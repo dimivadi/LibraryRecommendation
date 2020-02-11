@@ -14,10 +14,15 @@ class Library{
 	Library(String libraryName){
 		this.libraryName = libraryName;
 	}
+	
+	String getLibrary() {
+		return this.libraryName;
+	}
 }
 
 
 class Keyword{
+	
 	String keywordName;
 	
 	Keyword(String keywordName){
@@ -60,8 +65,30 @@ class FindComponents{
 		sw.close();
 	}
 	
-	void findLibraries(CodeFile codefile) {
-		//
+	void findLibraries(CodeFile codefile, ArrayList<Library> libraries) throws FileNotFoundException {
+		
+		Pattern libPattern = Pattern.compile("(?<=(^\\s*import\\s))[\\w+\\.]+");
+		Scanner in = new Scanner(codefile.getFile());
+		String line;
+		
+		while(in.hasNextLine()) {
+			line = in.nextLine();
+			Matcher m = libPattern.matcher(line);
+			while(m.find()) {
+				String token = m.group();
+				if(!stopwords.contains(token)) {
+					Library newLibrary = new Library(token);
+					if(!libraries.contains(newLibrary)) {
+						libraries.add(newLibrary);
+						System.out.println("Library: "+ newLibrary.getLibrary());
+						
+					}
+				}
+			}
+		}
+		
+		in.close();
+		
 	}
 	
 	void findKeywords(CodeFile codeFile, ArrayList<Keyword> keywords) throws FileNotFoundException {
