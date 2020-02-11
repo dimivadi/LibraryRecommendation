@@ -22,7 +22,6 @@ class Library{
 
 
 class Keyword{
-	
 	String keywordName;
 	
 	Keyword(String keywordName){
@@ -94,7 +93,6 @@ class FindComponents{
 	void findKeywords(CodeFile codeFile, ArrayList<Keyword> keywords) throws FileNotFoundException {
 		
 		
-		
 		Pattern wordPattern = Pattern.compile("[a-zA-Z]{3,}");
 		
 		Scanner in = new Scanner(codeFile.getFile());
@@ -106,19 +104,19 @@ class FindComponents{
 			Matcher m = wordPattern.matcher(line);
 			while(m.find()) {
 				String token = m.group();
-				if(!stopwords.contains(token))
-					if(!keywords.contains(token)) {
-						Keyword keyword = new Keyword(token);
-						keywords.add(keyword);
-						}
+				if(!stopwords.contains(token)) {
+					Keyword newKeyword = new Keyword(token);
+					if(!keywords.contains(newKeyword)) {
+						keywords.add(newKeyword);
+						System.out.println("Keyword: " + newKeyword.getKeyword());
+						
+					}
+				}
+
 			}
 		}
-		for (Keyword word : keywords)
-			System.out.println(word.getKeyword());
-		
-		
+
 		in.close();
-			
 		
 	}
 }
@@ -132,7 +130,7 @@ public class Class1{
 	public static void main(String[] args) throws IOException{
 		CodeFile codefile = new CodeFile("ConnectedComponent.java");
 		FindComponents find = new FindComponents("stopwords.txt");
-		find.findLibraries(codefile);//findLiraries static?
+		find.findLibraries(codefile, libraries);//findLiraries static?
 		find.findKeywords(codefile, keywords);
 		
 	}
