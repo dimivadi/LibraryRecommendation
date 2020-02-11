@@ -67,7 +67,6 @@ class FindComponents{
 	void findKeywords(CodeFile codeFile, ArrayList<Keyword> keywords) throws FileNotFoundException {
 		
 		
-		Pattern libPattern = Pattern.compile("(?<=(^\\s*import\\s))[\\w+\\.]+");
 		
 		Pattern wordPattern = Pattern.compile("[a-zA-Z]{3,}");
 		
@@ -92,10 +91,7 @@ class FindComponents{
 		
 		
 		in.close();
-		
-		
-		
-		
+			
 		
 	}
 }
