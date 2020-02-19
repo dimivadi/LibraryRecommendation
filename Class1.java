@@ -24,11 +24,13 @@ public class Class1{
 		
 		FindComponents find = new FindComponents("stopwords.txt", libraries, keywords);
 		
-		//File[] files = (new FilesList("Java-master")).getFiles();
+		//list of all .java files in directory
+		File[] files = (new FilesList("Java-master")).getFiles();
 		
-		CodeFile codefile = new CodeFile("ConnectedComponent.java", find);
-		codefile.getComponents();
-		
+		for(File file : files){
+			CodeFile codefile = new CodeFile(file, find);
+			codefile.getComponents();
+		}
 	}
 }
 
