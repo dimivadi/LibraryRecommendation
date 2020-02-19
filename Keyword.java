@@ -10,7 +10,7 @@ class Keyword{
 		this.keywordName = keywordName;
 	}
 	
-	public String getKeyword() {
+	public String getKeywordName() {
 		return keywordName;
 	}
 	
@@ -18,8 +18,20 @@ class Keyword{
 		this.libraries = libraries;
 	}
 	
+	void addConnectedLibrary(Library library) {
+		libraries.add(library);
+	}
+	
 	public ArrayList<Library> getConnectedLibraries(){
 		return libraries;
 	}
 	
+	boolean keywordExistsInArrayList(ArrayList<Keyword> keywords) {
+		for (Keyword kw : keywords) {
+			if(kw.getKeywordName() == this.keywordName) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

@@ -35,24 +35,24 @@ class FindComponents{
 		String line;
 		
 		
-		while(in.hasNextLine()) {
-			line = in.nextLine();
-			Matcher m = libPattern.matcher(line);
-			while(m.find()) {
-				String token = m.group();
-				if(!stopwords.contains(token)) {
-					Library newLibrary = new Library(token);
-					if(!libraries.contains(newLibrary)) {
-						libraries.add(newLibrary);
-						librariesInFile.add(newLibrary);
-						System.out.println("Library: "+ newLibrary.getLibrary());
-						
-					}
+		while(in.hasNextLine()) {			
+			line = in.nextLine();			
+			Matcher m = libPattern.matcher(line);			
+			while(m.find()) {				
+				String token = m.group();				
+				Library newLibrary = new Library(token);				
+				librariesInFile.add(newLibrary);				
+				if(!newLibrary.libraryExistsInArrayList(libraries)) {					
+					libraries.add(newLibrary);					
+					System.out.println("Library:"+ newLibrary.getLibraryName());
 				}
+				
 			}
 		}
 		
+		
 		in.close();
+
 		return librariesInFile;
 	}
 	
@@ -71,13 +71,26 @@ class FindComponents{
 			Matcher m = wordPattern.matcher(line);
 			while(m.find()) {
 				String token = m.group();
+				
 				if(!stopwords.contains(token)) {
 					Keyword newKeyword = new Keyword(token);
-					if(!keywords.contains(newKeyword)) {
-						newKeyword.setConnectedLibraries(connectedLibraries);
-						keywords.add(newKeyword);
-						System.out.println("Keyword: " + newKeyword.getKeyword());
+					newKeyword.setConnectedLibraries(connectedLibraries);
+					
+					if(!newKeyword.keywordExistsInArrayList(keywordsInFile)) {
+						keywordsInFile.add(newKeyword);
+						System.out.println("Keyword: " + newKeyword.getKeywordName());
 						
+						if(!newKeyword.keywordExistsInArrayList(keywords)) {
+							keywords.add(newKeyword);
+						}else {
+							Keyword kw;
+							kw = getKeywordByName(keywords, newKeyword.getKeywordName());
+							for(Library lib : connectedLibraries) {
+								if(!lib.libraryExistsInArrayList(kw.getConnectedLibraries())) {
+									kw.addConnectedLibrary(lib);
+								}
+							}
+						}
 					}
 				}
 
@@ -88,5 +101,34 @@ class FindComponents{
 		in.close();
 		return keywordsInFile;
 		
+	}
+	/*
+	boolean libraryExists(ArrayList<Library> libraries, Library library) {
+		
+		for (Library lib : libraries) {
+			if(lib.getLibraryName() == library.getLibraryName()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	*/
+	/*
+	boolean keywordExists(ArrayList<Keyword> keywords, Keyword currentKw) {
+		
+		for (Keyword kw : keywords) {
+			if(kw.getKeywordName() == currentKw.getKeywordName()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	*/
+	Keyword getKeywordByName(ArrayList<Keyword> keywords, String keywordName) {
+		for (Keyword kw: keywords)
+			if(kw.getKeywordName() == keywordName)
+				return kw;
+		Keyword k = new Keyword("");
+		return k;
 	}
 }
