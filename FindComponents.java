@@ -102,28 +102,7 @@ class FindComponents{
 		return keywordsInFile;
 		
 	}
-	/*
-	boolean libraryExists(ArrayList<Library> libraries, Library library) {
-		
-		for (Library lib : libraries) {
-			if(lib.getLibraryName() == library.getLibraryName()) {
-				return true;
-			}
-		}
-		return false;
-	}
-	*/
-	/*
-	boolean keywordExists(ArrayList<Keyword> keywords, Keyword currentKw) {
-		
-		for (Keyword kw : keywords) {
-			if(kw.getKeywordName() == currentKw.getKeywordName()) {
-				return true;
-			}
-		}
-		return false;
-	}
-	*/
+	
 	Keyword getKeywordByName(ArrayList<Keyword> keywords, String keywordName) {
 		for (Keyword kw: keywords)
 			if(kw.getKeywordName() == keywordName)
