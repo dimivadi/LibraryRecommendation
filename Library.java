@@ -8,7 +8,7 @@ class Library{
 	Library(String libraryName){
 		this.libraryName = libraryName;
 	}
-	
+
 	public String getLibraryName() {
 		return this.libraryName;
 	}

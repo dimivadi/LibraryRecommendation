@@ -16,7 +16,7 @@ class CodeFile{
 		this.find = find;
 		this.codefile = new File(filename);	
 	}
-	
+
 	CodeFile(File file, FindComponents find){
 		this.find = find;
 		this.codefile = file;	

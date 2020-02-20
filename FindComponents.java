@@ -30,16 +30,18 @@ class FindComponents{
 		
 		ArrayList<Library> librariesInFile = new ArrayList<Library>();
 		
-		Pattern libPattern = Pattern.compile("(?<=(^\\s*import\\s))[\\w+\\.]+");
+		Pattern libPattern = Pattern.compile("\\s*import\\s+([\\w+\\.]+)");
+		
 		Scanner in = new Scanner(codefile.getFile());
 		String line;
-		
 		
 		while(in.hasNextLine()) {			
 			line = in.nextLine();			
 			Matcher m = libPattern.matcher(line);			
 			while(m.find()) {				
-				String token = m.group();				
+				String token = m.group(1);
+				System.out.println(token);
+				//token = "java.util.Set";
 				Library newLibrary = new Library(token);				
 				librariesInFile.add(newLibrary);				
 				if(!newLibrary.libraryExistsInArrayList(libraries)) {					
@@ -52,7 +54,7 @@ class FindComponents{
 		
 		
 		in.close();
-
+		
 		return librariesInFile;
 	}
 	
@@ -60,46 +62,74 @@ class FindComponents{
 		
 		ArrayList<Keyword> keywordsInFile = new ArrayList<Keyword>();
 		
-		Pattern wordPattern = Pattern.compile("[a-zA-Z]{3,}");
-		
+		Pattern wordPattern = Pattern.compile("\\w{3,}([\\S]+\\w{3,})*");
+		Matcher m = wordPattern.matcher(" ");
 		Scanner in = new Scanner(codeFile.getFile());
 		String line;
 		
 
 		while(in.hasNextLine()) {
 			line = in.nextLine();
-			Matcher m = wordPattern.matcher(line);
+			if(line.matches("\\s*import\\s+.*"))
+					continue;
+			
+			m.reset(line);
 			while(m.find()) {
 				String token = m.group();
 				
-				if(!stopwords.contains(token)) {
-					Keyword newKeyword = new Keyword(token);
-					newKeyword.setConnectedLibraries(connectedLibraries);
+		
+				String[] parts = splitTokenInStrings(token);
+				
+				for(String part : parts) {
+					if(!stopwords.contains(part)) {
+						Keyword newKeyword = new Keyword(part);
+						newKeyword.setConnectedLibraries(connectedLibraries);
 					
-					if(!newKeyword.keywordExistsInArrayList(keywordsInFile)) {
-						keywordsInFile.add(newKeyword);
-						System.out.println("Keyword: " + newKeyword.getKeywordName());
+						if(!newKeyword.keywordExistsInArrayList(keywordsInFile)) {
+							keywordsInFile.add(newKeyword);
+							System.out.println("Keyword: " + newKeyword.getKeywordName());
 						
-						if(!newKeyword.keywordExistsInArrayList(keywords)) {
-							keywords.add(newKeyword);
-						}else {
-							Keyword kw;
-							kw = getKeywordByName(keywords, newKeyword.getKeywordName());
-							for(Library lib : connectedLibraries) {
-								if(!lib.libraryExistsInArrayList(kw.getConnectedLibraries())) {
-									kw.addConnectedLibrary(lib);
+							if(!newKeyword.keywordExistsInArrayList(keywords)) {
+								keywords.add(newKeyword);
+							}else {
+								Keyword currentKeyword;
+								currentKeyword = getKeywordByName(keywords, newKeyword.getKeywordName());
+								for(Library lib : connectedLibraries) {
+									if(!lib.libraryExistsInArrayList(currentKeyword.getConnectedLibraries())) {
+										currentKeyword.addConnectedLibrary(lib);
+									}
 								}
 							}
 						}
 					}
 				}
-
 			}
 		}
 
 		
 		in.close();
 		return keywordsInFile;
+		
+	}
+	
+	String[] splitTokenInStrings(String str) {
+		
+		String[] s = str.split("\\W");
+		
+		String[] arr;
+		ArrayList<String> strList = new ArrayList<String>();
+		ArrayList<String> strList2 = new ArrayList<String>();
+		for (String temp : s) {
+			arr = temp.split("(?<=[a-z])(?=[A-Z])");
+			for(String c : arr) {
+				strList.add(c);
+			}
+			strList2.add(String.join(" ", arr));
+			strList.add(String.join(" ", arr));
+		}
+		
+		strList.add(String.join(" ",strList2.toArray(new String[0])));
+		return (String[]) strList.toArray(new String[0]);	
 		
 	}
 	
@@ -111,3 +141,4 @@ class FindComponents{
 		return k;
 	}
 }
+
