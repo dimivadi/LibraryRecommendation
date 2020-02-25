@@ -8,34 +8,40 @@ class CodeFile{
 	
 	private FindComponents find;
 	private File codefile; 
-	private ArrayList<Library> librariesInFile;
-	private ArrayList<Keyword> keywordsInFile;
+	//private ArrayList<Library> librariesInFile;
+	//private ArrayList<Keyword> keywordsInFile;
 	
 	
-	CodeFile(String filename, FindComponents find){
-		this.find = find;
+	CodeFile(String filename) throws FileNotFoundException{
+		find = new FindComponents();
 		this.codefile = new File(filename);	
 	}
 
-	CodeFile(File file, FindComponents find){
-		this.find = find;
+	CodeFile(File file) throws FileNotFoundException{
+		find = new FindComponents();
 		this.codefile = file;	
 	}
 	
 	
-	File getFile() {
+	public File getFile() {
 		return codefile;
 	}
 	
-	void getComponents() throws FileNotFoundException {
-		//TODO check if arrayList == NULL
-		librariesInFile = find.findLibraries(this);
-		keywordsInFile = find.findKeywords(this, librariesInFile);
+	
+	public ArrayList<Component> getComponents() throws FileNotFoundException{
+		return find.findComponents(this);
 	}
 	
-
+	//return arraylist<Library>?
+	public ArrayList<Component> getLibraries() throws FileNotFoundException{
+		return find.findLibraries(this);
+	}
 	
+	public ArrayList<Component> getKeywords() throws FileNotFoundException{
+		return find.findKeywords(this);
+	}
 	
 }
+
 
 

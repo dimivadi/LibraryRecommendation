@@ -9,32 +9,31 @@ import java.util.ArrayList;
 
 public class Class1{
 	
-	private static ArrayList<Library> libraries = new ArrayList<Library>();
-	private static ArrayList<Keyword> keywords = new ArrayList<Keyword>();
+
 	
-	static public ArrayList<Library> getLibraries(){
-		return libraries;
-	}
-	
-	static public ArrayList<Keyword> getKeywords(){
-		return keywords;
-	}
 	
 	public static void main(String[] args) throws IOException{
 		
-		FindComponents find = new FindComponents("stopwords.txt", libraries, keywords);
-		
-		//list of all .java files in directory
+		ArrayList<CodeFile> codefiles = new ArrayList<CodeFile>();
 		File[] files = (new FilesList("Java-master")).getFiles();
 		
 		for(File file : files){
-			CodeFile codefile = new CodeFile(file, find);
+			CodeFile codefile = new CodeFile(file);
+			codefiles.add(codefile);
 			codefile.getComponents();
+
 		}
+		ArrayList<Graph> graphs	= new ArrayList<Graph>();
+		for(CodeFile cf : codefiles) {
+			Graph graph = new Graph(cf);
+			graphs.add(graph);
+		}
+		
+		//CodeFile codefile = new CodeFile("ConnectedComponent.java");
+		//codefile.getComponents();
+		
 	}
 }
-
-
 
 
 
