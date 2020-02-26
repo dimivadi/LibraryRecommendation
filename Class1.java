@@ -23,10 +23,10 @@ public class Class1{
 			codefile.getComponents();
 
 		}
-		ArrayList<Graph> graphs	= new ArrayList<Graph>();
+		ArrayList<Connections> connectionsList	= new ArrayList<Connections>();
 		for(CodeFile cf : codefiles) {
-			Graph graph = new Graph(cf);
-			graphs.add(graph);
+			Connections connections = new Connections(cf);
+			connectionsList.add(connections);
 		}
 		
 		//CodeFile codefile = new CodeFile("ConnectedComponent.java");
