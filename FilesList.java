@@ -6,7 +6,8 @@ import java.util.List;
 
 class FilesList {
 	
-	
+	// Methods to be called by user
+	// extensions: String of extensions separated by non-word characters
 	public static List<File> listAllFiles(String startDir, String extensions) {
 		String[] suffixes = toSuffixes(extensions);
 		System.out.println(suffixes);
@@ -19,7 +20,7 @@ class FilesList {
 		return recurseDir(startDir, suffixes);
 	}
 	
-	
+	// Recursive search in folders
 	public static List<File> recurseDir(File startDir, String[] suffixes) {
 		List<File> files = new ArrayList<File>();
 		
