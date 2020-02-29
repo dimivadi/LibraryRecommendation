@@ -10,13 +10,11 @@ class FilesList {
 	// extensions: String of extensions separated by non-word characters
 	public static List<File> listAllFiles(String startDir, String extensions) {
 		String[] suffixes = toSuffixes(extensions);
-		System.out.println(suffixes);
 		return recurseDir(new File(startDir), suffixes);
 	}
 	
 	public static List<File> listAllFiles(File startDir, String extensions){
 		String[] suffixes = toSuffixes(extensions);
-		System.out.println(suffixes);
 		return recurseDir(startDir, suffixes);
 	}
 	
