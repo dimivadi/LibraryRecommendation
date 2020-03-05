@@ -1,47 +1,67 @@
 package package1;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Connections {
-
-	private Map<Component, List<Component>> connections = new HashMap<Component, List<Component>>();
+abstract class Connections {
 	
-	Connections(CodeFile codefile) throws FileNotFoundException{
-		//Create vertices without edges
-		for(Component comp : codefile.getComponents()) {
-			connections.put(comp, new ArrayList<Component>());
+	private Map<Component, Collection<Component>> connections;
+	
+	void addConnection(Component componentA, Component componentB) {
+		if(!connections.containsKey(componentA)) {
+			connections.put(componentA, new ArrayList<Component>());
 		}
-	}
-	
-	// create edges between all vertices
-	public void connect() {
-		Set<Component> elems = new HashSet<Component>();
-		elems = connections.keySet();
-		for(Component each : elems) {
-			Component temp = each;
-			elems.remove(each);
-			for(Component c : elems) {
-				addConnection(temp, c);
-			}
+		if(!connections.containsKey(componentB)) {
+			connections.put(componentB, new ArrayList<Component>());
 		}
+		
+		connections.get(componentA).add(componentB);
+		connections.get(componentB).add(componentA);
 	}
 	
-	// 
-	public void connect(int i) {
-		// i -> parameter for different connections in graphs
+	void addConnectionsByType(Collection<Component> components, Class c1, Class c2) {
+		//
 	}
+	
+	void addComponent(Component component) {
+		connections.put(component, new ArrayList<Component>());
+	}
+	
+	void addComponent(Collection<Component> components) {
+		for(Component component : components)
+			connections.put(component, new ArrayList<Component>());
+	}
+	
+	Set<Component> getComponents(){
+		return connections.keySet();
+	}
+	
+	
+	Collection<Component> getComponentConnections(Component component) {
+		return connections.get(component);
+	}
+	
+	
+	void removeConnection(Component componentA, Component componentB) {
+		connections.get(componentA).remove(componentB);
+		connections.get(componentB).remove(componentA);
+	}
+	
+	
+	
+	void merge(Connections connections) {
+		this.connections.putAll(connections.getConnections());
+	}
+	
+	 Map<Component, Collection<Component>> getConnections(){
+		 return connections;
+	 }
+	
 
-	// add edge given two vertices
-	public void addConnection(Component A, Component B) {
-		connections.get(A).add(B);
-		connections.get(B).add(A);
-	}
+	
 	
 }
+

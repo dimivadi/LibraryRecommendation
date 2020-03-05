@@ -3,6 +3,7 @@ package package1;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 
 class CodeFile{
 	
@@ -32,8 +33,8 @@ class CodeFile{
 		return find.findComponents(this);
 	}
 	
-	//return arraylist<Library>?
-	public ArrayList<Component> getLibraries() throws FileNotFoundException{
+
+	public List<Component> getLibraries() throws FileNotFoundException{
 		return find.findLibraries(this);
 	}
 	

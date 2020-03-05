@@ -17,7 +17,7 @@ public abstract class Component {
 	}
 	
 	// List or ArrayList
-	public boolean existsInArrayList(ArrayList<Component> components) {
+	public boolean existsInArrayList(List<Component> components) {
 		for(Component comp : components) {
 			if(comp.getName() == this.name) {
 				return true;
@@ -34,6 +34,21 @@ public abstract class Component {
 			}
 		}
 		return this;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o == this)
+			return true;
+		if(!(o instanceof Component))
+			return false;
+		Component c = (Component) o;
+		return c.getName() == this.getName();
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.getName().hashCode();
 	}
 	
 }

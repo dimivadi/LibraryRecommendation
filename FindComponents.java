@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,7 +15,8 @@ import java.util.regex.Pattern;
 class FindComponents{
 	
 	private ArrayList<String> stopwords = new ArrayList<String>();
-	private ArrayList<Component> libraries = new ArrayList<Component>();
+	//List OR ArrayList ?
+	private List<Component> libraries = new ArrayList<Component>();
 	private ArrayList<Component> keywords = new ArrayList<Component>();
 	private ArrayList<Component> components = new ArrayList<Component>();
 	
@@ -30,7 +32,7 @@ class FindComponents{
 		
 	}
 	
-	public ArrayList<Component> findLibraries(CodeFile codefile) throws FileNotFoundException {
+	public List<Component> findLibraries(CodeFile codefile) throws FileNotFoundException {
 		
 		
 		if(libraries.isEmpty()) {
