@@ -13,7 +13,7 @@ public class Class1{
 	
 	public static void main(String[] args) throws IOException{
 		
-		
+		/*
 		List<CodeFile> codefiles = new ArrayList<CodeFile>();
 		Connections connections;
 		
@@ -24,7 +24,12 @@ public class Class1{
 			codefiles.add(codefile);
 			//
 		}
-
+		*/
+		CodeFile codefile = new CodeFile("ConnectedComponent.java");
+		List<Component> components = codefile.getComponents();
+		Connections connections = new Connections();
+		connections.addConnectionsByType(components, Library.class, Keyword.class);
+		
 
 		
 	}

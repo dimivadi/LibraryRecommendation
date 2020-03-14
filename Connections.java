@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-abstract class Connections {
+class Connections {
 	
 	private Map<Component, Collection<Component>> connections;
 	
@@ -22,21 +22,39 @@ abstract class Connections {
 		connections.get(componentB).add(componentA);
 	}
 	
+	
 	void addConnectionsByType(Collection<Component> components, Class c1, Class c2) {
-		//
+		Collection<Component> class1 = new ArrayList<Component>();
+		Collection<Component> class2 = new ArrayList<Component>();
+		
+		for(Component component : components) {
+			if(component.getClass() == c1)
+				class1.add(component);
+			else
+				class2.add(component);
+		}
+		for(Component component1 : class1) {
+			for(Component component2 : class2)
+				addConnection(component1, component2);
+		}
 	}
 	
 	void addComponent(Component component) {
-		connections.put(component, new ArrayList<Component>());
+		if(!connections.containsKey(component))
+			connections.put(component, new ArrayList<Component>());
 	}
 	
 	void addComponent(Collection<Component> components) {
 		for(Component component : components)
-			connections.put(component, new ArrayList<Component>());
+			addComponent(component);
 	}
 	
 	Set<Component> getComponents(){
 		return connections.keySet();
+	}
+	
+	Set<Map.Entry<Component, Collection<Component>>> getEntries(){
+		return connections.entrySet();
 	}
 	
 	
@@ -53,10 +71,17 @@ abstract class Connections {
 	
 	
 	void merge(Connections connections) {
-		this.connections.putAll(connections.getConnections());
+
+		for(Map.Entry<Component, Collection<Component>> e : connections.getEntries()) {
+			if(!this.connections.containsKey(e.getKey()))
+				this.connections.put(e.getKey(), e.getValue());
+			else {
+				this.connections.get(e.getKey()).addAll(e.getValue());
+			}
+		}
 	}
 	
-	 Map<Component, Collection<Component>> getConnections(){
+	Map<Component, Collection<Component>> getConnections(){
 		 return connections;
 	 }
 	
