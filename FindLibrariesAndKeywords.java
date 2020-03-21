@@ -12,9 +12,9 @@ import java.util.regex.Pattern;
 public class FindLibrariesAndKeywords extends FindComponents{
 	
 	private ArrayList<String> stopwords = new ArrayList<String>();
-	private List<Component> libraries;
-	private List<Component> keywords;
-	private List<Component> components;
+	private Collection<Component> libraries;
+	private Collection<Component> keywords;
+	private Collection<Component> components;
 	
 	
 	FindLibrariesAndKeywords() throws FileNotFoundException{
@@ -63,8 +63,6 @@ public class FindLibrariesAndKeywords extends FindComponents{
 			Matcher m = libPattern.matcher(line);			
 			while(m.find()) {				
 				String token = m.group(1);
-				System.out.println(token);
-				//token = "java.util.Set";
 				Library newLibrary = new Library(token);						
 				if(!libraries.contains(newLibrary)) {					
 					libraries.add(newLibrary);					
@@ -100,6 +98,8 @@ public class FindLibrariesAndKeywords extends FindComponents{
 				String[] parts = splitTokenInStrings(token);
 				
 				for(String part : parts) {
+					if(part.length() < 3)
+						continue;
 					if(!stopwords.contains(part)) {
 						Keyword newKeyword = new Keyword(part);
 						
