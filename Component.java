@@ -36,7 +36,8 @@ public abstract class Component {
 		if(!(o instanceof Component))
 			return false;
 		Component c = (Component) o;
-		return c.getName() == this.getName();
+		return this.name.equals(c.getName());
+		//return c.getName() == this.getName();
 	}
 	
 	@Override
