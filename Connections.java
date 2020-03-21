@@ -1,4 +1,4 @@
-package package1;
+package datatypes;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,26 +39,26 @@ class Connections {
 		}
 	}
 	
-	void addComponent(Component component) {
+	public void addComponent(Component component) {
 		if(!connections.containsKey(component))
 			connections.put(component, new ArrayList<Component>());
 	}
 	
-	void addComponent(Collection<Component> components) {
+	public void addComponent(Collection<Component> components) {
 		for(Component component : components)
 			addComponent(component);
 	}
 	
-	Set<Component> getComponents(){
+	public Set<Component> getComponents(){
 		return connections.keySet();
 	}
 	
-	Set<Map.Entry<Component, Collection<Component>>> getEntries(){
+	public Set<Map.Entry<Component, Collection<Component>>> getEntries(){
 		return connections.entrySet();
 	}
 	
 	
-	Collection<Component> getComponentConnections(Component component) {
+	public Collection<Component> getComponentConnections(Component component) {
 		return connections.get(component);
 	}
 	

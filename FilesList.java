@@ -1,4 +1,4 @@
-package package1;
+package datatypes;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ class FilesList {
 	}
 	
 	// Recursive search in folders
-	public static List<File> recurseDir(File startDir, String[] suffixes) {
+	private static List<File> recurseDir(File startDir, String[] suffixes) {
 		List<File> files = new ArrayList<File>();
 		
 		for(File item : startDir.listFiles()) {
@@ -34,7 +34,7 @@ class FilesList {
 		return files;
 	}
 	
-	public static boolean accept(String fileName, String[] suffixes) {
+	private static boolean accept(String fileName, String[] suffixes) {
 		for (String suffix : suffixes) {
 			if(fileName.endsWith(suffix))
 				return true;
@@ -42,7 +42,7 @@ class FilesList {
 		return false;
 	}
 	
-	public static String[] toSuffixes(String extensions) {
+	private static String[] toSuffixes(String extensions) {
 		return extensions.split("\\W+");
 	}
 	

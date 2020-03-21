@@ -1,25 +1,24 @@
-package package1;
+package datatypes;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 class CodeFile{
 	
 	private FindComponents find;
 	private File codefile; 
-	//private ArrayList<Library> librariesInFile;
-	//private ArrayList<Keyword> keywordsInFile;
 	
 	
 	CodeFile(String filename) throws FileNotFoundException{
-		find = new FindComponents();
+		find = new FindLibrariesAndKeywords();
 		this.codefile = new File(filename);	
 	}
 
 	CodeFile(File file) throws FileNotFoundException{
-		find = new FindComponents();
+		find = new FindLibrariesAndKeywords();
 		this.codefile = file;	
 	}
 	
@@ -28,19 +27,14 @@ class CodeFile{
 		return codefile;
 	}
 	
-	
-	public ArrayList<Component> getComponents() throws FileNotFoundException{
-		return find.findComponents(this);
+	/*
+	public Collection<Component> getComponents() throws FileNotFoundException{
+		if(components.isEmpty()) {
+			components = find.findComponents(this);
+		}
+		return components;
 	}
-	
-
-	public List<Component> getLibraries() throws FileNotFoundException{
-		return find.findLibraries(this);
-	}
-	
-	public ArrayList<Component> getKeywords() throws FileNotFoundException{
-		return find.findKeywords(this);
-	}
+	*/
 	
 }
 
