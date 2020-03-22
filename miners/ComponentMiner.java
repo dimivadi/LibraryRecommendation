@@ -5,5 +5,5 @@ import datatypes.Component;
 
 public abstract class ComponentMiner {
 	
-	abstract Collection<Component> ComponentMining(Collection<Component> components);
+	abstract Collection<Component> componentMining(Collection<Component> components);
 }
