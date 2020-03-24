@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-class CodeFile{
+public class CodeFile{
 	
 	private FindComponents find;
 	private File codefile; 

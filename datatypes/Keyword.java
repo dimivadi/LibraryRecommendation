@@ -1,7 +1,7 @@
 package datatypes;
 
 
-class Keyword extends Component{
+public class Keyword extends Component{
 	
 	Keyword(String name){
 		super(name);

@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-class FilesList {
+public class FilesList {
 	
 	// Methods to be called by user
 	// extensions: String of extensions separated by non-word characters
