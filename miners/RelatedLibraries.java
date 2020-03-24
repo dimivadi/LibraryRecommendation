@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+import datatypes.Library;
 
 import datatypes.Component;
 import datatypes.Connections;
