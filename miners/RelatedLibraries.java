@@ -28,9 +28,7 @@ public class RelatedLibraries extends ComponentMiner{
 				System.out.println("Component "+component.getName()+" does not exist in graph");
 				continue;
 			}
-			
-			relatedLibraries = connectedComponents.stream().filter(c->c.getClass() == Library.class).collect(Collectors.toSet());
-			relatedLibraries.addAll(connectedComponents);
+			relatedLibraries.addAll(connectedComponents.stream().filter(c->c.getClass() == Library.class).collect(Collectors.toSet()));
 		}
 		return relatedLibraries;
 	}
