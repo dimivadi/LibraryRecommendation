@@ -11,7 +11,7 @@ import miners.ComponentMiner;
 import miners.RelatedLibraries;
 
 
-public class Class1{
+public class MainClass{
 	
 
 	
