@@ -17,7 +17,7 @@ public class FindLibrariesAndKeywords extends FindComponents{
 	private Collection<Component> components;
 	
 	
-	FindLibrariesAndKeywords() throws FileNotFoundException{
+	public FindLibrariesAndKeywords() throws FileNotFoundException{
 		File swfile = new File("stopwords.txt");
 		Scanner sw = new Scanner(swfile);
 		while(sw.hasNext()) {
@@ -129,7 +129,7 @@ public class FindLibrariesAndKeywords extends FindComponents{
 		for (String temp : s) {
 			arr = temp.split("(?<=[a-z])(?=[A-Z])");
 			for(String c : arr) {
-				strList.add(c);
+				strList.add(c.toLowerCase());
 			}
 			strList2.add(String.join(" ", arr));
 			strList.add(String.join(" ", arr));

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-class Connections {
+public class Connections {
 	
 	private Map<Component, Set<Component>> connections = new HashMap<Component, Set<Component>>();
 	
@@ -26,7 +26,7 @@ class Connections {
 	}
 	
 
-	void addConnectionsByType(Collection<Component> components, Class... classes) {
+	public void addConnectionsByType(Collection<Component> components, Class... classes) {
 		
 		List classesAsList = Arrays.asList(classes);
 		
@@ -61,6 +61,9 @@ class Connections {
 		System.out.println(connections);
 	}
 	
+	public Map<Component, Set<Component>> getConnections(){
+		return connections;
+	}
 	
 	public void addComponent(Component component) {
 		if(!connections.containsKey(component))
@@ -103,10 +106,7 @@ class Connections {
 			}
 		}
 	}
-	
-	Map<Component, Set<Component>> getConnections(){
-		 return connections;
-	 }
+
 	
 
 	
