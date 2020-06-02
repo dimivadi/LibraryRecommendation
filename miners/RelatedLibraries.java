@@ -53,7 +53,7 @@ public class RelatedLibraries extends ComponentMiner{
 		}
 		
 		
-		//Sort list based in scoring
+		//Sort list based on scoring
 		Collections.sort(relatedLibraries, new Comparator<Component>() {
 									@Override
 									public int compare(Component a, Component b) {
