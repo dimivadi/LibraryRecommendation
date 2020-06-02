@@ -55,11 +55,11 @@ public class RelatedLibraries extends ComponentMiner{
 		
 		//Sort list based in scoring
 		Collections.sort(relatedLibraries, new Comparator<Component>() {
-																@Override
-																public int compare(Component a, Component b) {
-																return (int) (Math.signum(scores.get(b) - scores.get(a)));
-																}
-															});
+									@Override
+									public int compare(Component a, Component b) {
+									return (int) (Math.signum(scores.get(b) - scores.get(a)));
+										}
+									});
 		
 		return relatedLibraries;
 		
