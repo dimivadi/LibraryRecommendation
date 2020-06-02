@@ -33,8 +33,6 @@ public class MainClass{
 			connections.addConnectionsByType(components, Library.class, Keyword.class);
 		}
 		
-		List<Component> temp = new ArrayList<Component>();
-		temp.add(new Keyword("keyword4"));
 		ComponentMiner cm = new RelatedLibraries(connections);
 		System.out.println(cm.componentMining(new Keyword("keyword4")));
 	}
