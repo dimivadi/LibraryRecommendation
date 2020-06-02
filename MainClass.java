@@ -1,5 +1,3 @@
-package datatypes;
-
 
 import java.io.File;
 import java.io.IOException;
@@ -7,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import miners.ComponentMiner;
-import miners.RelatedLibraries;
+import miners.*;
+import datatypes.*;
 
 
 public class MainClass{
@@ -37,10 +35,8 @@ public class MainClass{
 		
 		List<Component> temp = new ArrayList<Component>();
 		temp.add(new Keyword("keyword4"));
-		temp.add(new Keyword("keyword5"));
-		temp.add(new Keyword("keyword6"));
 		ComponentMiner cm = new RelatedLibraries(connections);
-		System.out.println(cm.componentMining(temp));
+		System.out.println(cm.componentMining(new Keyword("keyword4")));
 	}
 }
 
