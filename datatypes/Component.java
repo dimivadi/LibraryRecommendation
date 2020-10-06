@@ -15,8 +15,7 @@ public abstract class Component {
 	public String getName() {
 		return this.name;
 	}
-	
-
+	/*
 	Component getComponentByName(ArrayList<Component> compList, String name) {
 		
 		for(Component comp : compList) {
@@ -25,6 +24,11 @@ public abstract class Component {
 			}
 		}
 		return this;
+	}
+	*/
+	@Override
+	public String toString() {
+		return this.name;
 	}
 	
 	@Override
@@ -36,8 +40,8 @@ public abstract class Component {
 		if(!(o instanceof Component))
 			return false;
 		Component c = (Component) o;
-		return this.name.equals(c.getName());
-		//return c.getName() == this.getName();
+		return this.name.equalsIgnoreCase(c.getName());
+	
 	}
 	
 	@Override

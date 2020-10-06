@@ -3,7 +3,7 @@ package datatypes;
 
 public class Library extends Component{
 	
-	Library(String name){
+	public Library(String name){
 		super(name);
 	}
 

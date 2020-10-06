@@ -3,7 +3,7 @@ package datatypes;
 
 public class Keyword extends Component{
 	
-	Keyword(String name){
+	public Keyword(String name){
 		super(name);
 	}
 }

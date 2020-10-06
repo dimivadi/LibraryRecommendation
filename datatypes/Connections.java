@@ -52,7 +52,7 @@ public class Connections {
 			for(j=i+1; j < classes.length; j++) {
 				System.out.println("i, j = "+i+" "+j);
 				for(Component component1 : classesOfComponents.get(i)) {
-					for(Component component2 : classesOfComponents.get(j))
+					for(Component component2 : classesOfComponents.get(j)) 
 						addConnection(component1, component2);
 				}
 				

@@ -12,13 +12,11 @@ public class CodeFile{
 	private File codefile; 
 	
 	
-	CodeFile(String filename) throws FileNotFoundException{
-		find = new FindLibrariesAndKeywords();
+	public CodeFile(String filename) throws FileNotFoundException{
 		this.codefile = new File(filename);	
 	}
 
-	CodeFile(File file) throws FileNotFoundException{
-		find = new FindLibrariesAndKeywords();
+	public CodeFile(File file) throws FileNotFoundException{
 		this.codefile = file;	
 	}
 	
