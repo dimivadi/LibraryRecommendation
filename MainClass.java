@@ -21,6 +21,7 @@ public class MainClass{
 		FindComponents find = new FindLibrariesAndKeywords();
 		Collection<Component> components;
 		
+		
 		List<File> files = FilesList.listAllFiles("testFolder", "java");
 		
 		for(File file : files){
@@ -33,8 +34,13 @@ public class MainClass{
 			connections.addConnectionsByType(components, Library.class, Keyword.class);
 		}
 		
+		//List<Component> temp = new ArrayList<Component>();
+		//temp.add(new Keyword("keyword4"));
 		ComponentMiner cm = new RelatedLibraries(connections);
-		System.out.println(cm.componentMining(new Keyword("keyword4")));
+		Collection<Component> seedComponents = new ArrayList<>();
+		//seedComponents.add(new Keyword("Keyword4"));
+		seedComponents.add(new Keyword("keyword3"));
+		System.out.println(cm.componentMining(seedComponents));
 	}
 }
 
