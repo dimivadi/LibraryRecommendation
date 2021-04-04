@@ -50,7 +50,7 @@ public class Connections {
 		int i,j;
 		for(i=0; i < classes.length-1; i++) {
 			for(j=i+1; j < classes.length; j++) {
-				System.out.println("i, j = "+i+" "+j);
+				//System.out.println("i, j = "+i+" "+j);
 				for(Component component1 : classesOfComponents.get(i)) {
 					for(Component component2 : classesOfComponents.get(j)) 
 						addConnection(component1, component2);
@@ -58,7 +58,7 @@ public class Connections {
 				
 			}
 		}
-		System.out.println(connections);
+		//System.out.println(connections);
 	}
 	
 	public Map<Component, Set<Component>> getConnections(){

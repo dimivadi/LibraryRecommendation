@@ -40,7 +40,7 @@ public abstract class Component {
 		if(!(o instanceof Component))
 			return false;
 		Component c = (Component) o;
-		return this.name.equalsIgnoreCase(c.getName());
+		return (this.name+this.getClass()).equalsIgnoreCase(c.getName()+c.getClass());
 	
 	}
 	
