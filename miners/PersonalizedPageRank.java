@@ -27,7 +27,7 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 	private Map<Component, Double> scores;
 	private Collection<Component> seedComponents; //personalization components
 	
-	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, Collection<Component> components, int maxIterations, double tolerance, double dampingFactor){
+	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, Collection<Component> seedComponents, int maxIterations, double tolerance, double dampingFactor){
 		
 		//TODO Add exceptions
 		
@@ -35,13 +35,13 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 		this.tolerance = tolerance;
 		this.dampingFactor = dampingFactor;
 		this.maxIterations = maxIterations;
-		this.seedComponents = components;
+		this.seedComponents = seedComponents;
 		
 	}
 	
-	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, Collection<Component> components){
+	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, Collection<Component> seedComponents){
 		
-		this(graph, components, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT);
+		this(graph, seedComponents, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT);
 		
 	}
 	
@@ -61,7 +61,7 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 		private double[] nextScore;
 		private int[] outDegree;
 		private Map<Component, Integer> vertexIndexMap;
-		private ArrayList<Component> vertexMap;
+		private Component[] vertexMap; 
 		private ArrayList<int[]> adjList;
 	
 		
@@ -73,7 +73,7 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 			this.curScore = new double[totalVertices];
 			this.nextScore = new double[totalVertices];
 			this.outDegree = new int[totalVertices];
-			this.vertexMap = new ArrayList<Component>(totalVertices); //or using array
+			this.vertexMap =  new Component[totalVertices];
 			this.vertexIndexMap = new HashMap<>();
 			this.adjList = new ArrayList<int[]>(totalVertices);
 			this.numOfPersonalizationComponents = seedComponents.size();
@@ -85,19 +85,19 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 				curScore[i] = initScore;
 				outDegree[i] = graph.outDegreeOf(c);
 				vertexIndexMap.put(c, i);
-				vertexMap.add(c);
-				
+				vertexMap[i] = c;
+				seedVector[i] = (seedComponents.contains(c) == true)? 1 / numOfPersonalizationComponents : 0d;
+				i++;
 			}
-			for(Component c : graph.vertexSet()) {
+			for(int k=0; k<totalVertices; k++) { 
+				Component c = vertexMap[k];
 				int[] inNeighbors = new int[graph.inDegreeOf(c)];
 				int j = 0;
 				for(DefaultEdge e : graph.incomingEdgesOf(c)) {
-					Component nc = Graphs.getOppositeVertex(graph, e, c);					
+					Component nc = Graphs.getOppositeVertex(graph, e, c);
 					inNeighbors[j++] = vertexIndexMap.get(nc);
 				}
 				adjList.add(inNeighbors);
-				seedVector[i] = (seedComponents.contains(c) == true)? 1 / numOfPersonalizationComponents : 0d;
-				i++;
 			}
 			
 			
@@ -111,13 +111,15 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 			
 			while(iterations > 0 && maxChange >= tolerance) {
 				
-				for(int i=0; i<totalVertices; i++) {
+				for(int i=0; i<totalVertices; i++) { 
 					double contribution = 0d;
+					// if outDegree = 0???
 					for(int j : adjList.get(i)) {
-						contribution += dampingFactor * curScore[j] / outDegree[j]; // if outDegree = 0
+						contribution += dampingFactor * curScore[j] / outDegree[j]; 
 					}
-					double newValue = contribution + (1d - dampingFactor) * seedVector[i];
+					double newValue = contribution + (1d - dampingFactor) * seedVector[i]; 
 					maxChange = Math.max(maxChange, Math.abs(newValue) - curScore[i]);
+					
 					nextScore[i] = newValue;
 				}
 				curScore = nextScore;
@@ -133,7 +135,7 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 			run();
 			Map<Component, Double> scores = new HashMap<>();
 			for(int i=0; i<totalVertices; i++) {
-				scores.put(vertexMap.get(i), curScore[i]);
+				scores.put(vertexMap[i], curScore[i]);
 			}
 			
 			return scores;

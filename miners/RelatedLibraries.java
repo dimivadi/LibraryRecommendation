@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Comparator;
 import datatypes.Component;
 import datatypes.Library;
@@ -33,7 +34,7 @@ public class RelatedLibraries implements ComponentMiner{
 	/*
 	 * 
 	 */
-	public Collection<Component> componentMining(Collection<Component> components){
+	public Map<Component, Double> componentMining(Collection<Component> components){
 		
 		
 		//Create Graph
@@ -42,16 +43,25 @@ public class RelatedLibraries implements ComponentMiner{
 		cg.addConnectionsToGraph(connections);
 		graph = cg.getGraph();
 		
+		//Check graph 
+		
+		Set<DefaultEdge> testEdges = graph.edgesOf(new Library("lib2"));
+		for(DefaultEdge e: testEdges) {
+			System.out.println("Edge Source: "+graph.getEdgeSource(e));
+			System.out.println("Edge Target: "+graph.getEdgeTarget(e));
+		}
+		
+		
 		//Scoring Algorithm
 		//VertexScoringAlgorithm<Component, Double> pr = new PageRank(graph);
 		//Map<Component, Double> scores = pr.getScores();
 		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(graph, components);
 		Map<Component, Double> scores = ppr.getScores();
 		
-		System.out.println(scores);
+		//System.out.println(scores);
 		
 		//Traverse graph starting from input
-		Component tempComponent;
+		//Component tempComponent;
 	/*	
 		BreadthFirstIterator<Component, DefaultEdge> iterator = new BreadthFirstIterator(graph, component);
 		while(iterator.hasNext()) {
@@ -72,7 +82,7 @@ public class RelatedLibraries implements ComponentMiner{
 																}
 															});
 	*/	
-		return relatedLibraries;
+		return scores;
 		
 	}
 	
