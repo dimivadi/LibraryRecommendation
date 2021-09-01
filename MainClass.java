@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import miners.*;
 import datatypes.*;
+import evaluation.*;
 
 
 public class MainClass{
@@ -23,24 +25,29 @@ public class MainClass{
 		
 		
 		List<File> files = FilesList.listAllFiles("testFolder", "java");
-		
+		System.out.println("-------ListedAllFiles-----------");
 		for(File file : files){
 			CodeFile codefile = new CodeFile(file);
 			codefiles.add(codefile);
 			
 		}
+		System.out.println("Files to codefiles ended");
+		int i = 0;
 		for(CodeFile codefile : codefiles){
+			i++;
+			System.out.println("CodeFile # " + i+"\n");
 			components = find.findComponents(codefile);
+			
 			connections.addConnectionsByType(components, Library.class, Keyword.class);
 		}
 		
-		//List<Component> temp = new ArrayList<Component>();
-		//temp.add(new Keyword("keyword4"));
+		
 		ComponentMiner cm = new RelatedLibraries(connections);
-		Collection<Component> seedComponents = new ArrayList<>();
-		//seedComponents.add(new Keyword("Keyword4"));
-		seedComponents.add(new Keyword("keyword3"));
-		System.out.println(cm.componentMining(seedComponents));
+
+		RecommendedComponents rc = new RecommendedComponents(cm.componentMining(new Keyword("keyword2")));
+		System.out.println(rc.getTopComponents(3));
+		
+		
 	}
 }
 
