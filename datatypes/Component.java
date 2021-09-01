@@ -15,17 +15,7 @@ public abstract class Component {
 	public String getName() {
 		return this.name;
 	}
-	/*
-	Component getComponentByName(ArrayList<Component> compList, String name) {
-		
-		for(Component comp : compList) {
-			if(comp.getName() == name) {
-				return comp;
-			}
-		}
-		return this;
-	}
-	*/
+
 	@Override
 	public String toString() {
 		return this.name;

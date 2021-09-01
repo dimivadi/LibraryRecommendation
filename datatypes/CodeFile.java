@@ -25,15 +25,6 @@ public class CodeFile{
 		return codefile;
 	}
 	
-	/*
-	public Collection<Component> getComponents() throws FileNotFoundException{
-		if(components.isEmpty()) {
-			components = find.findComponents(this);
-		}
-		return components;
-	}
-	*/
-	
 }
 
 
