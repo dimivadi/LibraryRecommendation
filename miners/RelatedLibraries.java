@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Comparator;
+import java.util.HashMap;
+
 import datatypes.Component;
 import datatypes.Library;
 import org.jgrapht.Graph;
@@ -17,6 +19,12 @@ import datatypes.Connections;
 import org.jgrapht.alg.scoring.PageRank;
 import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
 
+
+/*
+ *  Class to take as input the Connections data structure and return
+ *  a Map containing all the the Libraries as keys 
+ *  and their corresponding scores as values
+ */
 public class RelatedLibraries implements ComponentMiner{
 	
 	private Connections connections;
@@ -31,14 +39,10 @@ public class RelatedLibraries implements ComponentMiner{
 		this.connections = connections;
 	}
 	
-	/*
-	 * 
-	 */
-	public Map<Component, Double> componentMining(Collection<Component> components){
-		
-		
+	
+	public Map<Component, Double> componentMining(Component... components){	
+
 		//Create Graph
-		//TODO Abstract CreateGraph class
 		ComponentGraph cg = new ComponentGraph();
 		cg.addConnectionsToGraph(connections);
 		graph = cg.getGraph();
@@ -53,36 +57,21 @@ public class RelatedLibraries implements ComponentMiner{
 		
 		
 		//Scoring Algorithm
-		//VertexScoringAlgorithm<Component, Double> pr = new PageRank(graph);
-		//Map<Component, Double> scores = pr.getScores();
+
 		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(graph, components);
 		Map<Component, Double> scores = ppr.getScores();
 		
-		//System.out.println(scores);
 		
-		//Traverse graph starting from input
-		//Component tempComponent;
-	/*	
-		BreadthFirstIterator<Component, DefaultEdge> iterator = new BreadthFirstIterator(graph, component);
-		while(iterator.hasNext()) {
-			tempComponent = iterator.next();
-			if(iterator.getDepth(tempComponent) == 4)
-				break;
-			if(tempComponent.getClass() == Library.class) {
-				relatedLibraries.add(tempComponent);
+		//keep scores only for Library Components
+		Map<Component, Double> libScores = new HashMap<>();
+		for(Map.Entry<Component, Double> entry : scores.entrySet()) {
+			if(entry.getKey().getClass() == Library.class) {
+				libScores.put(entry.getKey(), entry.getValue());
 			}
 		}
+	
+		return libScores;
 		
-		
-		//Sort list based on scoring
-		Collections.sort(relatedLibraries, new Comparator<Component>() {
-																@Override
-																public int compare(Component a, Component b) {
-																return (int) (Math.signum(scores.get(b) - scores.get(a)));
-																}
-															});
-	*/	
-		return scores;
 		
 	}
 	

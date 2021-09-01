@@ -7,5 +7,5 @@ import datatypes.Component;
 
 public interface ComponentMiner {
 	
-	Map<Component, Double> componentMining(Collection<Component> seedComponents);
+	Map<Component, Double> componentMining(Component... seedComponents);
 }

@@ -1,8 +1,10 @@
 package miners;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jgrapht.Graph;
@@ -25,24 +27,25 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 	private final int maxIterations;
 	private final double tolerance;
 	private Map<Component, Double> scores;
-	private Collection<Component> seedComponents; //personalization components
+	//private Collection<Component> seedComponents; 
+	private List<Component> seedComponents; //personalization components
 	
-	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, Collection<Component> seedComponents, int maxIterations, double tolerance, double dampingFactor){
-		
+
+	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, int maxIterations, double tolerance, double dampingFactor, Component... seedComponents){	
 		//TODO Add exceptions
 		
 		this.graph = graph;
 		this.tolerance = tolerance;
 		this.dampingFactor = dampingFactor;
 		this.maxIterations = maxIterations;
-		this.seedComponents = seedComponents;
+		this.seedComponents = Arrays.asList(seedComponents);
 		
 	}
 	
-	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, Collection<Component> seedComponents){
+
+	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, Component... seedComponents){	
 		
-		this(graph, seedComponents, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT);
-		
+		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT, seedComponents);
 	}
 	
 	public Map<Component, Double> getScores(){
