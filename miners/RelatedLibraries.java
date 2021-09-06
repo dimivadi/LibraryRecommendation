@@ -21,7 +21,7 @@ import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
 
 
 /*
- *  Class to take as input the Connections data structure and return
+ *  Class to use as input the Connections data structure and return
  *  a Map containing all the the Libraries as keys 
  *  and their corresponding scores as values
  */
@@ -47,6 +47,7 @@ public class RelatedLibraries implements ComponentMiner{
 		cg.addConnectionsToGraph(connections);
 		graph = cg.getGraph();
 		
+		/*
 		//Check graph 
 		
 		Set<DefaultEdge> testEdges = graph.edgesOf(new Library("lib2"));
@@ -54,7 +55,7 @@ public class RelatedLibraries implements ComponentMiner{
 			System.out.println("Edge Source: "+graph.getEdgeSource(e));
 			System.out.println("Edge Target: "+graph.getEdgeTarget(e));
 		}
-		
+		*/
 		
 		//Scoring Algorithm
 
