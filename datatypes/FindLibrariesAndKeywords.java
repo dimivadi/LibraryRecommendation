@@ -4,19 +4,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class FindLibrariesAndKeywords extends FindComponents{
 	
 	private Collection<Component> libraries;
 	private Collection<Component> keywords;
-	private Collection<Component> components;
+	private Set<Component> components;
 	
 	
 	
-	public Collection<Component> findComponents(CodeFile codefile) {
+	public Set<Component> findComponents(CodeFile codefile) {
 			
-		components = new ArrayList<Component>();
+		components = new HashSet<Component>();
 		
 		try {
 			FindLibraries fl = new FindLibraries();

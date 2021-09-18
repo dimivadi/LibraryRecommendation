@@ -4,14 +4,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FindKeywords {
 
 	private ArrayList<String> stopwords = new ArrayList<>();
-	ArrayList<Component> keywords;
+	Set<Component> keywords;
 	
 	public FindKeywords() throws FileNotFoundException{
 		
@@ -26,9 +28,9 @@ public class FindKeywords {
 	}
 	
 	
-	public Collection<Component> findComponents(CodeFile codefile) throws FileNotFoundException{
+	public Set<Component> findComponents(CodeFile codefile) throws FileNotFoundException{
 		
-		keywords = new ArrayList<Component>();
+		keywords = new HashSet<Component>();
 		Pattern wordPattern = Pattern.compile("\\w{3,}([\\S]+\\w{3,})*");
 		Matcher m = wordPattern.matcher(" ");
 		Scanner in = new Scanner(codefile.getFile());
@@ -67,11 +69,13 @@ public class FindKeywords {
 	
 	}
 	
-	private String[] splitTokenInStrings(String str) {
+	/*
+	public String[] splitTokenInStrings(String str) {
 		
 		String[] s = str.split("\\W");
 		
 		String[] arr;
+		
 		ArrayList<String> strList = new ArrayList<String>();
 		ArrayList<String> strList2 = new ArrayList<String>();
 		for (String temp : s) {
@@ -87,6 +91,22 @@ public class FindKeywords {
 		return (String[]) strList.toArray(new String[0]);	
 		
 	}
+	*/
 	
+	 String[] splitTokenInStrings(String str) {
+		
+		//split words separated by non word characters
+		String[] s1 = str.split("\\W");
+		ArrayList<String> strList = new ArrayList<String>();
+		String[] words;
+		for(String s2 : s1) {
+			words = s2.split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
+			for(String word: words) {
+				strList.add(word.toLowerCase());
+			}
+		}
+		return (String[]) strList.toArray(new String[0]);
+		
+	}
 	
 }

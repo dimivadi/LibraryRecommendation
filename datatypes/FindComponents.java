@@ -1,8 +1,9 @@
 package datatypes;
 
 import java.util.Collection;
+import java.util.Set;
 
 public abstract class FindComponents {
 	
-	public abstract Collection<Component> findComponents(CodeFile codefile);
+	public abstract Set<Component> findComponents(CodeFile codefile);
 }

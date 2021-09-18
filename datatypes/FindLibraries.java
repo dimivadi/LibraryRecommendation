@@ -3,17 +3,19 @@ package datatypes;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FindLibraries extends FindComponents{
 	
-	ArrayList<Component> libraries;
-	public Collection<Component> findComponents(CodeFile codefile) {
+	Set<Component> libraries;
+	public Set<Component> findComponents(CodeFile codefile) {
 		
 		
-		libraries = new ArrayList<Component>();
+		libraries = new HashSet<Component>();
 		Pattern libPattern = Pattern.compile("\\s*import\\s+(?:static\\s+)?([\\w+\\.]+)");
 		
 		Scanner in;

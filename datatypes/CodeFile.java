@@ -25,6 +25,18 @@ public class CodeFile{
 		return codefile;
 	}
 	
+	
+	public static List<CodeFile> getCodeFiles(List<File> files) throws FileNotFoundException {
+		
+		List<CodeFile> codefiles = new ArrayList<>();
+		
+		for(File file : files){
+			CodeFile codefile = new CodeFile(file);
+			codefiles.add(codefile);
+		}
+		return codefiles;
+	}
+	
 }
 
 
