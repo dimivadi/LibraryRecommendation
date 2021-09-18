@@ -16,6 +16,8 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.BreadthFirstIterator;
 import datatypes.Connections;
+import datatypes.Keyword;
+
 import org.jgrapht.alg.scoring.PageRank;
 import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
 
@@ -37,15 +39,22 @@ public class RelatedLibraries implements ComponentMiner{
 	 */
 	public RelatedLibraries(Connections connections){
 		this.connections = connections;
-	}
-	
-	
-	public Map<Component, Double> componentMining(Component... components){	
-
+		
+		//TIME
+		long start = System.nanoTime();
 		//Create Graph
 		ComponentGraph cg = new ComponentGraph();
 		cg.addConnectionsToGraph(connections);
 		graph = cg.getGraph();
+		//TIME
+		long elapsedTime = System.nanoTime() - start;
+		double elapsedTimeInSeconds = (double) elapsedTime / 1_000_000_000;
+		System.out.println("time to create graph: "+ elapsedTimeInSeconds);
+	}
+	
+	
+	public Map<Component, Double> componentMining(Component... seedComponents){	
+
 		
 		/*
 		//Check graph 
@@ -57,10 +66,21 @@ public class RelatedLibraries implements ComponentMiner{
 		}
 		*/
 		
+		for(Component comp: seedComponents) {
+			if (comp.getClass() == Library.class) {
+				System.out.println("Error: Do not use an instance of Library with the class 'RelatedLibraries ");
+			}
+		}
+		
 		//Scoring Algorithm
-
-		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(graph, components);
+		//TIME
+		long start1 = System.nanoTime();
+		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(graph, seedComponents);
 		Map<Component, Double> scores = ppr.getScores();
+		//TIME
+		long elapsedTime1 = System.nanoTime() - start1;
+		double elapsedTimeInSeconds1 = (double) elapsedTime1 / 1_000_000_000;
+		System.out.println("time to run algorithm: "+ elapsedTimeInSeconds1);
 		
 		
 		//keep scores only for Library Components
