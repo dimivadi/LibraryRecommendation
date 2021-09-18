@@ -1,7 +1,11 @@
 package evaluation;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import datatypes.*;
 import miners.*;
@@ -14,19 +18,26 @@ import miners.*;
  * 
  */
 
-public class HitRate {
-	
+public class HitRate extends Evaluate{
+
 	int hits = 0;
 	int total = 0;
 	
-	public float run(Map<Component, ArrayList<Component>> existingConnections, ComponentMiner cm) {
+	public HitRate(String trainingSet, String testingSet, String filesExtensions) throws FileNotFoundException {
+		super(trainingSet, testingSet, filesExtensions);
+
+	}
 	
+//	public float run(Map<Component, Set<Component>> existingConnections, ComponentMiner cm) {
+	@Override
+	public void run() {
 		Map<Component, Double> recommendedComponents;
 		
 		//For every Component in the testing set compare the existing Connections with the predictions from the recommendation system. 
-		for(Map.Entry<Component, ArrayList<Component>> entry : existingConnections.entrySet()) {
+		//First, get top 3 recommended Components
+		for(Entry<Component, Set<Component>> entry : existingConnections.entrySet()) {
 			
-			RecommendedComponents rc = new RecommendedComponents(cm.componentMining(entry.getKey()));
+			RecommendedComponents rc = new RecommendedComponents(componentMiner.componentMining(entry.getKey()));
 			recommendedComponents = rc.getTopComponents(3);
 			
 			int t = 0;
@@ -48,8 +59,8 @@ public class HitRate {
 			
 		}
 		
-		return hits/total;
+		System.out.println("Hit Rate: " + (float) hits/total);
 		
 	}
-	
+
 }
