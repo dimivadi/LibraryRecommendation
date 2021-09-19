@@ -31,21 +31,22 @@ public class HitRate extends Evaluate{
 //	public float run(Map<Component, Set<Component>> existingConnections, ComponentMiner cm) {
 	@Override
 	public void run() {
-		Map<Component, Double> recommendedComponents;
+		Map<Component, Double> topComponents;
 		
 		//For every Component in the testing set compare the existing Connections with the predictions from the recommendation system. 
 		//First, get top 3 recommended Components
 		for(Entry<Component, Set<Component>> entry : existingConnections.entrySet()) {
 			
 			RecommendedComponents rc = new RecommendedComponents(componentMiner.componentMining(entry.getKey()));
-			recommendedComponents = rc.getTopComponents(3);
+			topComponents = rc.getTopComponents(3);
 			
 			int t = 0;
 			
 			//Search for at least one hit
-			for(Map.Entry<Component, Double> recommendedComp : recommendedComponents.entrySet()) {
+			for(Map.Entry<Component, Double> recommendedComp : topComponents.entrySet()) {
+				//System.out.println("recommendedComp: "+recommendedComp.getKey()+" for keyword: "+ entry.getKey());
 				for(Component comp : entry.getValue()) {
-					if(recommendedComp == comp) {
+					if(recommendedComp.getKey().equals(comp)) {
 						hits++;
 						t = 1;
 						break;
@@ -59,7 +60,7 @@ public class HitRate extends Evaluate{
 			
 		}
 		
-		System.out.println("Hit Rate: " + (float) hits/total);
+		System.out.println("Hit Rate: " + (double) hits/total);
 		
 	}
 
