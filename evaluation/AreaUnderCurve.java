@@ -1,6 +1,7 @@
 package evaluation;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class AreaUnderCurve extends Evaluate{
 //	List<Double> x = new ArrayList<Double>(); //ranking of libraries that the system should recommend, according to testingSet
 //	List<Double> y = new ArrayList<Double>(); //ranking of unwanted libraries
 	
-	public AreaUnderCurve(String trainingSet, String testingSet, String filesExtensions) throws FileNotFoundException {
+	public AreaUnderCurve(String trainingSet, String testingSet, String filesExtensions) throws IOException {
 		super(trainingSet, testingSet, filesExtensions);
 		
 	}
@@ -40,7 +41,7 @@ public class AreaUnderCurve extends Evaluate{
 		
 		Map<Component, Double> rankedComponents;
 		
-		for(Entry<Component, Set<Component>> entry: existingConnections.entrySet()) {
+		for(Entry<Set<Component>, Set<Component>> entry: existingConnections.entrySet()) {
 			rankedComponents = componentMiner.componentMining(entry.getKey());
 			x = new double[entry.getValue().size()];
 			y = new double[rankedComponents.size()];
@@ -54,7 +55,9 @@ public class AreaUnderCurve extends Evaluate{
 				}
 			}
 			
-			System.out.println("p value for keyword \""+entry.getKey()+"  "+  mw.mannWhitneyUTest(x, y));
+			double U = mw.mannWhitneyU(x, y);
+			
+			System.out.println("AUC for keyword \""+entry.getKey()+"\":  "+ U/(x.length * y.length));
 		}
 		
 		

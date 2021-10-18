@@ -1,6 +1,7 @@
 package evaluation;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -14,7 +15,7 @@ import miners.*;
  * Calculate the hit rate metric calling the method run()
  * Inputs:
  * existingConnections: Map containing as keys the components of the testing set and as values the components they are connected to. 
- * cm: Instance of ComponentMiner containing the graph between components created by the training set
+ * componentMiner: Instance of ComponentMiner containing the graph between components created by the training set
  * 
  */
 
@@ -23,7 +24,7 @@ public class HitRate extends Evaluate{
 	int hits = 0;
 	int total = 0;
 	
-	public HitRate(String trainingSet, String testingSet, String filesExtensions) throws FileNotFoundException {
+	public HitRate(String trainingSet, String testingSet, String filesExtensions) throws IOException {
 		super(trainingSet, testingSet, filesExtensions);
 
 	}
@@ -35,7 +36,7 @@ public class HitRate extends Evaluate{
 		
 		//For every Component in the testing set compare the existing Connections with the predictions from the recommendation system. 
 		//First, get top 3 recommended Components
-		for(Entry<Component, Set<Component>> entry : existingConnections.entrySet()) {
+		for(Entry<Set<Component>, Set<Component>> entry : existingConnections.entrySet()) {
 			
 			RecommendedComponents rc = new RecommendedComponents(componentMiner.componentMining(entry.getKey()));
 			topComponents = rc.getTopComponents(3);
@@ -60,7 +61,7 @@ public class HitRate extends Evaluate{
 			
 		}
 		
-		System.out.println("Hit Rate: " + (double) hits/total);
+		System.out.println("Hit Rate: " + (float) hits/total);
 		
 	}
 
