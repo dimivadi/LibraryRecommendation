@@ -26,9 +26,12 @@ public class Stopwords {
 	int numOfDocs;
 	List<File> files;
 	Map<String, Integer> termsFreq;
+
 	
-	
-	void addStopwords(String dir) throws IOException {
+	//calculate IDF for every term in dir, then add to stopwords if IDF is smaller than 0.5
+	public void addStopwords(String dir) throws IOException {
+
+		
 		List<String> stopwords = Files.readAllLines(Paths.get("stopwords.txt"));
 		
 		files = FilesList.listAllFiles(dir, "java");
@@ -36,7 +39,7 @@ public class Stopwords {
 		termsFreq = termsFreq();
 		for(Map.Entry<String, Integer> term: termsFreq.entrySet()) {
 			//calculate IDF
-			if(term.getValue() / numOfDocs > 0.5) {
+			if(term.getValue() / numOfDocs > 0.3) {
 				if(stopwords.contains(term.getKey()))
 					continue;
 				else
@@ -48,9 +51,27 @@ public class Stopwords {
 		Files.write(Paths.get("stopwords.txt"), stopwords);
 			
 	}
+	
+	public Set<String> getStopwords() throws FileNotFoundException{
+		Set<String> stopwords = new HashSet<>();
+		File swfile = new File("stopwords.txt");
+		Scanner sw = new Scanner(swfile);
+		while(sw.hasNext()) {
+			stopwords.add(sw.next());
+		}
 		
+		sw.close();
 	
+		return stopwords;
+	}
 	
+
+		
+	/*
+	 * Add to Map termsFreq:
+	 * key: every term in the files List
+	 * value: the number of files that this term occurs
+	 */
 	Map<String, Integer> termsFreq() throws FileNotFoundException{
 		Map<String, Integer> termsFreq = new HashMap<>();
 		

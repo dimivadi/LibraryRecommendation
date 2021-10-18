@@ -12,12 +12,11 @@ public class FileNameToKeywords {
 	 * Class to split a File name and return the words as components
 	 */
 	
-	public Set<Keyword> getKeywords(File file){
+	public Set<Component> getKeywords(File file){
 		
 		String fileName = file.getName().split("\\.")[0];
 		String[] arr;
-		Set<String> strList = new HashSet<String>();
-		Set<Keyword> keywords = new HashSet<Keyword>();
+		Set<Component> keywords = new HashSet<>();
 		
 		arr = fileName.split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
 
@@ -25,7 +24,14 @@ public class FileNameToKeywords {
 			keywords.add(new Keyword(s.toLowerCase()));
 		}
 		return keywords;
+	
 	}
-		
+	
+//	public Set<Component> getKeywordsWithoutStopwords(File file){
+//		Set<Component> keywordsWithoutStopwords;
+//		keywordsWithoutStopwords = this.getKeywords(file);
+//		Stopwords stopwords = new Stopwords();
+//		
+//	}
 		
 }

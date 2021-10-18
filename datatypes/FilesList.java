@@ -6,8 +6,16 @@ import java.util.List;
 
 public class FilesList {
 	
-	// Methods to be called by user
-	// extensions: String of extensions separated by non-word characters
+	/*
+	 * 
+	 * This class returns a list of objects of class File, 
+	 * using as input the directory of the files and the extension of the files we are interested in
+	 * 
+	 * extensions - String of extensions separated by non-word characters
+	 * 
+	 * 
+	 */
+	
 	public static List<File> listAllFiles(String startDir, String extensions) {
 		String[] suffixes = toSuffixes(extensions);
 		return recurseDir(new File(startDir), suffixes);

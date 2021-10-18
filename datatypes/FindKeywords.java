@@ -95,7 +95,7 @@ public class FindKeywords {
 	
 	 String[] splitTokenInStrings(String str) {
 		
-		//split words separated by non word characters
+		//split words using as delimiter non word characters and camel case syntax
 		String[] s1 = str.split("\\W");
 		ArrayList<String> strList = new ArrayList<String>();
 		String[] words;
