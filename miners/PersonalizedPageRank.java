@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -28,22 +29,22 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 	private final double tolerance;
 	private Map<Component, Double> scores;
 	//private Collection<Component> seedComponents; 
-	private List<Component> seedComponents; //personalization components
+	private Set<Component> seedComponents; //personalization components
 	
 
-	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, int maxIterations, double tolerance, double dampingFactor, Component... seedComponents){	
+	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, int maxIterations, double tolerance, double dampingFactor, Set<Component> seedComponents){	
 		//TODO Add exceptions
 		
 		this.graph = graph;
 		this.tolerance = tolerance;
 		this.dampingFactor = dampingFactor;
 		this.maxIterations = maxIterations;
-		this.seedComponents = Arrays.asList(seedComponents);
+		this.seedComponents = seedComponents;
 		
 	}
 	
 
-	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, Component... seedComponents){	
+	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, Set<Component> seedComponents){	
 		
 		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT, seedComponents);
 	}

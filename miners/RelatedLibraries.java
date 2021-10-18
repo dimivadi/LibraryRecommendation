@@ -23,9 +23,11 @@ import org.jgrapht.alg.interfaces.VertexScoringAlgorithm;
 
 
 /*
- *  Class to use as input the Connections data structure and return
- *  a Map containing all the the Libraries as keys 
+ *  Class that implements ComponentMiner Interface. 
+ *  Use as input the Connections data structure and the seed components
+ *  Return a Map containing all the the Libraries as keys 
  *  and their corresponding scores as values
+ *  
  */
 public class RelatedLibraries implements ComponentMiner{
 	
@@ -52,8 +54,8 @@ public class RelatedLibraries implements ComponentMiner{
 		System.out.println("time to create graph: "+ elapsedTimeInSeconds);
 	}
 	
-	
-	public Map<Component, Double> componentMining(Component... seedComponents){	
+	//return a Map that will have as keys the libraries of the graph, and as values their corresponding scores
+	public Map<Component, Double> componentMining(Set<Component> seedComponents){	
 
 		
 		/*
@@ -68,7 +70,7 @@ public class RelatedLibraries implements ComponentMiner{
 		
 		for(Component comp: seedComponents) {
 			if (comp.getClass() == Library.class) {
-				System.out.println("Error: Do not use an instance of Library with the class 'RelatedLibraries ");
+				System.out.println("Error: Do not use an instance of Library with the class 'RelatedLibraries' ");
 			}
 		}
 		
