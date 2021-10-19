@@ -1,18 +1,8 @@
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import miners.*;
-import datatypes.*;
 import evaluation.*;
+import examples.EvaluateFromFiles;
 
 
 public class MainClass{
@@ -21,11 +11,13 @@ public class MainClass{
 	
 	public static void main(String[] args) throws IOException{
 		
-	
-		Evaluate evaluate = new HitRate("jEdit", "test", "java");
-		evaluate.run();
+//		Evaluate evaluate = new HitRate("jEdit", "test", "java");
+//		Evaluate evaluate = new AreaUnderCurve("jEdit", "test", "java");
+//		evaluate.run();
 
-		
+		EvaluationDataProvider evaluationDataProvider = new EvaluateFromFiles("jEdit", "test", "java");
+		Evaluate evaluate = new AreaUnderCurve(evaluationDataProvider);
+		evaluate.run();
 		
 	}
 }
