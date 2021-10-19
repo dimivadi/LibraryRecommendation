@@ -26,12 +26,6 @@ public class FileNameToKeywords {
 		return keywords;
 	
 	}
-	
-//	public Set<Component> getKeywordsWithoutStopwords(File file){
-//		Set<Component> keywordsWithoutStopwords;
-//		keywordsWithoutStopwords = this.getKeywords(file);
-//		Stopwords stopwords = new Stopwords();
-//		
-//	}
+
 		
 }
