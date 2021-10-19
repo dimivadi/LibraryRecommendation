@@ -8,23 +8,15 @@ import datatypes.*;
 
 /*
  * Return top-N recommended components. 
- * Use as input a ComponentMiner object (the appropriate graph of components)
- * and a seedVector that will be used to the ScoringAlgorithm,
- * or use as input directly a Map containing the Components as keys 
- * and their score as values (e.g. the result of RelatedLibraries.componentMining())
- * Call getComponents() using as input the number N
+ * Use as input for the constructor a Map containing the components and their corresponding scores
+ * Use as input for the method getTopComponents the number n of the top components to return
  * 
  */
 public class RecommendedComponents {
 	
 	Map<Component, Double> componentScores;
 	
-	/*
-	public RecommendedComponents(ComponentMiner cm, Component... seedComponents ) {
-		this.componentScores = cm.componentMining(seedComponents);
-	}
 
-	*/
 	public RecommendedComponents(Map<Component, Double> scores) {
 		this.componentScores = scores;
 		
