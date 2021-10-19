@@ -19,17 +19,20 @@ import miners.*;
  * 
  */
 
-public class HitRate extends Evaluate{
+public class HitRate implements Evaluate{
 
+	ComponentMiner componentMiner;
+	Map<Set<Component>, Set<Component>> existingConnections;
+	
 	int hits = 0;
 	int total = 0;
 	
-	public HitRate(String trainingSet, String testingSet, String filesExtensions) throws IOException {
-		super(trainingSet, testingSet, filesExtensions);
-
+	
+	public HitRate(EvaluationDataProvider evaluationDataProvider) {
+		this.componentMiner = evaluationDataProvider.getComponentMiner();
+		this.existingConnections = evaluationDataProvider.getExistingConnections();
 	}
 	
-//	public float run(Map<Component, Set<Component>> existingConnections, ComponentMiner cm) {
 	@Override
 	public void run() {
 		Map<Component, Double> topComponents;
