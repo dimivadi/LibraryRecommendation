@@ -13,6 +13,13 @@ public class Connections {
 	
 	private Map<Component, Set<Component>> connections = new HashMap<Component, Set<Component>>();
 	
+	/*
+	 * given 2 components, add each one as key in the connections map, and the other as an element in its corresponding set
+	 * e.g. 
+	 * (A -> (...,B))
+	 * (B -> (...,A))
+	 */
+	
 	void addConnection(Component componentA, Component componentB) {
 		if(!connections.containsKey(componentA)) {
 			connections.put(componentA, new HashSet<Component>());
@@ -25,7 +32,10 @@ public class Connections {
 		connections.get(componentB).add(componentA);
 	}
 	
-
+	/*
+	 * given a collection of components, 
+	 * call addConnection(A,B) for every 2 components that are of different class, for any class defined in the classes array
+	 */
 	public void addConnectionsByType(Collection<Component> components, Class... classes) {
 		
 		List classesAsList = Arrays.asList(classes);
