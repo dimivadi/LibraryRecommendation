@@ -28,9 +28,9 @@ public class HitRate implements Evaluate{
 	int total = 0;
 	
 	
-	public HitRate(EvaluationDataSource evaluationDataProvider) {
-		this.componentMiner = evaluationDataProvider.getComponentMiner();
-		this.existingConnections = evaluationDataProvider.getExistingConnections();
+	public HitRate(EvaluationDataSource evaluationDataSource) {
+		this.componentMiner = evaluationDataSource.getComponentMiner();
+		this.existingConnections = evaluationDataSource.getExistingConnections();
 	}
 	
 	@Override
