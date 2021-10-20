@@ -37,7 +37,7 @@ public class AreaUnderCurve implements Evaluate{
 	int j;
 	MannWhitneyUTest mw = new MannWhitneyUTest();
 
-	public AreaUnderCurve(EvaluationDataProvider evaluationDataProvider) {
+	public AreaUnderCurve(EvaluationDataSource evaluationDataProvider) {
 		this.componentMiner = evaluationDataProvider.getComponentMiner();
 		this.existingConnections = evaluationDataProvider.getExistingConnections();
 	}
