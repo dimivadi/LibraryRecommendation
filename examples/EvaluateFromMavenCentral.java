@@ -31,39 +31,39 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 		updateStopwords(filePath);
 		
 		
-//		String line;
-//		String library;
-//		String[] terms;
-//		
-//		//stores the library whose dependencies are examined at the moment, given that the dependencies of a library are in consecutive lines
-//		//the maven dataset is in the form: (library , dependency)
-//		String currentLibrary = "";
-//		
-//		BufferedReader br = new BufferedReader(new FileReader(filePath));
-//
-//		Pattern pattern = Pattern.compile(".+:"); 
-//		Matcher m = pattern.matcher(" ");
-//		while((line = br.readLine()) != null) {
-//			m.reset(line.split(",")[0]);
-//			m.find();
-//			library = m.group();
-//			if(library != currentLibrary) {
-//				currentLibrary = library;
-//				terms = library.split("\\W");
-//				keywords.clear();
-//				for(String s: terms) {
-//					if(stopwords.contains(s))
-//						continue;
-//					keywords.add(new Keyword(s));
-//					
-//				}
-//			}
-//			String dependency = line.split(",")[1];
-//			for(Keyword k: keywords) {
-//				connections.addConnection(k, new Library(dependency));
-//		}
-//	}
-//	System.out.println(connections.getConnections());
+		String line;
+		String library;
+		String[] terms;
+		
+		//stores the library whose dependencies are examined at the moment, given that the dependencies of a library are in consecutive lines
+		//the maven dataset is in the form: (library , dependency)
+		String currentLibrary = "";
+		
+		BufferedReader br = new BufferedReader(new FileReader(filePath));
+
+		Pattern pattern = Pattern.compile(".+:"); 
+		Matcher m = pattern.matcher(" ");
+		while((line = br.readLine()) != null) {
+			m.reset(line.split(",")[0]);
+			m.find();
+			library = m.group();
+			if(library != currentLibrary) {
+				currentLibrary = library;
+				terms = library.split("\\W");
+				keywords.clear();
+				for(String s: terms) {
+					if(stopwords.contains(s))
+						continue;
+					keywords.add(new Keyword(s));
+					
+				}
+			}
+			String dependency = line.split(",")[1];
+			for(Keyword k: keywords) {
+				connections.addConnection(k, new Library(dependency));
+		}
+	}
+	System.out.println(connections.getConnections());
 	
 }
 	
