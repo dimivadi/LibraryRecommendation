@@ -39,7 +39,7 @@ public class Stopwords {
 		termsFreq = termsFreq();
 		for(Map.Entry<String, Integer> term: termsFreq.entrySet()) {
 			//calculate IDF
-			if(term.getValue() / numOfDocs > 0.3) {
+			if((float)term.getValue() / numOfDocs > 0.3) {
 				if(stopwords.contains(term.getKey()))
 					continue;
 				else
@@ -84,6 +84,7 @@ public class Stopwords {
 		}
 		return termsFreq;
 	}
+	
 	
 	Set<String> termsInFile(File file) throws FileNotFoundException{ 
 		Set<String> termsInDoc = new HashSet<>();
