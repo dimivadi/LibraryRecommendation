@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,42 +35,43 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 		String line;
 		String library;
 		String[] terms;
-		
-		//stores the library whose dependencies are examined at the moment, given that the dependencies of a library are in consecutive lines
-		//the maven dataset is in the form: (library , dependency)
+
 		String currentLibrary = "";
 		
 		BufferedReader br = new BufferedReader(new FileReader(filePath));
-
+		br.readLine();
+		
 		Pattern pattern = Pattern.compile(".+:"); 
 		Matcher m = pattern.matcher(" ");
 		while((line = br.readLine()) != null) {
+			
 			m.reset(line.split(",")[0]);
 			m.find();
 			library = m.group();
-			if(library != currentLibrary) {
-				currentLibrary = library;
-				terms = library.split("\\W");
-				keywords.clear();
-				for(String s: terms) {
-					if(stopwords.contains(s))
-						continue;
-					keywords.add(new Keyword(s));
+			if(library.equals(currentLibrary))
+				continue;
+			
+			currentLibrary = library;
+			terms = library.split("\\W");
+			Set<String> termsSet = new HashSet<>(Arrays.asList(terms));
+			keywords.clear();
+			for(String s: termsSet) {
+				if(stopwords.contains(s) || s.length() < 2)
+					continue;
+				keywords.add(new Keyword(s));
 					
-				}
 			}
+		
 			String dependency = line.split(",")[1];
 			for(Keyword k: keywords) {
 				connections.addConnection(k, new Library(dependency));
 		}
 	}
-	System.out.println(connections.getConnections());
-	
 }
 	
 	
 	void updateStopwords(String filePath) throws IOException {
-		
+
 		String line;
 		String library;
 		String[] terms;
@@ -89,22 +91,22 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 			m.find();
 			library = m.group();
 			if(library.equals(currentLibrary))
-				continue;		
+				continue;	
+			numOfLibs++;
 			currentLibrary = library;
 			terms = library.split("\\W");
-			
-			for(String term: terms) {
+			Set<String> termsSet = new HashSet<>(Arrays.asList(terms));
+			for(String term: termsSet) {
 				termsFreq.put(term, termsFreq.getOrDefault(term, 0) + 1);
 			}
-			numOfLibs++;
+			
 		}
+	
 		for(Map.Entry<String, Integer> term: termsFreq.entrySet()) {
-			if(term.getValue() / numOfLibs > 0.3) {
-				if(stopwords.contains(term.getKey()))
-					continue;
-				else
+			if(((float)term.getValue() / numOfLibs) > 0.1) {
+				if(!stopwords.contains(term.getKey())) {
 					stopwords.add(term.getKey());
-				
+					}		
 			}
 		}
 	}
