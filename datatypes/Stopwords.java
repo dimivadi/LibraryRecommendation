@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,8 +50,14 @@ public class Stopwords {
 			}
 		}
 		
-		Files.write(Paths.get("stopwords.txt"), stopwords);
+		Files.write(Paths.get("stopwords.txt"), stopwords, StandardOpenOption.TRUNCATE_EXISTING);
 			
+	}
+	
+	public void resetStopwordsList() throws FileNotFoundException {
+		PrintWriter writer = new PrintWriter(new File("stopwords.txt"));
+		writer.print("");
+		writer.close();
 	}
 	
 	public Set<String> getStopwords() throws FileNotFoundException{
