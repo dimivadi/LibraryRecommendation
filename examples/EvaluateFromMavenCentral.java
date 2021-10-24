@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -20,22 +22,26 @@ import datatypes.Keyword;
 import datatypes.Library;
 import evaluation.EvaluationDataSource;
 import miners.ComponentMiner;
+import miners.RelatedLibraries;
 
 public class EvaluateFromMavenCentral implements EvaluationDataSource{
 	
 	Connections connections = new Connections();
+	Map<Set<Component>, Set<Component>> existingConnections = new HashMap<>();
 	Set<String> stopwords = new HashSet<>();
-	Set<Keyword> keywords = new HashSet<>();
+	
 	
 	public EvaluateFromMavenCentral(String filePath) throws IOException {
 		
 		updateStopwords(filePath);
 		
+		Set<Component> libraryTermsAsKeywords = new HashSet<>();
 		
 		String line;
 		String library;
-		String[] terms;
-
+		String[] libraryTerms;
+		Random rand = new Random();
+		boolean usedForTestingSet = false; //true if that line is used for the testing set. Is set by a random number generator
 		String currentLibrary = "";
 		
 		BufferedReader br = new BufferedReader(new FileReader(filePath));
@@ -48,26 +54,56 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 			m.reset(line.split(",")[0]);
 			m.find();
 			library = m.group();
-			if(library.equals(currentLibrary))
-				continue;
-			
-			currentLibrary = library;
-			terms = library.split("\\W");
-			Set<String> termsSet = new HashSet<>(Arrays.asList(terms));
-			keywords.clear();
-			for(String s: termsSet) {
-				if(stopwords.contains(s) || s.length() < 2)
-					continue;
-				keywords.add(new Keyword(s));
+			if(!library.equals(currentLibrary)) {
+				usedForTestingSet = (rand.nextInt(1000) < 1);
 					
+				currentLibrary = library;
+				libraryTerms = library.split("\\W");
+				Set<String> libraryTermsSet = new HashSet<>(Arrays.asList(libraryTerms));
+				for(Iterator<String> i = libraryTermsSet.iterator(); i.hasNext();) {
+					String element = i.next();
+					if(stopwords.contains(element) || element.length() < 2) {
+						i.remove();
+					}
+				}
+				libraryTermsAsKeywords = new HashSet<>();
+				for(String s: libraryTermsSet) {
+					libraryTermsAsKeywords.add(new Keyword(s));
+				}
+				
+//				keywords.clear();
+//				for(String s: libraryTermsSet) {
+//					if(stopwords.contains(s) || s.length() < 2)
+//						continue;
+//					keywords.add(new Keyword(s));
+//						
+//				}
+			}
+			String dependency = line.split(",")[1];
+			if(usedForTestingSet) {
+				Set<Component> value = new HashSet<Component>();
+				if(existingConnections.get(libraryTermsAsKeywords) == null) {
+					value.add(new Library(dependency));
+					existingConnections.put(libraryTermsAsKeywords, value);
+				}else {
+					existingConnections.get(libraryTermsAsKeywords).add(new Library(dependency));
+				}
+						
+					
+				
+			}else {
+
+				for(Component k: libraryTermsAsKeywords) {
+					connections.addConnection(k, new Library(dependency));
+				}
 			}
 		
-			String dependency = line.split(",")[1];
-			for(Keyword k: keywords) {
-				connections.addConnection(k, new Library(dependency));
-		}
+		}	
+		
+		
+		System.out.println("Size of existing connections: "+existingConnections.size());
+		System.out.println("existingConnections: "+ existingConnections);
 	}
-}
 	
 	
 	void updateStopwords(String filePath) throws IOException {
@@ -113,14 +149,15 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 	
 	@Override
 	public ComponentMiner getComponentMiner() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		ComponentMiner componentMiner = new RelatedLibraries(connections);
+		return componentMiner;
 	}
 
 	@Override
 	public Map<Set<Component>, Set<Component>> getExistingConnections() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return existingConnections;
 	}
 	
 	
