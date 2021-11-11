@@ -71,15 +71,10 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 					libraryTermsAsKeywords.add(new Keyword(s));
 				}
 				
-//				keywords.clear();
-//				for(String s: libraryTermsSet) {
-//					if(stopwords.contains(s) || s.length() < 2)
-//						continue;
-//					keywords.add(new Keyword(s));
-//						
-//				}
+
 			}
 			String dependency = line.split(",")[1];
+			dependency = dependency.split("(?=(:\\d))")[0];
 			if(usedForTestingSet) {
 				Set<Component> value = new HashSet<Component>();
 				if(existingConnections.get(libraryTermsAsKeywords) == null) {
@@ -97,12 +92,7 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 					connections.addConnection(k, new Library(dependency));
 				}
 			}
-		
 		}	
-		
-		
-		System.out.println("Size of existing connections: "+existingConnections.size());
-		System.out.println("existingConnections: "+ existingConnections);
 	}
 	
 	
