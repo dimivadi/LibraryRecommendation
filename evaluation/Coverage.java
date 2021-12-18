@@ -13,7 +13,7 @@ public class Coverage {
 	private Set<Component> recommendedComponents = new HashSet<>();
 	private ComponentGraph componentGraph;
 	
-	//takes as input the return type of ComponentMiner.componentMining() method
+	
 	public void addToRecommendedComponents(Map<Component, Double> recommendedComponents) {
 		for(Map.Entry<Component, Double> entry: recommendedComponents.entrySet()) {
 			this.recommendedComponents.add(entry.getKey());
