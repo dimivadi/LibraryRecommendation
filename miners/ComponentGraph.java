@@ -9,8 +9,6 @@ import datatypes.Component;
 import datatypes.Connections;
 
 public class ComponentGraph {
-	
-	//private Connections connections;
 
 	private Graph<Component, DefaultEdge> graph = GraphTypeBuilder
 				.<Component, DefaultEdge> undirected()
@@ -22,7 +20,6 @@ public class ComponentGraph {
 	
 
 	public void addConnectionsToGraph(Connections connections) {
-		//this.connections = connections;
 		
 		for (Component component : connections.getComponents()) {
 			graph.addVertex(component);
@@ -31,8 +28,8 @@ public class ComponentGraph {
 				graph.addEdge(component, comp);
 			}
 		}
-		
 	}
+	
 	
 	public Graph<Component, DefaultEdge> getGraph(){
 		return graph;
