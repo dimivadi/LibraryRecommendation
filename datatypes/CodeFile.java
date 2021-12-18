@@ -3,12 +3,10 @@ package datatypes;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class CodeFile{
 	
-	private FindComponents find;
 	private File codefile; 
 	
 	

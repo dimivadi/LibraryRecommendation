@@ -1,6 +1,5 @@
 package datatypes;
 
-import java.util.Collection;
 import java.util.Set;
 
 //Scans a file and finds the appropriate components depending on the subclass

@@ -2,7 +2,6 @@ package datatypes;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -13,7 +12,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -124,6 +122,7 @@ public class Stopwords {
 				
 			}
 		}
+		in.close();
 		return (String[]) tokens.toArray(new String[0]);
 	}
 	

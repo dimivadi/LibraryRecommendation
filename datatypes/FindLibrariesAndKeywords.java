@@ -1,11 +1,8 @@
 package datatypes;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Scanner;
 import java.util.Set;
 
 public class FindLibrariesAndKeywords extends FindComponents{

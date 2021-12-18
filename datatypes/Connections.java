@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,16 +21,18 @@ public class Connections {
 	 * (B -> (...,A))
 	 */
 	
-	void addConnection(Component componentA, Component componentB) {
+	public void addConnection(Component componentA, Component componentB) {
 		if(!connections.containsKey(componentA)) {
 			connections.put(componentA, new HashSet<Component>());
 		}
 		if(!connections.containsKey(componentB)) {
 			connections.put(componentB, new HashSet<Component>());
 		}
+		if(!componentA.equals(componentB)) {
+			connections.get(componentA).add(componentB);
+			connections.get(componentB).add(componentA);
+		}
 		
-		connections.get(componentA).add(componentB);
-		connections.get(componentB).add(componentA);
 	}
 	
 	/*
@@ -38,37 +41,56 @@ public class Connections {
 	 */
 	public void addConnectionsByType(Collection<Component> components, Class... classes) {
 		
-		List classesAsList = Arrays.asList(classes);
-		
-		List<List<Component>> classesOfComponents = new ArrayList<List<Component>>(classes.length);
-		int index;
-		
-		for (int i=0; i < classes.length; i++) {
-			classesOfComponents.add(new ArrayList<Component>());
-		}
-		//Create a List for every Class
-		for(Component component : components) {
-			for(Class c : classes) {
-				if(component.getClass() == c) {
-					index = classesAsList.indexOf(c);
-					classesOfComponents.get(index).add(component);
-					break;
+		//if classes array contains only one element, then add a connection between all the components of this unique class
+		if(classes.length == 1) {
+			
+			Iterator<Component> i = components.iterator();
+			//save an element of collection components in a local variable
+			Component currentComponent = i.next();
+			//remove this element from the collection
+			i.remove();
+			//add a connection with every element of the collection
+			if(currentComponent.getClass() == classes[0]) {
+				for(Component comp: components) {
+					if(comp.getClass() == classes[0])
+						addConnection(currentComponent, comp);
+				}	
+			}
+			
+	
+		}else {
+			
+			List<Class> classesAsList = Arrays.asList(classes);
+			
+			List<List<Component>> classesOfComponents = new ArrayList<List<Component>>(classes.length);
+			int index;
+			
+			for (int i=0; i < classes.length; i++) {
+				classesOfComponents.add(new ArrayList<Component>());
+			}
+			//Create a List for every Class
+			for(Component component : components) {
+				for(Class c : classes) {
+					if(component.getClass() == c) {
+						index = classesAsList.indexOf(c);
+						classesOfComponents.get(index).add(component);
+						break;
+					}
 				}
 			}
-		}
-		
-		int i,j;
-		for(i=0; i < classes.length-1; i++) {
-			for(j=i+1; j < classes.length; j++) {
-				//System.out.println("i, j = "+i+" "+j);
-				for(Component component1 : classesOfComponents.get(i)) {
-					for(Component component2 : classesOfComponents.get(j)) 
-						addConnection(component1, component2);
+			
+			int i,j;
+			for(i=0; i < classes.length-1; i++) {
+				for(j=i+1; j < classes.length; j++) {
+					for(Component component1 : classesOfComponents.get(i)) {
+						for(Component component2 : classesOfComponents.get(j)) 
+							addConnection(component1, component2);
+					}	
 				}
-				
 			}
+			
 		}
-		//System.out.println(connections);
+
 	}
 	
 	public Map<Component, Set<Component>> getConnections(){
