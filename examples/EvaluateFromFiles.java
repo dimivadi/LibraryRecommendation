@@ -22,7 +22,7 @@ import datatypes.Library;
 import datatypes.Stopwords;
 import miners.ComponentMiner;
 import miners.RelatedLibraries;
-import evaluation.EvaluationDataProvider;
+import evaluation.EvaluationDataSource;
 
 
 /*
@@ -39,7 +39,7 @@ import evaluation.EvaluationDataProvider;
  */
 
 
-public class EvaluateFromFiles implements EvaluationDataProvider{
+public class EvaluateFromFiles implements EvaluationDataSource{
 	
 	List<File> trainingFiles; 
 	List<File> testingFiles;
@@ -57,6 +57,7 @@ public class EvaluateFromFiles implements EvaluationDataProvider{
 		
 		//update stopwords
 		Stopwords stopwords = new Stopwords();
+		stopwords.resetStopwordsList();
 		stopwords.addStopwords(trainingSet);
 		stopwords.addStopwords(testingSet);
 		
@@ -100,11 +101,18 @@ public class EvaluateFromFiles implements EvaluationDataProvider{
 
 	}
 	
-	public ComponentMiner getComponentMiner() {
-		
-		return componentMiner;
+//	@Override
+//	public ComponentMiner getComponentMiner() {
+//		
+//		return componentMiner;
+//	}
+	
+	@Override
+	public Connections getConnections() {
+		return connections;
 	}
 	
+	@Override
 	public Map<Set<Component>, Set<Component>> getExistingConnections(){
 		
 		return existingConnections;

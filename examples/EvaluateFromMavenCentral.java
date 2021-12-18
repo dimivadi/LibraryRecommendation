@@ -1,8 +1,6 @@
 package examples;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Arrays;
@@ -11,7 +9,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,8 +18,6 @@ import datatypes.Connections;
 import datatypes.Keyword;
 import datatypes.Library;
 import evaluation.EvaluationDataSource;
-import miners.ComponentMiner;
-import miners.RelatedLibraries;
 
 public class EvaluateFromMavenCentral implements EvaluationDataSource{
 	
@@ -36,7 +31,7 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 		updateStopwords(filePath);
 		
 		Set<Component> libraryTermsAsKeywords = new HashSet<>();
-		
+		Set<Component> dependencies = new HashSet<>(); //store every dependency for the current library		
 		String line;
 		String library;
 		String[] libraryTerms;
@@ -55,8 +50,9 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 			m.find();
 			library = m.group();
 			if(!library.equals(currentLibrary)) {
-				usedForTestingSet = (rand.nextInt(1000) < 1);
-					
+				usedForTestingSet = (rand.nextInt(10000) < 1);
+				dependencies = new HashSet<Component>();
+				
 				currentLibrary = library;
 				libraryTerms = library.split("\\W");
 				Set<String> libraryTermsSet = new HashSet<>(Arrays.asList(libraryTerms));
@@ -75,28 +71,34 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 			}
 			String dependency = line.split(",")[1];
 			dependency = dependency.split("(?=(:\\d))")[0];
+			Library dependencyAsComponent = new Library(dependency);
+			
 			if(usedForTestingSet) {
 				Set<Component> value = new HashSet<Component>();
 				if(existingConnections.get(libraryTermsAsKeywords) == null) {
-					value.add(new Library(dependency));
+					value.add(dependencyAsComponent);
 					existingConnections.put(libraryTermsAsKeywords, value);
 				}else {
-					existingConnections.get(libraryTermsAsKeywords).add(new Library(dependency));
+					existingConnections.get(libraryTermsAsKeywords).add(dependencyAsComponent);
 				}
 						
 					
 				
 			}else {
-
+				for(Component d: dependencies) {
+					connections.addConnection(d, dependencyAsComponent);
+				}
+				dependencies.add(dependencyAsComponent);
 				for(Component k: libraryTermsAsKeywords) {
-					connections.addConnection(k, new Library(dependency));
+					connections.addConnection(k, dependencyAsComponent);
 				}
 			}
-		}	
+		}
+		br.close();
 	}
 	
 	
-	void updateStopwords(String filePath) throws IOException {
+	private void updateStopwords(String filePath) throws IOException {
 
 		String line;
 		String library;
@@ -127,6 +129,7 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 			}
 			
 		}
+		br.close();
 	
 		for(Map.Entry<String, Integer> term: termsFreq.entrySet()) {
 			if(((float)term.getValue() / numOfLibs) > 0.1) {
@@ -137,11 +140,16 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 		}
 	}
 	
+//	@Override
+//	public ComponentMiner getComponentMiner() {
+//		
+//		ComponentMiner componentMiner = new RelatedLibraries(connections);
+//		return componentMiner;
+//	}
+	
 	@Override
-	public ComponentMiner getComponentMiner() {
-		
-		ComponentMiner componentMiner = new RelatedLibraries(connections);
-		return componentMiner;
+	public Connections getConnections() {
+		return connections;
 	}
 
 	@Override
