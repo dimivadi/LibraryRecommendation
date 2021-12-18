@@ -73,7 +73,8 @@ public class EvaluateFromFiles implements EvaluationDataSource{
 			connections.addConnectionsByType(components, Library.class, Keyword.class);
 		}
 		
-		componentMiner = new RelatedLibraries(connections);
+		componentMiner = new RelatedLibraries();
+		componentMiner.createGraph(connections);
 		
 		FileNameToKeywords fileNameToKeywords = new FileNameToKeywords();
 		
