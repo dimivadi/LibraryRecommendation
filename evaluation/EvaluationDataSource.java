@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Set;
 
 import datatypes.Component;
-import miners.ComponentMiner;
+import datatypes.Connections;
 
 /*
  * 
@@ -17,8 +17,10 @@ import miners.ComponentMiner;
 
 public interface EvaluationDataSource {
 
-	ComponentMiner getComponentMiner();
+	//ComponentMiner getComponentMiner();
 	
 	Map<Set<Component>, Set<Component>> getExistingConnections();
+	
+	Connections getConnections();
 	
 }

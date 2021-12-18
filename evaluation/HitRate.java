@@ -1,9 +1,5 @@
 package evaluation;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -27,22 +23,34 @@ public class HitRate implements Evaluate{
 	int hits = 0;
 	int total = 0;
 	
-	
-	public HitRate(EvaluationDataSource evaluationDataSource) {
-		this.componentMiner = evaluationDataSource.getComponentMiner();
-		this.existingConnections = evaluationDataSource.getExistingConnections();
+	public HitRate(ComponentMiner componentMiner, Map<Set<Component>, Set<Component>> existingConnections) {
+		this.componentMiner = componentMiner;
+		this.existingConnections = existingConnections;
+		
 	}
+	
+//	public HitRate(EvaluationDataSource evaluationDataProvider) {
+//		this.componentMiner = evaluationDataProvider.getComponentMiner();
+//		this.existingConnections = evaluationDataProvider.getExistingConnections();
+//	}
 	
 	@Override
 	public void run() {
 		Map<Component, Double> topComponents;
 		
+		//
+		Coverage coverage = new Coverage();
+		coverage.setGraph(componentMiner.getComponentGraph());
+		
 		//For every Component in the testing set compare the existing Connections with the predictions from the recommendation system. 
-		//First, get top 3 recommended Components
+		//First, get top 10 recommended Components
 		for(Entry<Set<Component>, Set<Component>> entry : existingConnections.entrySet()) {
 			
 			RecommendedComponents rc = new RecommendedComponents(componentMiner.componentMining(entry.getKey()));
-			topComponents = rc.getTopComponents(3);
+			topComponents = rc.getTopComponents(10);
+			
+			//
+			coverage.addToRecommendedComponents(topComponents);
 			
 			int t = 0;
 			
@@ -65,6 +73,7 @@ public class HitRate implements Evaluate{
 		}
 		
 		System.out.println("Hit Rate: " + (float) hits/total);
+		System.out.println("Coverage: " + coverage.getCoverage());
 		
 	}
 

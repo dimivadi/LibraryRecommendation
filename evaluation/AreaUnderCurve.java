@@ -1,9 +1,6 @@
 package evaluation;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -28,8 +25,10 @@ import miners.ComponentMiner;
 public class AreaUnderCurve implements Evaluate{
 
 	
-	ComponentMiner componentMiner;
-	Map<Set<Component>, Set<Component>> existingConnections;
+	private ComponentMiner componentMiner;
+	private Map<Set<Component>, Set<Component>> existingConnections;
+	
+	
 	
 	double[] x; //ranking of libraries that the system should recommend, according to testingSet
 	double[] y; //ranking of unwanted libraries
@@ -37,18 +36,29 @@ public class AreaUnderCurve implements Evaluate{
 	int j;
 	MannWhitneyUTest mw = new MannWhitneyUTest();
 
-	public AreaUnderCurve(EvaluationDataSource evaluationDataSource) {
-		this.componentMiner = evaluationDataSource.getComponentMiner();
-		this.existingConnections = evaluationDataSource.getExistingConnections();
+	public AreaUnderCurve(ComponentMiner componentMiner, Map<Set<Component>, Set<Component>> existingConnections) {
+		this.componentMiner = componentMiner;
+		this.existingConnections = existingConnections;
+		
 	}
+	
+	
+//	public AreaUnderCurve(EvaluationDataSource evaluationDataSource) {
+//		this.componentMiner = evaluationDataSource.getComponentMiner();
+//		this.existingConnections = evaluationDataSource.getExistingConnections();
+//	}
 
 	@Override
 	public void run() {
 		
 		Map<Component, Double> rankedComponents;
 		
+		double sumOfAUC = 0;
+		int N = 0;
+		
 		for(Entry<Set<Component>, Set<Component>> entry: existingConnections.entrySet()) {
 			rankedComponents = componentMiner.componentMining(entry.getKey());
+			
 			x = new double[entry.getValue().size()];
 			y = new double[rankedComponents.size()];
 			i = 0;
@@ -64,8 +74,11 @@ public class AreaUnderCurve implements Evaluate{
 			}
 			
 			double U = mw.mannWhitneyU(x, y);
-			
-			System.out.println("AUC for keyword \""+entry.getKey()+"\":  "+ U/(x.length * y.length));
-		}		
+			double auc = U/(x.length * y.length);
+			sumOfAUC += auc;
+			N++;
+			System.out.println("AUC for keyword \""+entry.getKey()+"\":  "+ auc);
+		}
+		System.out.println("AUC mean: "+ sumOfAUC/N);
 	}	
 }

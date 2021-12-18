@@ -1,7 +1,7 @@
 package evaluation;
 
 /*
- * Every evaluation class must implement this abstract class 
+ * Every evaluation class must implement this interface
  */
 public interface Evaluate {
 	
