@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Connections {
+public class Connections implements java.io.Serializable {
+	
+	private static final long serialVersionUID = 1L;
 	
 	private Map<Component, Set<Component>> connections = new HashMap<Component, Set<Component>>();
 	

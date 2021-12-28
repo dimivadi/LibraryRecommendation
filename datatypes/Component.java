@@ -1,6 +1,6 @@
 package datatypes;
 
-public abstract class Component {
+public abstract class Component implements java.io.Serializable {
 	
 	private String name;
 	
