@@ -23,16 +23,12 @@ public class MainClass{
 	public static void main(String[] args) throws IOException{
 		
 		final boolean buildNewGraph = false;
-		final boolean b2 = true;
 		
 		String training = "training.ser";
 		String testing = "testing.set";
-		String graph = "graph.set";
 		
 		Map<Set<Component>, Set<Component>> existingConnections = null;
 		Connections connections = null;
-		ComponentMiner componentMiner;
-		ComponentGraph componentGraph = null;
 		
 		if(buildNewGraph) {
 		
@@ -107,50 +103,56 @@ public class MainClass{
 		
 		}
 		
-		if(b2) {
-			//instantiate a miner and create the graph
-			componentMiner = new RelatedLibraries();
-			componentMiner.createGraph(connections);
-			
-			try {
-				FileOutputStream file = new FileOutputStream(graph);
-				ObjectOutputStream out = new ObjectOutputStream(file);
-				
-				out.writeObject(componentMiner.getComponentGraph());
-				
-				out.close();
-				file.close();
-				
-				System.out.println("Graph has been serialized");
-				
-			}catch(IOException ex)
-	        {
-	            System.out.println("IOException is caught");
-	        }
-			
-		}else {
-			
-			try {
-				FileInputStream file = new FileInputStream(graph);
-				ObjectInputStream in = new ObjectInputStream(file);
-				
-				componentGraph = (ComponentGraph) in.readObject();
-				
-				in.close();
-				file.close();
-				
-				System.out.println("Graph has been deserialized");
-				
-			}catch(IOException ex)
-	        {
-	            System.out.println("IOException is caught");
-	        }
-	          
-	        catch(ClassNotFoundException ex)
-	        {
-	            System.out.println("ClassNotFoundException is caught");
-	        }
-		}
+		
+		ComponentMiner componentMiner = new RelatedLibraries();
+		componentMiner.createGraph(connections);
+		
+//		if(b2) {
+//			//instantiate a miner and create the graph
+//			
+//			
+//			
+//			try {
+//				FileOutputStream file = new FileOutputStream(graph);
+//				ObjectOutputStream out = new ObjectOutputStream(file);
+//				
+//				out.writeObject(componentMiner.getComponentGraph());
+//				
+//				out.close();
+//				file.close();
+//				
+//				System.out.println("Graph has been serialized");
+//				
+//			}catch(IOException ex)
+//	        {
+//	            System.out.println("IOException is caught");
+//	        }
+//			
+//		}else {
+//			
+//			try {
+//				FileInputStream file = new FileInputStream(graph);
+//				ObjectInputStream in = new ObjectInputStream(file);
+//				
+//				componentGraph = (ComponentGraph) in.readObject();
+//				
+//				in.close();
+//				file.close();
+//				
+//				System.out.println("Graph has been deserialized");
+//				
+//			}catch(IOException ex)
+//	        {
+//	            System.out.println("IOException is caught");
+//	        }
+//	          
+//	        catch(ClassNotFoundException ex)
+//	        {
+//	            System.out.println("ClassNotFoundException is caught");
+//	        }
+//			
+//			componentMiner.setComponentGraph(componentGraph);
+//		}
 		
 		
 		//call miner for a user defined seed vector
