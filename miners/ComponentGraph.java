@@ -8,8 +8,10 @@ import org.jgrapht.graph.builder.GraphTypeBuilder;
 import datatypes.Component;
 import datatypes.Connections;
 
-public class ComponentGraph {
-
+public class ComponentGraph implements java.io.Serializable{
+	
+	private static final long serialVersionUID = 1L;
+	
 	private Graph<Component, DefaultEdge> graph = GraphTypeBuilder
 				.<Component, DefaultEdge> undirected()
 					.allowingMultipleEdges(false)
