@@ -1,7 +1,9 @@
 
+import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
@@ -23,12 +25,17 @@ public class MainClass{
 	public static void main(String[] args) throws IOException{
 		
 		final boolean buildNewGraph = false;
+		final boolean b2 = false;
 		
 		String training = "training.ser";
-		String testing = "testing.set";
+		String testing = "testing.ser";
+		String graph = "graph.ser";
 		
 		Map<Set<Component>, Set<Component>> existingConnections = null;
 		Connections connections = null;
+		
+		//
+		ComponentMiner componentMiner = new RelatedLibraries();
 		
 		if(buildNewGraph) {
 		
@@ -43,20 +50,13 @@ public class MainClass{
 			//get data structure to use as input for component miner
 			connections = evaluationDataSource.getConnections();
 			
+			componentMiner.createGraph(connections);
 			
 			//Serialization
 			try {
-				
-				FileOutputStream file = new FileOutputStream(training);
-				ObjectOutputStream out = new ObjectOutputStream(file);
-				
-				out.writeObject(connections);
-				
-				out.close();
-				file.close();
 			
-				file = new FileOutputStream(testing);
-				out = new ObjectOutputStream(file);
+				FileOutputStream file = new FileOutputStream(testing);
+				ObjectOutputStream out = new ObjectOutputStream(file);
 				
 				out.writeObject(existingConnections);
 				
@@ -64,6 +64,17 @@ public class MainClass{
 				file.close();
 				
 				System.out.println("Objects have been serialized");
+				
+				file = new FileOutputStream(graph);
+				out = new ObjectOutputStream(file);
+				
+				out.writeObject(componentMiner.getComponentGraph());
+				
+				out.close();
+				file.close();
+				
+				System.out.println("Graph has been serialized");
+				
 			}catch(IOException ex)
 	        {
 	            System.out.println("IOException is caught");
@@ -72,17 +83,14 @@ public class MainClass{
 		}else {
 		
 			//Deserialization
-			try {
-				FileInputStream file = new FileInputStream(training);
+			
+			ComponentGraph componentGraph = null;
+			
+			try {				
+				
+				FileInputStream file = new FileInputStream(testing);
+				InputStream is = new BufferedInputStream(file);
 				ObjectInputStream in = new ObjectInputStream(file);
-				
-				connections = (Connections) in.readObject();
-				
-				in.close();
-				file.close();
-				
-				file = new FileInputStream(testing);
-				in = new ObjectInputStream(file);
 				
 				existingConnections = (Map<Set<Component>, Set<Component>>) in.readObject();
 				
@@ -90,6 +98,17 @@ public class MainClass{
 				file.close();
 				
 				System.out.println("Objects have been deserialized");
+				
+				file = new FileInputStream(graph);
+				is = new BufferedInputStream(file);
+				in = new ObjectInputStream(is);
+				
+				componentGraph = (ComponentGraph) in.readObject();
+				
+				in.close();
+				file.close();
+				
+				System.out.println("Graph has been deserialized");
 				
 			}catch(IOException ex)
 	        {
@@ -100,19 +119,26 @@ public class MainClass{
 	        {
 	            System.out.println("ClassNotFoundException is caught");
 	        }
-		
+			
+			componentMiner.setComponentGraph(componentGraph);
 		}
 		
-		
-		ComponentMiner componentMiner = new RelatedLibraries();
-		componentMiner.createGraph(connections);
 		
 //		if(b2) {
 //			//instantiate a miner and create the graph
 //			
-//			
+//			componentMiner.createGraph(connections);
 //			
 //			try {
+//				
+////				FileOutputStream file = new FileOutputStream(training);
+////				ObjectOutputStream out = new ObjectOutputStream(file);
+////				
+////				out.writeObject(connections);
+////				
+////				out.close();
+////				file.close();
+//				
 //				FileOutputStream file = new FileOutputStream(graph);
 //				ObjectOutputStream out = new ObjectOutputStream(file);
 //				
@@ -129,10 +155,22 @@ public class MainClass{
 //	        }
 //			
 //		}else {
+//			ComponentGraph componentGraph = null;
 //			
 //			try {
+//				
+////				FileInputStream file = new FileInputStream(training);
+////				InputStream is = new BufferedInputStream(file);
+////				ObjectInputStream in = new ObjectInputStream(is);
+////				
+////				connections = (Connections) in.readObject();
+////				
+////				in.close();
+////				file.close();
+//				
 //				FileInputStream file = new FileInputStream(graph);
-//				ObjectInputStream in = new ObjectInputStream(file);
+//				InputStream is = new BufferedInputStream(file);
+//				ObjectInputStream in = new ObjectInputStream(is);
 //				
 //				componentGraph = (ComponentGraph) in.readObject();
 //				
