@@ -25,7 +25,6 @@ public class MainClass{
 	public static void main(String[] args) throws IOException{
 		
 		final boolean buildNewGraph = false;
-		final boolean b2 = false;
 		
 		String training = "training.ser";
 		String testing = "testing.ser";
@@ -49,9 +48,9 @@ public class MainClass{
 			
 			//get data structure to use as input for component miner
 			connections = evaluationDataSource.getConnections();
-			
+	
 			componentMiner.createGraph(connections);
-			
+		
 			//Serialization
 			try {
 			
