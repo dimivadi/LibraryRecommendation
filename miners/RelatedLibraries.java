@@ -18,7 +18,6 @@ import datatypes.Connections;
  */
 public class RelatedLibraries implements ComponentMiner{
 	
-	//private Graph<Component, DefaultEdge> graph;
 	private ComponentGraph componentGraph;
 	
 	/*
@@ -48,7 +47,7 @@ public class RelatedLibraries implements ComponentMiner{
 			
 		for(Component comp: seedComponents) {
 			if (comp.getClass() == Library.class) {
-				System.out.println("Error: Do not use an instance of Library with the class 'RelatedLibraries' ");
+				System.out.println("Error: Do not use a Library object as seed for 'RelatedLibraries' ");
 			}
 		}
 			
@@ -90,6 +89,10 @@ public class RelatedLibraries implements ComponentMiner{
 		long elapsedTime = System.nanoTime() - start;
 		double elapsedTimeInSeconds = (double) elapsedTime / 1_000_000_000;
 		System.out.println("time to create graph: "+ elapsedTimeInSeconds);
+	}
+	
+	public void setComponentGraph(ComponentGraph componentGraph) {
+		this.componentGraph = componentGraph;
 	}
 	
 	public ComponentGraph getComponentGraph() {

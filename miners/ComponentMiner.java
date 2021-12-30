@@ -11,4 +11,5 @@ public interface ComponentMiner {
 	Map<Component, Double> componentMining(Set<Component> seedComponents);
 	void createGraph(Connections connections);
 	ComponentGraph getComponentGraph();
+	void setComponentGraph(ComponentGraph componentGraph);
 }
