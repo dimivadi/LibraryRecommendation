@@ -44,6 +44,8 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 		
 		Pattern pattern = Pattern.compile(".+:"); 
 		Matcher m = pattern.matcher(" ");
+		//TIME
+		long start1 = System.nanoTime();
 		while((line = br.readLine()) != null) {
 			
 			m.reset(line.split(",")[0]);
@@ -85,9 +87,9 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 					
 				
 			}else {
-				for(Component d: dependencies) {
-					connections.addConnection(d, dependencyAsComponent);
-				}
+//				for(Component d: dependencies) {
+//					connections.addConnection(d, dependencyAsComponent);
+//				}
 				dependencies.add(dependencyAsComponent);
 				for(Component k: libraryTermsAsKeywords) {
 					connections.addConnection(k, dependencyAsComponent);
@@ -95,6 +97,9 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 			}
 		}
 		br.close();
+		long elapsedTime = System.nanoTime() - start1;
+		double elapsedTimeInSeconds = (double) elapsedTime / 1_000_000_000;
+		System.out.println("Time to get all connections: " + elapsedTimeInSeconds);
 	}
 	
 	

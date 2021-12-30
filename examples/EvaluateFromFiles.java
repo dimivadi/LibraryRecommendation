@@ -30,7 +30,7 @@ import evaluation.EvaluationDataSource;
  * Class to provide essential fields for an evaluation method,
  * i.e. the graph of components (ComponentMiner) 
  * and the existing connections between components in the testing set (existingConnections)
- * This class takes as input a string pointing to the training set, another one for the testing set, and a string indicating the extensions of the files to be used
+ * This class takes as input the path of the training set as a string, another one for the testing set, and a string indicating the extensions of the files to be used
  * 
  * trainingSet: path of the training set as string
  * testingSet: path of the testing set as string
@@ -71,10 +71,11 @@ public class EvaluateFromFiles implements EvaluationDataSource{
 		for(CodeFile codefile : trainingCodefiles){
 			components = find.findComponents(codefile);
 			connections.addConnectionsByType(components, Library.class, Keyword.class);
+			connections.addConnectionsByType(components, Library.class);
 		}
 		
-		componentMiner = new RelatedLibraries();
-		componentMiner.createGraph(connections);
+//		componentMiner = new RelatedLibraries();
+//		componentMiner.createGraph(connections);
 		
 		FileNameToKeywords fileNameToKeywords = new FileNameToKeywords();
 		
