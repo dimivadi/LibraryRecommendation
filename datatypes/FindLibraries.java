@@ -14,7 +14,7 @@ public class FindLibraries extends FindComponents{
 		
 		
 		libraries = new HashSet<Component>();
-		Pattern libPattern = Pattern.compile("\\s*import\\s+(?:static\\s+)?([\\w+\\.]+)");
+		Pattern libPattern = Pattern.compile("^\\s*import\\s+(?:static\\s+)?([\\w+\\.]+)");
 		
 		Scanner in;
 		try {
