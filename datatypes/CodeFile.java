@@ -8,6 +8,7 @@ import java.util.List;
 public class CodeFile{
 	
 	private File codefile; 
+	private String fileName;
 	
 	
 	public CodeFile(String filename) throws FileNotFoundException{
@@ -16,6 +17,7 @@ public class CodeFile{
 
 	public CodeFile(File file) throws FileNotFoundException{
 		this.codefile = file;	
+		this.fileName = file.getName();
 	}
 	
 	
@@ -23,6 +25,9 @@ public class CodeFile{
 		return codefile;
 	}
 	
+	public String getFileName() {
+		return fileName;
+	}
 	
 	public static List<CodeFile> getCodeFiles(List<File> files) throws FileNotFoundException {
 		

@@ -32,7 +32,6 @@ public class FindLibraries extends FindComponents{
 						libraries.add(newLibrary);					
 						//System.out.println("Library:"+ newLibrary.getName());
 					}
-				
 				}
 			}
 		
