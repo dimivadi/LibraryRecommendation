@@ -28,7 +28,10 @@ public class Coverage {
 		Set<Component> graphVertexSet = this.componentGraph.getGraph().vertexSet();
 		long numOfLibrariesInGraph = graphVertexSet.stream().filter(e -> e.getClass() == Library.class).count();
 		
-		return recommendedComponents.size() / numOfLibrariesInGraph;
+		System.out.println("numOfLibrariesInGraph: "+ numOfLibrariesInGraph);
+		System.out.println("Size of recommendedComponents: "+recommendedComponents.size());
+		
+		return (double) recommendedComponents.size() / numOfLibrariesInGraph;
 		
 	}
 }

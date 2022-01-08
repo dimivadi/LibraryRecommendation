@@ -29,11 +29,6 @@ public class HitRate implements Evaluate{
 		
 	}
 	
-//	public HitRate(EvaluationDataSource evaluationDataProvider) {
-//		this.componentMiner = evaluationDataProvider.getComponentMiner();
-//		this.existingConnections = evaluationDataProvider.getExistingConnections();
-//	}
-	
 	@Override
 	public void run() {
 		Map<Component, Double> topComponents;
@@ -41,6 +36,7 @@ public class HitRate implements Evaluate{
 		//
 		Coverage coverage = new Coverage();
 		coverage.setGraph(componentMiner.getComponentGraph());
+
 		
 		//For every Component in the testing set compare the existing Connections with the predictions from the recommendation system. 
 		//First, get top 10 recommended Components
@@ -49,7 +45,6 @@ public class HitRate implements Evaluate{
 			RecommendedComponents rc = new RecommendedComponents(componentMiner.componentMining(entry.getKey()));
 			topComponents = rc.getTopComponents(10);
 			
-			//
 			coverage.addToRecommendedComponents(topComponents);
 			
 			int t = 0;
