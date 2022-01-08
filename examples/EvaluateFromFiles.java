@@ -67,7 +67,6 @@ public class EvaluateFromFiles implements EvaluationDataSource{
 		
 		List<CodeFile> trainingCodefiles = CodeFile.getCodeFiles(this.trainingFiles);
 		
-		
 		for(CodeFile codefile : trainingCodefiles){
 			components = find.findComponents(codefile);
 			connections.addConnectionsByType(components, Library.class, Keyword.class);

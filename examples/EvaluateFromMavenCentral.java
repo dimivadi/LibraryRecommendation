@@ -87,9 +87,9 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 					
 				
 			}else {
-//				for(Component d: dependencies) {
-//					connections.addConnection(d, dependencyAsComponent);
-//				}
+				for(Component d: dependencies) {
+					connections.addConnection(d, dependencyAsComponent);
+				}
 				dependencies.add(dependencyAsComponent);
 				for(Component k: libraryTermsAsKeywords) {
 					connections.addConnection(k, dependencyAsComponent);
