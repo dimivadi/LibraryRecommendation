@@ -40,8 +40,8 @@ public class MainClass{
 		
 		
 		//get data
-//			EvaluationDataSource evaluationDataSource = new EvaluateFromFiles("jEdit", "test", "java");
-			EvaluationDataSource evaluationDataSource = new EvaluateFromMavenCentral("maven-data.csv/links_all.csv");
+			EvaluationDataSource evaluationDataSource = new EvaluateFromFiles("jEdit", "test", "java");
+//			EvaluationDataSource evaluationDataSource = new EvaluateFromMavenCentral("maven-data.csv/links_all.csv");
 			
 			//get connections (part of the data) that will be used as a testing set
 			existingConnections = evaluationDataSource.getExistingConnections();
