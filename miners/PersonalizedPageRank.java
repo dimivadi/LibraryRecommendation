@@ -119,7 +119,7 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 						contribution += dampingFactor * curScore[j] / outDegree[j]; 
 					}
 					double newValue = contribution + (1d - dampingFactor) * seedVector[i]; 
-					maxChange = Math.max(maxChange, Math.abs(newValue) - curScore[i]);
+					maxChange = Math.max(maxChange, Math.abs(newValue - curScore[i]));
 					
 					nextScore[i] = newValue;
 				}
