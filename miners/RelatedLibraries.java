@@ -2,6 +2,7 @@ package miners;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.HashMap;
 
 import datatypes.Component;
@@ -19,6 +20,13 @@ import datatypes.Connections;
 public class RelatedLibraries implements ComponentMiner{
 	
 	private ComponentGraph componentGraph;
+	private Map<Component, Double> globalLibraryScores; //scores calculated using global pagerank
+	
+	class InvalidSeedException extends RuntimeException{
+		InvalidSeedException(String message){
+			super(message);
+		}
+	}
 	
 	/*
 	 * Constructor's argument is a Connections data structure.
@@ -42,15 +50,21 @@ public class RelatedLibraries implements ComponentMiner{
 
 	
 	//return a Map that will have as keys the libraries of the graph, and as values their corresponding scores
-	public Map<Component, Double> componentMining(Set<Component> seedComponents){	
+	public Map<Component, Double> componentMining(Set<Component> seedComponents) {	
 
 			
 		for(Component comp: seedComponents) {
 			if (comp.getClass() == Library.class) {
-				System.out.println("Error: Do not use a Library object as seed for 'RelatedLibraries' ");
+				throw new InvalidSeedException("Seed component for 'RelatedLibraries' should not be a Library");
 			}
 		}
-			
+		
+		if(globalLibraryScores == null) {
+			globalLibraryScores = getGlobalScores();
+			System.out.println("Calculated PR");
+		}
+		
+		System.out.println("seed: " + seedComponents);
 		//Scoring Algorithm
 		//TIME
 		long start1 = System.nanoTime();
@@ -62,18 +76,45 @@ public class RelatedLibraries implements ComponentMiner{
 		System.out.println("time to run algorithm: "+ elapsedTimeInSeconds1);	
 			
 		//keep scores only for Library Components
-		Map<Component, Double> libScores = new HashMap<>();
-		for(Map.Entry<Component, Double> entry : scores.entrySet()) {
-			if(entry.getKey().getClass() == Library.class) {
-				libScores.put(entry.getKey(), entry.getValue());
-			}
+//		Map<Component, Double> libScores = new HashMap<>();
+//		for(Map.Entry<Component, Double> entry : scores.entrySet()) {
+//			if(entry.getKey().getClass() == Library.class) {
+//				libScores.put(entry.getKey(), entry.getValue());
+//			}
+//		}
+		
+		Map<Component, Double> libScores = keepLibraryScores(scores);
+		
+		
+//		return libScores;
+		
+		Map<Component, Double> libScoresUsingConductance = new HashMap<>();;
+		
+		for(Map.Entry<Component, Double> entry: libScores.entrySet()) { 
+			double newScore = entry.getValue() / globalLibraryScores.get(entry.getKey());
+			libScoresUsingConductance.put(entry.getKey(), newScore);
 		}
+			
+		return libScoresUsingConductance;
+	}
+	
+	private Map<Component, Double> getGlobalScores(){
+		
+		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph());
+		Map<Component, Double> scores = ppr.getScores();
+		scores = keepLibraryScores(scores);
+		
+		return scores;
+	}
+	
+	private Map<Component, Double> keepLibraryScores(Map<Component, Double> scores) {
+		
+		Map<Component, Double> libScores = scores.entrySet().stream()
+															.filter(x -> x.getKey().getClass() == Library.class)
+																.collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
 		
 		return libScores;
-			
-			
 	}
-		
 	
 	public void createGraph(Connections connections){
 		
