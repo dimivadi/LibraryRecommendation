@@ -56,11 +56,14 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 				dependencies = new HashSet<Component>();
 				
 				currentLibrary = library;
-				libraryTerms = library.split("\\W");
+//				libraryTerms = library.split("\\W");
+				libraryTerms = library.split("[^a-zA-Z0-9]");
 				Set<String> libraryTermsSet = new HashSet<>(Arrays.asList(libraryTerms));
 				for(Iterator<String> i = libraryTermsSet.iterator(); i.hasNext();) {
 					String element = i.next();
-					if(stopwords.contains(element) || element.length() < 2) {
+					if(stopwords.contains(element) 
+							|| element.length() < 2 ){
+							//|| !Pattern.matches("[a-zA-Z]", element)) { 
 						i.remove();
 					}
 				}
