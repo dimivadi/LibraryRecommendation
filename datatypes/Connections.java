@@ -10,12 +10,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
 public class Connections implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private Map<Component, Set<Component>> connections = new HashMap<Component, Set<Component>>();
+//	private Map<Component, Set<Component>> connections = new HashMap<Component, Set<Component>>();
 	
+	private Map<Component, Integer> componentIndex = new HashMap<Component, Integer>();
+	private int index = 0;
+	private Map<Integer, Component> indexToComponent = new HashMap<>();
+	private Map<Component, Set<Integer>> adjacentComponents = new HashMap<>();
 	/*
 	 * given 2 components, add each one as key in the connections map, and the other as an element in its corresponding set
 	 * e.g. 
@@ -24,18 +29,55 @@ public class Connections implements java.io.Serializable {
 	 */
 	
 	public void addConnection(Component componentA, Component componentB) {
-		if(!connections.containsKey(componentA)) {
-			connections.put(componentA, new HashSet<Component>());
-		}
-		if(!connections.containsKey(componentB)) {
-			connections.put(componentB, new HashSet<Component>());
-		}
-		if(!componentA.equals(componentB)) {
-			connections.get(componentA).add(componentB);
-			connections.get(componentB).add(componentA);
-		}
+//		if(!connections.containsKey(componentA)) {
+//			connections.put(componentA, new HashSet<Component>());
+//		}
+//		if(!connections.containsKey(componentB)) {
+//			connections.put(componentB, new HashSet<Component>());
+//		}
+//		if(!componentA.equals(componentB)) {
+//			connections.get(componentA).add(componentB);
+//			connections.get(componentB).add(componentA);
+//		}
 		
+		if(!componentIndex.containsKey(componentA)) {
+			componentIndex.put(componentA, index);
+			adjacentComponents.put(componentA, new HashSet<Integer>());
+			indexToComponent.put(index++, componentA);
+			
+		}
+		if(!componentIndex.containsKey(componentB)) {
+			componentIndex.put(componentB, index);
+			adjacentComponents.put(componentB, new HashSet<Integer>());
+			indexToComponent.put(index++, componentB);
+		}
+//		addComponent(componentA);
+//		addComponent(componentB);
+		int indexA, indexB;
+		if(!componentA.equals(componentB)) {
+			indexA = componentIndex.get(componentA);
+			indexB = componentIndex.get(componentB);
+			adjacentComponents.get(componentA).add(indexB);
+			adjacentComponents.get(componentB).add(indexA);
+			
+			
+		}
 	}
+	
+//	private void addComponent(Component component) {
+//		if(!componentsList.contains(component)) {
+//			componentsList.add(component);
+//			index++;
+//			adjacencyMatrix.add(new ArrayList<Integer>(Arrays.asList(new Integer[index])));
+//			for(int i = 0; i < index-1; i++) {
+//				adjacencyMatrix.get(index-1).set(i, 0);
+//			}
+//			for(ArrayList<Integer> list: adjacencyMatrix) {
+//				list.add(0);
+//			}
+//			adjacencyMatrix.get(index-1).set(index-1, 1);
+//		}
+//	}
 	
 	/*
 	 * given a collection of components, 
@@ -90,56 +132,37 @@ public class Connections implements java.io.Serializable {
 					}	
 				}
 			}
-			
 		}
+	}
+	
 
-	}
-	
-	public Map<Component, Set<Component>> getConnections(){
-		return connections;
-	}
-	
-	public void addComponent(Component component) {
-		if(!connections.containsKey(component))
-			connections.put(component, new HashSet<Component>());
-	}
-	
-	public void addComponent(Collection<Component> components) {
-		for(Component component : components)
-			addComponent(component);
-	}
-	
 	public Set<Component> getComponents(){
-		return connections.keySet();
-	}
-	
-	public Set<Map.Entry<Component, Set<Component>>> getEntries(){
-		return connections.entrySet();
-	}
-	
-	
-	public Collection<Component> getComponentConnections(Component component) {
-		return connections.get(component);
+		
+		//return connections.keySet();
+		return componentIndex.keySet();
 	}
 	
 	
-	void removeConnection(Component componentA, Component componentB) {
-		connections.get(componentA).remove(componentB);
-		connections.get(componentB).remove(componentA);
-	}
-	
-	
-	
-	void merge(Connections connections) {
+	public Collection<Component> getComponentConnections(Component component){
+		Set<Component> componentConnections = new HashSet<Component>();
 
-		for(Map.Entry<Component, Set<Component>> e : connections.getEntries()) {
-			if(!this.connections.containsKey(e.getKey()))
-				this.connections.put(e.getKey(), e.getValue());
-			else {
-				this.connections.get(e.getKey()).addAll(e.getValue());
+//		return connections.get(component);
+		for(Integer i: adjacentComponents.get(component)) {
+			componentConnections.add(indexToComponent.get(i));
+		}
+		return componentConnections;
+	}
+	
+	public void getAllConnectionsByName() {
+		for(Map.Entry<Component, Set<Integer>> entry: adjacentComponents.entrySet()) {
+			System.out.println("Connections of component: "+entry.getKey());
+			for(Integer i: entry.getValue()) {
+				System.out.print(indexToComponent.get(i)+", ");
 			}
+			System.out.println();
 		}
 	}
+	
 
 	
 
