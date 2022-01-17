@@ -26,7 +26,7 @@ public class MainClass{
 		
 		final boolean buildNewGraph = false;
 		
-		String training = "training.ser";
+//		String training = "training.ser";
 		String testing = "testing.ser";
 		String graph = "graph.ser";
 		
@@ -41,16 +41,19 @@ public class MainClass{
 		
 		//get data
 			EvaluationDataSource evaluationDataSource = new EvaluateFromFiles("jEdit", "test", "java");
-//			EvaluationDataSource evaluationDataSource = new EvaluateFromMavenCentral("maven-data.csv/links_all.csv");
+//			EvaluationDataSource evaluationDataSource = new EvaluateFromMavenCentral("maven-data2.csv/links_all.csv");
 			
 			//get connections (part of the data) that will be used as a testing set
 			existingConnections = evaluationDataSource.getExistingConnections();
 			
 			//get data structure to use as input for component miner
 			connections = evaluationDataSource.getConnections();
-	
+			
 			componentMiner.createGraph(connections);
-		
+			
+			//num of edges for debugging
+			componentMiner.getComponentGraph().getNumOfEdges();
+			
 			//Serialization
 			try {
 			
@@ -62,7 +65,7 @@ public class MainClass{
 				out.close();
 				file.close();
 				
-				System.out.println("Objects have been serialized");
+				System.out.println("existingConnections have been serialized");
 				
 				file = new FileOutputStream(graph);
 				out = new ObjectOutputStream(file);
@@ -96,14 +99,14 @@ public class MainClass{
 				in.close();
 				file.close();
 				
-				System.out.println("Objects have been deserialized");
+				System.out.println("existingConnections have been deserialized");
 				
 				file = new FileInputStream(graph);
 				is = new BufferedInputStream(file);
 				in = new ObjectInputStream(is);
 				
 				componentGraph = (ComponentGraph) in.readObject();
-				
+				componentGraph.getNumOfEdges();
 				in.close();
 				file.close();
 				
@@ -136,7 +139,8 @@ public class MainClass{
 		//call an evaluation method 
 		
 //		Evaluate evaluate = new AreaUnderCurve(componentMiner, existingConnections);
-		Evaluate evaluate = new HitRate(componentMiner, existingConnections);
+//		Evaluate evaluate = new HitRate(componentMiner, existingConnections);
+		Evaluate evaluate = new Precision(componentMiner, existingConnections);
 		
 		evaluate.run();
 	}
