@@ -9,18 +9,15 @@ import datatypes.Connections;
 /*
  * 
  * Interface to provide the following essential data for evaluation classes
- * i) ComponentMiner: an instance of ComponentMiner containing the graph between components created by the training set
- * ii) existingConnections: Map containing as keys the components of the testing set and as values the components that the keys are connected to
- * 
+ * i) connections: Connections between components in the training test 
+ * ii) existingConnections: connections between components in the testing set
  * 
  */
 
 public interface EvaluationDataSource {
-
-	//ComponentMiner getComponentMiner();
-	
-	Map<Set<Component>, Set<Component>> getExistingConnections();
 	
 	Connections getConnections();
+	
+	Map<Set<Component>, Set<Component>> getExistingConnections();
 	
 }

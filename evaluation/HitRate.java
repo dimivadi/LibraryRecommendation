@@ -42,8 +42,11 @@ public class HitRate implements Evaluate{
 		//First, get top 10 recommended Components
 		for(Entry<Set<Component>, Set<Component>> entry : existingConnections.entrySet()) {
 			
+			if(entry.getKey().isEmpty() || entry.getValue().isEmpty())
+				continue;
+			
 			RecommendedComponents rc = new RecommendedComponents(componentMiner.componentMining(entry.getKey()));
-			topComponents = rc.getTopComponents(10);
+			topComponents = rc.getTopComponents(3);
 			
 			coverage.addToRecommendedComponents(topComponents);
 			
@@ -52,8 +55,8 @@ public class HitRate implements Evaluate{
 			//Search for at least one hit
 			for(Map.Entry<Component, Double> recommendedComp : topComponents.entrySet()) {
 				//System.out.println("recommendedComp: "+recommendedComp.getKey()+" for keyword: "+ entry.getKey());
-				for(Component comp : entry.getValue()) {
-					if(recommendedComp.getKey().equals(comp)) {
+				for(Component testingComp : entry.getValue()) {
+					if(recommendedComp.getKey().equals(testingComp)) {
 						hits++;
 						t = 1;
 						break;
