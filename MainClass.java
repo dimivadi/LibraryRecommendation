@@ -55,32 +55,32 @@ public class MainClass{
 			componentMiner.getComponentGraph().getNumOfEdges();
 			
 			//Serialization
-			try {
-			
-				FileOutputStream file = new FileOutputStream(testing);
-				ObjectOutputStream out = new ObjectOutputStream(file);
-				
-				out.writeObject(existingConnections);
-				
-				out.close();
-				file.close();
-				
-				System.out.println("existingConnections have been serialized");
-				
-				file = new FileOutputStream(graph);
-				out = new ObjectOutputStream(file);
-				
-				out.writeObject(componentMiner.getComponentGraph());
-				
-				out.close();
-				file.close();
-				
-				System.out.println("Graph has been serialized");
-				
-			}catch(IOException ex)
-	        {
-	            System.out.println("IOException is caught");
-	        }
+//			try {
+//			
+//				FileOutputStream file = new FileOutputStream(testing);
+//				ObjectOutputStream out = new ObjectOutputStream(file);
+//				
+//				out.writeObject(existingConnections);
+//				
+//				out.close();
+//				file.close();
+//				
+//				System.out.println("existingConnections have been serialized");
+//				
+//				file = new FileOutputStream(graph);
+//				out = new ObjectOutputStream(file);
+//				
+//				out.writeObject(componentMiner.getComponentGraph());
+//				
+//				out.close();
+//				file.close();
+//				
+//				System.out.println("Graph has been serialized");
+//				
+//			}catch(IOException ex)
+//	        {
+//	            System.out.println("IOException is caught");
+//	        }
 			
 		}else {
 		
@@ -139,9 +139,10 @@ public class MainClass{
 		//call an evaluation method 
 		
 //		Evaluate evaluate = new AreaUnderCurve(componentMiner, existingConnections);
-//		Evaluate evaluate = new HitRate(componentMiner, existingConnections);
-		Evaluate evaluate = new Precision(componentMiner, existingConnections);
-		
+//		Evaluate evaluate = new HitRate(componentMiner, existingConnections, 3);
+//		Evaluate evaluate = new Precision(componentMiner, existingConnections, 10);
+//		Evaluate evaluate = new Recall(componentMiner, existingConnections, 5);
+		Evaluate evaluate = new Metrics(componentMiner, existingConnections, 5);
 		evaluate.run();
 	}
 }
