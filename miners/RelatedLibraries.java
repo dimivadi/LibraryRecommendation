@@ -28,26 +28,6 @@ public class RelatedLibraries implements ComponentMiner{
 		}
 	}
 	
-	/*
-	 * Constructor's argument is a Connections data structure.
-	 * 
-	 */
-//	public RelatedLibraries(Connections connections){
-//		this.connections = connections;
-//		
-//		//TIME
-//		long start = System.nanoTime();
-//		System.out.println("Creating graph...");
-//		//Create Graph
-//		ComponentGraph cg = new ComponentGraph();
-//		cg.addConnectionsToGraph(connections);
-//		graph = cg.getGraph();
-//		//TIME
-//		long elapsedTime = System.nanoTime() - start;
-//		double elapsedTimeInSeconds = (double) elapsedTime / 1_000_000_000;
-//		System.out.println("time to create graph: "+ elapsedTimeInSeconds);
-//	}
-
 	
 	//return a Map that will have as keys the libraries of the graph, and as values their corresponding scores
 	public Map<Component, Double> componentMining(Set<Component> seedComponents) {	
@@ -75,13 +55,7 @@ public class RelatedLibraries implements ComponentMiner{
 		double elapsedTimeInSeconds1 = (double) elapsedTime1 / 1_000_000_000;
 		System.out.println("time to run algorithm: "+ elapsedTimeInSeconds1);	
 			
-		//keep scores only for Library Components
-//		Map<Component, Double> libScores = new HashMap<>();
-//		for(Map.Entry<Component, Double> entry : scores.entrySet()) {
-//			if(entry.getKey().getClass() == Library.class) {
-//				libScores.put(entry.getKey(), entry.getValue());
-//			}
-//		}
+
 		
 		Map<Component, Double> libScores = keepLibraryScores(scores);
 		
@@ -140,6 +114,12 @@ public class RelatedLibraries implements ComponentMiner{
 		return componentGraph;
 	}
 	
-	
+	//keep scores only for Library Components
+//	Map<Component, Double> libScores = new HashMap<>();
+//	for(Map.Entry<Component, Double> entry : scores.entrySet()) {
+//		if(entry.getKey().getClass() == Library.class) {
+//			libScores.put(entry.getKey(), entry.getValue());
+//		}
+//	}
 	
 }
