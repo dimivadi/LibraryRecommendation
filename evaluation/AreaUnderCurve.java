@@ -56,17 +56,22 @@ public class AreaUnderCurve implements Evaluate{
 		double sumOfAUC = 0;
 		int N = 0;
 		
-		for(Entry<Set<Component>, Set<Component>> entry: existingConnections.entrySet()) {
-			rankedComponents = componentMiner.componentMining(entry.getKey());
+		for(Entry<Set<Component>, Set<Component>> existingConnection: existingConnections.entrySet()) {
 			
-			x = new double[entry.getValue().size()];
+			if(existingConnection.getKey().isEmpty() || existingConnection.getValue().isEmpty()) {
+				continue;
+			}
+			
+			rankedComponents = componentMiner.componentMining(existingConnection.getKey());
+			
+			x = new double[existingConnection.getValue().size()];
 			y = new double[rankedComponents.size()];
 			i = 0;
 			j = 0;
-			System.out.println("Key: "+ entry.getKey());
-			System.out.println("value: "+ entry.getValue());
+//			System.out.println("Key: "+ existingConnection.getKey());
+//			System.out.println("value: "+ existingConnection.getValue());
 			for(Map.Entry<Component, Double> rankedEntry: rankedComponents.entrySet()) {
-				if(entry.getValue().contains(rankedEntry.getKey())) {
+				if(existingConnection.getValue().contains(rankedEntry.getKey())) {
 					x[i++] = rankedEntry.getValue();
 				}else {
 					y[j++] = rankedEntry.getValue();
@@ -77,7 +82,8 @@ public class AreaUnderCurve implements Evaluate{
 			double auc = U/(x.length * y.length);
 			sumOfAUC += auc;
 			N++;
-			System.out.println("AUC for keyword \""+entry.getKey()+"\":  "+ auc);
+//			System.out.println("AUC for keyword \""+existingConnection.getKey()+"\":  "+ auc);
+			System.out.println("AUC for seed "+existingConnection.getKey()+ ": " +auc);
 		}
 		System.out.println("AUC mean: "+ sumOfAUC/N);
 	}	

@@ -6,17 +6,23 @@ import java.util.Map.Entry;
 
 import datatypes.Component;
 import miners.ComponentMiner;
-import miners.RecommendedComponents;
+import miners.RankedComponents;
 
 public class Precision implements Evaluate{
 
 	ComponentMiner componentMiner;
 	Map<Set<Component>, Set<Component>> existingConnections;
+	int numOfRecommendedComponents;
+	RankedComponents rankedComponents;
 	
-	
-	public Precision(ComponentMiner componentMiner, Map<Set<Component>, Set<Component>> existingConnections){
+	public Precision(ComponentMiner componentMiner, Map<Set<Component>, Set<Component>> existingConnections, int numOfRecommendedComponents){
 		this.componentMiner = componentMiner;
 		this.existingConnections = existingConnections;
+		this.numOfRecommendedComponents = numOfRecommendedComponents;
+	}
+	
+	public Precision(RankedComponents rankedComponents) {
+		this.rankedComponents = rankedComponents;
 	}
 	
 	public void run() {
@@ -34,8 +40,8 @@ public class Precision implements Evaluate{
 				continue;
 			}
 
-			RecommendedComponents rc = new RecommendedComponents(componentMiner.componentMining(existingConnection.getKey()));
-			Map<Component, Double> topComponents = rc.getTopComponents(10);
+			RankedComponents rc = new RankedComponents(componentMiner.componentMining(existingConnection.getKey()));
+			Map<Component, Double> topComponents = rc.getTopComponents(numOfRecommendedComponents);
 			
 			coverage.addToRecommendedComponents(topComponents);
 			
@@ -45,7 +51,9 @@ public class Precision implements Evaluate{
 					count++;
 				}
 			}
-			precision += (double) count / topComponents.size();
+			precision += (double) count / (topComponents.size());
+
+			System.out.println("precision for "+existingConnection.getKey()+" for top "+topComponents.size()+" components: "+(double) count / topComponents.size());
 			
 		}
 		

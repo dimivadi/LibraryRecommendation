@@ -19,58 +19,50 @@ public class HitRate implements Evaluate{
 
 	ComponentMiner componentMiner;
 	Map<Set<Component>, Set<Component>> existingConnections;
+	int numOfRecommendedComponents;
 	
-	int hits = 0;
-	int total = 0;
 	
-	public HitRate(ComponentMiner componentMiner, Map<Set<Component>, Set<Component>> existingConnections) {
+	public HitRate(ComponentMiner componentMiner, Map<Set<Component>, Set<Component>> existingConnections, int numOfRecommendedComponents) {
 		this.componentMiner = componentMiner;
 		this.existingConnections = existingConnections;
-		
+		this.numOfRecommendedComponents = numOfRecommendedComponents;
 	}
 	
 	@Override
 	public void run() {
-		Map<Component, Double> topComponents;
+
+		int sizeOfTestingSet = existingConnections.size();
+		int hits = 0;
 		
-		//
 		Coverage coverage = new Coverage();
 		coverage.setGraph(componentMiner.getComponentGraph());
 
 		
 		//For every Component in the testing set compare the existing Connections with the predictions from the recommendation system. 
 		//First, get top 10 recommended Components
-		for(Entry<Set<Component>, Set<Component>> entry : existingConnections.entrySet()) {
+		for(Entry<Set<Component>, Set<Component>> existingConnection : existingConnections.entrySet()) {
 			
-			if(entry.getKey().isEmpty() || entry.getValue().isEmpty())
+			if(existingConnection.getKey().isEmpty() || existingConnection.getValue().isEmpty()) {
+				sizeOfTestingSet--;
 				continue;
+			}
 			
-			RecommendedComponents rc = new RecommendedComponents(componentMiner.componentMining(entry.getKey()));
-			topComponents = rc.getTopComponents(3);
+			RankedComponents rc = new RankedComponents(componentMiner.componentMining(existingConnection.getKey()));
+			Map<Component, Double> topComponents = rc.getTopComponents(numOfRecommendedComponents);
 			
 			coverage.addToRecommendedComponents(topComponents);
-			
-			int t = 0;
 			
 			//Search for at least one hit
 			for(Map.Entry<Component, Double> recommendedComp : topComponents.entrySet()) {
 				//System.out.println("recommendedComp: "+recommendedComp.getKey()+" for keyword: "+ entry.getKey());
-				for(Component testingComp : entry.getValue()) {
-					if(recommendedComp.getKey().equals(testingComp)) {
-						hits++;
-						t = 1;
-						break;
-					}
-				}
-				if(t == 1)
+				if(existingConnection.getValue().contains(recommendedComp.getKey())) {
+					hits++;
 					break;
+				}
 			}
-			
-			total++;
-			
 		}
 		
-		System.out.println("Hit Rate: " + (float) hits/total);
+		System.out.println("Hit Rate: " + (float) hits/sizeOfTestingSet);
 		System.out.println("Coverage: " + coverage.getCoverage());
 		
 	}
