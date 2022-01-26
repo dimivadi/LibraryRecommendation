@@ -42,21 +42,22 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 		BufferedReader br = new BufferedReader(new FileReader(filePath));
 		br.readLine();
 		
-		Pattern pattern = Pattern.compile(".+:"); 
-		Matcher m = pattern.matcher(" ");
-		//TIME
-		long start1 = System.nanoTime();
+		Pattern libraryPattern = Pattern.compile(".+:"); 
+		Matcher libraryMatcher = libraryPattern.matcher(" ");
+		Pattern dependencyPattern = Pattern.compile("(?<=\"\")(.*)(?=:)");
+		Matcher dependencyMatcher = dependencyPattern.matcher("");
+
 		while((line = br.readLine()) != null) {
 			
-			m.reset(line.split(",")[0]);
-			m.find();
-			library = m.group();
+			System.out.println("line: "+line);
+			libraryMatcher.reset(line.split(",")[0]);
+			libraryMatcher.find();
+			library = libraryMatcher.group();
 			if(!library.equals(currentLibrary)) {
 				usedForTestingSet = (rand.nextInt(10000) < 1);
 				dependencies = new HashSet<Component>();
 				
 				currentLibrary = library;
-//				libraryTerms = library.split("\\W");
 				libraryTerms = library.split("[^a-zA-Z0-9]");
 				Set<String> libraryTermsSet = new HashSet<>(Arrays.asList(libraryTerms));
 				for(Iterator<String> i = libraryTermsSet.iterator(); i.hasNext();) {
@@ -74,8 +75,13 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 				
 
 			}
-			String dependency = line.split(",")[1];
-			dependency = dependency.split("(?=(:\\d))")[0];
+			
+			String dependency = line.split(",(?=\")")[1];
+			System.out.println("split dependency: "+dependency);
+			dependencyMatcher.reset(dependency);
+			dependencyMatcher.find();
+			dependency = dependencyMatcher.group();
+
 			Library dependencyAsComponent = new Library(dependency);
 			
 			if(usedForTestingSet) {
@@ -100,9 +106,6 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 			}
 		}
 		br.close();
-		long elapsedTime = System.nanoTime() - start1;
-		double elapsedTimeInSeconds = (double) elapsedTime / 1_000_000_000;
-		System.out.println("Time to get all connections: " + elapsedTimeInSeconds);
 	}
 	
 	
