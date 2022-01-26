@@ -14,7 +14,8 @@ import datatypes.*;
  */
 public class RankedComponents {
 	
-	Map<Component, Double> componentScores;
+	private Map<Component, Double> componentScores;
+	private Map<Component, Double> sortedComponents;
 	
 
 	public RankedComponents(Map<Component, Double> scores) {
@@ -26,11 +27,10 @@ public class RankedComponents {
 	public Map<Component, Double> getTopComponents(int n){
 		//sort and return top n
 		Map<Component, Double> topComponents = new LinkedHashMap<>();
-		Map<Component, Double> sortedComponents = componentScores.entrySet()
-				.stream()
-                .sorted(Map.Entry.<Component, Double> comparingByValue().reversed())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 		
+		if(sortedComponents == null) 
+			sortComponentsByScore();
+
 		for(Map.Entry<Component, Double> entry : sortedComponents.entrySet()) {
 			topComponents.put(entry.getKey(), entry.getValue());
 			n-=1;
@@ -39,4 +39,26 @@ public class RankedComponents {
 		}
 		return topComponents;
 	}	
+	
+	
+	
+	public void getLibraryPosition(Component library) {
+		if(sortedComponents == null) 
+			sortComponentsByScore();
+		int i = 1;
+		for(Map.Entry<Component, Double> entry: sortedComponents.entrySet()) {
+			if(entry.getKey().equals(library)) {
+				System.out.println("position: "+i);
+				break;
+			}
+			i++;
+		}
+	}
+	
+	private void sortComponentsByScore() {
+		sortedComponents = componentScores.entrySet()
+				.stream()
+                .sorted(Map.Entry.<Component, Double> comparingByValue().reversed())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+	}
 }

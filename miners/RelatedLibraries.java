@@ -47,29 +47,29 @@ public class RelatedLibraries implements ComponentMiner{
 		System.out.println("seed: " + seedComponents);
 		//Scoring Algorithm
 		//TIME
-		long start1 = System.nanoTime();
+//		long start1 = System.nanoTime();
 		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph(), seedComponents);
 		Map<Component, Double> scores = ppr.getScores();
 		//TIME
-		long elapsedTime1 = System.nanoTime() - start1;
-		double elapsedTimeInSeconds1 = (double) elapsedTime1 / 1_000_000_000;
-		System.out.println("time to run algorithm: "+ elapsedTimeInSeconds1);	
+//		long elapsedTime1 = System.nanoTime() - start1;
+//		double elapsedTimeInSeconds1 = (double) elapsedTime1 / 1_000_000_000;
+//		System.out.println("time to run algorithm: "+ elapsedTimeInSeconds1);	
 			
 
 		
 		Map<Component, Double> libScores = keepLibraryScores(scores);
 		
 		
-//		return libScores;
+		return libScores;
 		
-		Map<Component, Double> libScoresUsingConductance = new HashMap<>();;
-		
-		for(Map.Entry<Component, Double> entry: libScores.entrySet()) { 
-			double newScore = entry.getValue() / globalLibraryScores.get(entry.getKey());
-			libScoresUsingConductance.put(entry.getKey(), newScore);
-		}
-			
-		return libScoresUsingConductance;
+//		Map<Component, Double> libScoresUsingConductance = new HashMap<>();;
+//		
+//		for(Map.Entry<Component, Double> entry: libScores.entrySet()) { 
+//			double newScore = entry.getValue() / globalLibraryScores.get(entry.getKey());
+//			libScoresUsingConductance.put(entry.getKey(), newScore);
+//		}
+//			
+//		return libScoresUsingConductance;
 	}
 	
 	private Map<Component, Double> getGlobalScores(){

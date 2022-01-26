@@ -18,7 +18,7 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 	
 	public static final double TOLERANCE_DEFAULT = 0.000001;
 	
-	public static final double DAMPING_FACTOR_DEFAULT = 0.85d;
+	public static final double DAMPING_FACTOR_DEFAULT = 0.95d;
 	
 	private final Graph<Component, DefaultEdge> graph;
 	
@@ -28,7 +28,7 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 	private Map<Component, Double> scores; 
 	private Set<Component> seedComponents;
 	private int totalVertices;
-	private double[] seedVector;  //personalization vector
+	private double[] seedVector;  //personalization vector 
 	private int numOfPersonalizationComponents;
 	private double[] curScore;
 	private double[] nextScore;
@@ -89,7 +89,8 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 		
 		for(Component c : graph.vertexSet()) {
 			curScore[l] = initScore;
-			outDegree[l] = graph.outDegreeOf(c);
+//			outDegree[l] = graph.outDegreeOf(c);
+			outDegree[l] = graph.outDegreeOf(c) + 1;
 			vertexIndexMap.put(c, l);
 			vertexMap[l] = c;
 			if(seedComponents.size() > 0) {
@@ -114,25 +115,31 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 		}
 		
 		int iterations = maxIterations;
-		double maxChange = tolerance;
+//		double maxChange = tolerance;
 		double change = tolerance;
+		
 		
 		while(iterations > 0 && change >= tolerance) {
 //			long start = System.nanoTime();
+//			maxChange = 0;
 			
 			for(int i=0; i<totalVertices; i++) { 
 				double contribution = 0d;
 
 				for(int j : adjList.get(i)) {
 					contribution += curScore[j] / outDegree[j];
+//					contribution += curScore[j] / Math.sqrt(outDegree[j] * outDegree[i]);
 				}
-				
+				contribution += curScore[i] / outDegree[i];
 				double newValue = dampingFactor * contribution + (1d - dampingFactor) * seedVector[i]; 
-//				maxChange = Math.max(maxChange, Math.abs(newValue - curScore[i]));		
+				
+//				maxChange = Math.max(maxChange, Math.abs(newValue - curScore[i]));
 				nextScore[i] = newValue;
 								
 			}
-			change = euclideanDistance(nextScore, curScore);
+			change = euclideanDistance(nextScore, curScore)/Math.sqrt(totalVertices);
+//			change = euclideanDistance(nextScore, curScore);
+//			change = l1Norm(nextScore, curScore);
 			
 			double[] temp = curScore;
 			curScore = nextScore;
@@ -164,5 +171,15 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 		return Math.sqrt(sum);
 	}
 	
+	private double l1Norm(double[] a, double[] b) {
+		if(a.length != b.length) {
+			throw new RuntimeException();
+		}
+		double sum = 0;
+		for(int i = 0; i < a.length; i++) {
+			sum += Math.abs(a[i] - b[i]);
+		}
+		return sum;
+	}
 
 }
