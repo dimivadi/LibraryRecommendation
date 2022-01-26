@@ -40,8 +40,8 @@ public class MainClass{
 		
 		
 		//get data
-			EvaluationDataSource evaluationDataSource = new EvaluateFromFiles("jEdit", "test", "java");
-//			EvaluationDataSource evaluationDataSource = new EvaluateFromMavenCentral("maven-data2.csv/links_all.csv");
+//			EvaluationDataSource evaluationDataSource = new EvaluateFromFiles("jEdit", "test", "java");
+			EvaluationDataSource evaluationDataSource = new EvaluateFromMavenCentral("maven-data2.csv/links_all.csv");
 			
 			//get connections (part of the data) that will be used as a testing set
 			existingConnections = evaluationDataSource.getExistingConnections();
@@ -55,32 +55,32 @@ public class MainClass{
 			componentMiner.getComponentGraph().getNumOfEdges();
 			
 			//Serialization
-//			try {
-//			
-//				FileOutputStream file = new FileOutputStream(testing);
-//				ObjectOutputStream out = new ObjectOutputStream(file);
-//				
-//				out.writeObject(existingConnections);
-//				
-//				out.close();
-//				file.close();
-//				
-//				System.out.println("existingConnections have been serialized");
-//				
-//				file = new FileOutputStream(graph);
-//				out = new ObjectOutputStream(file);
-//				
-//				out.writeObject(componentMiner.getComponentGraph());
-//				
-//				out.close();
-//				file.close();
-//				
-//				System.out.println("Graph has been serialized");
-//				
-//			}catch(IOException ex)
-//	        {
-//	            System.out.println("IOException is caught");
-//	        }
+			try {
+			
+				FileOutputStream file = new FileOutputStream(testing);
+				ObjectOutputStream out = new ObjectOutputStream(file);
+				
+				out.writeObject(existingConnections);
+				
+				out.close();
+				file.close();
+				
+				System.out.println("existingConnections have been serialized");
+				
+				file = new FileOutputStream(graph);
+				out = new ObjectOutputStream(file);
+				
+				out.writeObject(componentMiner.getComponentGraph());
+				
+				out.close();
+				file.close();
+				
+				System.out.println("Graph has been serialized");
+				
+			}catch(IOException ex)
+	        {
+	            System.out.println("IOException is caught");
+	        }
 			
 		}else {
 		
@@ -136,14 +136,9 @@ public class MainClass{
 //		rankedComponents = rc.getTopComponents(10);
 		
 		
-		//call an evaluation method 
-		
-//		Evaluate evaluate = new AreaUnderCurve(componentMiner, existingConnections);
-//		Evaluate evaluate = new HitRate(componentMiner, existingConnections, 3);
-//		Evaluate evaluate = new Precision(componentMiner, existingConnections, 10);
-//		Evaluate evaluate = new Recall(componentMiner, existingConnections, 5);
-		Evaluate evaluate = new Metrics(componentMiner, existingConnections, 5);
-		evaluate.run();
+
+		Metrics metrics = new Metrics(componentMiner, existingConnections);
+		metrics.run();
 	}
 }
 
