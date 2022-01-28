@@ -15,6 +15,7 @@ import datatypes.Connections;
 import datatypes.FileNameToKeywords;
 import datatypes.FilesList;
 import datatypes.FindComponents;
+import datatypes.FindKeywords;
 import datatypes.FindLibraries;
 import datatypes.FindLibrariesAndKeywords;
 import datatypes.Keyword;
@@ -50,9 +51,7 @@ public class EvaluateFromFiles implements EvaluationDataSource{
 	//Map that contains as keys a Set of seed components, and as values the libraries they are connected with
 	Map<Set<Component>, Set<Component>> existingConnections = new HashMap<>();
 	
-	/*
 
-	 */
 	public EvaluateFromFiles(String trainingSet, String testingSet, String filesExtensions) throws IOException{
 		
 		//update stopwords
@@ -73,40 +72,38 @@ public class EvaluateFromFiles implements EvaluationDataSource{
 			connections.addConnectionsByType(components, Library.class);
 		}
 		
-//		componentMiner = new RelatedLibraries();
-//		componentMiner.createGraph(connections);
-		
 		FileNameToKeywords fileNameToKeywords = new FileNameToKeywords();
 		
+		//The keywords used as seed for testing comprise the name of the file
+		//and the libraries are the libraries that are imported from the same file
+		//Alternatively, the seed components may be the keywords contained in the file
 		for(File file: testingFiles) {
 			FindComponents findLibraries = new FindLibraries();
 			Set<Component> fileLibraries = findLibraries.findComponents(new CodeFile(file));
+			//
+			FindComponents findKeywords = new FindKeywords();
 			
-			Set<Component> fileNameAsKeywords = fileNameToKeywords.getKeywords(file);
+			Set<Component> fileKeywords = findKeywords.findComponents(new CodeFile(file)); //use as seed the keywords of the file
+//			Set<Component> fileKeywords = fileNameToKeywords.getKeywords(file); //use as seed the terms of the file name
+			
 			Set<String> stopwordsSet = stopwords.getStopwords();
 			
-			for (Iterator<Component> i = fileNameAsKeywords.iterator(); i.hasNext();) {
+			for (Iterator<Component> i = fileKeywords.iterator(); i.hasNext();) {
 			    Component element = i.next();
 			    if (stopwordsSet.contains(element.getName())) {
 			        i.remove();
 			    }
 			}
 			
-			if(existingConnections.putIfAbsent(fileNameAsKeywords, fileLibraries) == null)
+			if(existingConnections.putIfAbsent(fileKeywords, fileLibraries) == null)
 				continue;
 			else
-				existingConnections.get(fileNameAsKeywords).addAll(fileLibraries);
+				existingConnections.get(fileKeywords).addAll(fileLibraries);
 			
 		}
 		
 
 	}
-	
-//	@Override
-//	public ComponentMiner getComponentMiner() {
-//		
-//		return componentMiner;
-//	}
 	
 	@Override
 	public Connections getConnections() {
