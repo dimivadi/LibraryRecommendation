@@ -18,7 +18,7 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 	
 	public static final double TOLERANCE_DEFAULT = 0.000001;
 	
-	public static final double DAMPING_FACTOR_DEFAULT = 0.95d;
+	public static final double DAMPING_FACTOR_DEFAULT = 0.85d;
 	
 	private final Graph<Component, DefaultEdge> graph;
 	
