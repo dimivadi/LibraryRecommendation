@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FindKeywords {
+public class FindKeywords extends FindComponents{
 
 	private ArrayList<String> stopwords = new ArrayList<>();
 	Set<Component> keywords;
@@ -68,29 +68,6 @@ public class FindKeywords {
 	
 	}
 	
-	/*
-	public String[] splitTokenInStrings(String str) {
-		
-		String[] s = str.split("\\W");
-		
-		String[] arr;
-		
-		ArrayList<String> strList = new ArrayList<String>();
-		ArrayList<String> strList2 = new ArrayList<String>();
-		for (String temp : s) {
-			arr = temp.split("(?<=[a-z])(?=[A-Z])");
-			for(String c : arr) {
-				strList.add(c.toLowerCase());
-			}
-			strList2.add(String.join(" ", arr));
-			strList.add(String.join(" ", arr));
-		}
-		
-		strList.add(String.join(" ",strList2.toArray(new String[0])));
-		return (String[]) strList.toArray(new String[0]);	
-		
-	}
-	*/
 	
 	 String[] splitTokenInStrings(String str) {
 		
