@@ -27,7 +27,7 @@ public class Recall implements Evaluate{
 		int sizeOfTestingSet = existingConnections.size();
 		
 		Coverage coverage = new Coverage();
-		coverage.setGraph(componentMiner.getComponentGraph());
+//		coverage.setGraph(componentMiner.getComponentGraph());
 		
 		for(Entry<Set<Component>, Set<Component>> existingConnection : existingConnections.entrySet()) {
 			

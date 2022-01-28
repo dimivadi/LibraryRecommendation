@@ -3,6 +3,7 @@ package evaluation;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.Map.Entry;
 
@@ -42,6 +43,8 @@ public class Metrics{
 		double sumOfAUC = 0;
 		int sizeOfTestingSet = existingConnections.size();
 		
+		Similarity similarity = new Similarity(componentMiner);
+		
 		// 	Coverage
 		Coverage coverage = new Coverage();
 		coverage.setNumberOfCommonLibraries(componentMiner, existingConnections);
@@ -52,8 +55,8 @@ public class Metrics{
 				sizeOfTestingSet--;
 				continue;
 			}
-			Map<Component, Double> rankedComponents = componentMiner.componentMining(existingConnection.getKey());
-			
+//			Map<Component, Double> rankedComponents = componentMiner.componentMining(existingConnection.getKey());
+			Map<Component, Double> rankedComponents = similarity.getLibrarySimilarity(existingConnection.getKey());
 			
 			// AUC
 			x = new double[existingConnection.getValue().size()];
@@ -91,7 +94,7 @@ public class Metrics{
 				if(top10Components.containsKey(existingLibrary)) {
 					count++;
 				}else {
-					rc.getLibraryPosition(existingLibrary);
+//					rc.getLibraryPosition(existingLibrary);
 				}
 			}
 			recall += (double) count / existingConnection.getValue().size();
@@ -107,7 +110,6 @@ public class Metrics{
 			precision += (double) count / (top10Components.size());
 			System.out.println("precision@"+top10Components.size()+": " + (double) count / top10Components.size());
 			
-			f1Score = 2 / ((1/precision) + (1/recall));
 			// HitRate
 			for(Map.Entry<Component, Double> recommendedComp : top3Components.entrySet()) {
 
@@ -115,6 +117,12 @@ public class Metrics{
 					hits++;
 					break;
 				}
+			}
+			try {
+				TimeUnit.SECONDS.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		meanRecall = (double) recall/sizeOfTestingSet;
