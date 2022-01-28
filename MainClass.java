@@ -6,11 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import datatypes.Component;
 import datatypes.Connections;
+import datatypes.Library;
 import evaluation.*;
 import examples.*;
 import miners.ComponentGraph;
@@ -24,24 +27,23 @@ public class MainClass{
 	
 	public static void main(String[] args) throws IOException{
 		
-		final boolean buildNewGraph = false;
+		final boolean buildNewGraph = true;
 		
-//		String training = "training.ser";
 		String testing = "testing.ser";
 		String graph = "graph.ser";
 		
 		Map<Set<Component>, Set<Component>> existingConnections = null;
 		Connections connections = null;
 		
-		//
 		ComponentMiner componentMiner = new RelatedLibraries();
+		
 		
 		if(buildNewGraph) {
 		
 		
 		//get data
-//			EvaluationDataSource evaluationDataSource = new EvaluateFromFiles("jEdit", "test", "java");
-			EvaluationDataSource evaluationDataSource = new EvaluateFromMavenCentral("maven-data2.csv/links_all.csv");
+			EvaluationDataSource evaluationDataSource = new EvaluateFromFiles("jEdit", "test", "java");
+//			EvaluationDataSource evaluationDataSource = new EvaluateFromMavenCentral("maven-data2.csv/links_all.csv");
 			
 			//get connections (part of the data) that will be used as a testing set
 			existingConnections = evaluationDataSource.getExistingConnections();
@@ -134,7 +136,6 @@ public class MainClass{
 //		//keep top-n of the ranked components
 //		RecommendedComponents rc = new RecommendedComponents(rankedComponents);
 //		rankedComponents = rc.getTopComponents(10);
-		
 		
 
 		Metrics metrics = new Metrics(componentMiner, existingConnections);
