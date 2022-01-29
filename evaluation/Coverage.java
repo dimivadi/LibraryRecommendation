@@ -10,27 +10,26 @@ import miners.ComponentMiner;
 import datatypes.Component;
 import datatypes.Library;
 
+/*
+ * Class to calculate the fraction of the libraries in the testing set that are recommended
+ */
+
 public class Coverage {
 	
 	private Set<Component> recommendedComponents = new HashSet<>();
-//	private ComponentGraph componentGraph;
 	private int numberOfCommonLibraries;
+	private HashSet<Component> testingSetLibraries = new HashSet<>();
+	private HashSet<Component> trainingSetLibraries = new HashSet<>();
 	
 	
 	public void addToRecommendedComponents(Map<Component, Double> recommendedComponents) {
 		for(Map.Entry<Component, Double> entry: recommendedComponents.entrySet()) {
-			this.recommendedComponents.add(entry.getKey());
+			if(testingSetLibraries.contains(entry.getKey()))
+				this.recommendedComponents.add(entry.getKey());
 		}
 	}
-	
-//	public void setGraph(ComponentGraph componentGraph) {
-//		this.componentGraph = componentGraph;
-//	}
-//	
+
 	public void setNumberOfCommonLibraries(ComponentMiner componentMiner, Map<Set<Component>, Set<Component>> existingConnections) {
-		
-		HashSet<Component> testingSetLibraries = new HashSet<>();
-		HashSet<Component> trainingSetLibraries = new HashSet<>();
 		
 		for(Map.Entry<Set<Component>, Set<Component>> connection: existingConnections.entrySet()) {
 			testingSetLibraries.addAll(connection.getValue());
@@ -39,9 +38,9 @@ public class Coverage {
 		trainingSetLibraries = componentMiner.getComponentGraph().getGraph().vertexSet().stream()
 																							.filter(x -> x.getClass().equals(Library.class))
 																								.collect(Collectors.toCollection(HashSet::new));
-		
-		trainingSetLibraries.retainAll(testingSetLibraries);
-		numberOfCommonLibraries = trainingSetLibraries.size();
+		Set<Component> commonLibraries = new HashSet<Component>(trainingSetLibraries);
+		commonLibraries.retainAll(testingSetLibraries);
+		numberOfCommonLibraries = commonLibraries.size();
 	}
 	
 	public double getCoverage() {
@@ -53,15 +52,5 @@ public class Coverage {
 	}
 	
 	
-//	public double getCoverage() {
-//		Set<Component> graphVertexSet = this.componentGraph.getGraph().vertexSet();
-//		long numOfLibrariesInGraph = graphVertexSet.stream().filter(e -> e.getClass() == Library.class).count();
-//		
-//		System.out.println("numOfLibrariesInGraph: "+ numOfLibrariesInGraph);
-//		System.out.println("Size of recommendedComponents: "+recommendedComponents.size());
-//		
-//		return (double) recommendedComponents.size() / numOfLibrariesInGraph;
-//		
-//	}
 	
 }
