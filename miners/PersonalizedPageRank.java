@@ -1,6 +1,7 @@
 package miners;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 	private Map<Component, Integer> vertexIndexMap; 
 	Component[] vertexMap; 
 	private ArrayList<int[]> adjList;
-	
+	private double totalScore;
 
 	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, int maxIterations, double tolerance, double dampingFactor, Set<Component> seedComponents)	{
 				
@@ -89,8 +90,8 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 		
 		for(Component c : graph.vertexSet()) {
 			curScore[l] = initScore;
-//			outDegree[l] = graph.outDegreeOf(c);
-			outDegree[l] = graph.outDegreeOf(c) + 1;
+			outDegree[l] = graph.outDegreeOf(c);
+//			outDegree[l] = graph.outDegreeOf(c) + 1;													//renormalization
 			vertexIndexMap.put(c, l);
 			vertexMap[l] = c;
 			if(seedComponents.size() > 0) {
@@ -115,34 +116,35 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 		}
 		
 		int iterations = maxIterations;
-//		double maxChange = tolerance;
 		double change = tolerance;
 		
 		
 		while(iterations > 0 && change >= tolerance) {
 //			long start = System.nanoTime();
 //			maxChange = 0;
-			
+			totalScore = 0;
 			for(int i=0; i<totalVertices; i++) { 
 				double contribution = 0d;
 
 				for(int j : adjList.get(i)) {
-					contribution += curScore[j] / outDegree[j];
-//					contribution += curScore[j] / Math.sqrt(outDegree[j] * outDegree[i]);
+//					contribution += curScore[j] / outDegree[j];												//original
+					contribution += curScore[j] / Math.sqrt(outDegree[j] * outDegree[i]);					//symmetric normalization
 				}
-				contribution += curScore[i] / outDegree[i];
+//				contribution += curScore[i] / outDegree[i];													//renormalization
 				double newValue = dampingFactor * contribution + (1d - dampingFactor) * seedVector[i]; 
 				
-//				maxChange = Math.max(maxChange, Math.abs(newValue - curScore[i]));
+//				maxChange = Math.max(maxChange, Math.abs(newValue - curScore[i]));							//L inf
 				nextScore[i] = newValue;
-								
+				totalScore += newValue;
 			}
-			change = euclideanDistance(nextScore, curScore)/Math.sqrt(totalVertices);
-//			change = euclideanDistance(nextScore, curScore);
-//			change = l1Norm(nextScore, curScore);
+			System.out.println("totalScore: "+totalScore);
+			change = euclideanDistance(nextScore, curScore)/Math.sqrt(totalVertices);						//L2 normalized
+//			change = euclideanDistance(nextScore, curScore);												//L2
+//			change = l1Norm(nextScore, curScore);															//L1
 			
 			double[] temp = curScore;
 			curScore = nextScore;
+//			curScore = Arrays.stream(curScore).map(i -> i / totalScore).toArray();							//symmetric normalization
 			nextScore = temp;
 			
 			iterations--;

@@ -60,16 +60,16 @@ public class RelatedLibraries implements ComponentMiner{
 		Map<Component, Double> libScores = keepLibraryScores(scores);
 		
 		
-//		return libScores;
+		return libScores;																						//original
 		
-		Map<Component, Double> libScoresUsingConductance = new HashMap<>();;
-		
-		for(Map.Entry<Component, Double> entry: libScores.entrySet()) { 
-			double newScore = entry.getValue() / globalLibraryScores.get(entry.getKey());
-			libScoresUsingConductance.put(entry.getKey(), newScore);
-		}
-			
-		return libScoresUsingConductance;
+//		Map<Component, Double> libScoresUsingConductance = new HashMap<>();										//sweep ratio							
+//		
+//		for(Map.Entry<Component, Double> entry: libScores.entrySet()) { 
+//			double newScore = entry.getValue() / globalLibraryScores.get(entry.getKey());
+//			libScoresUsingConductance.put(entry.getKey(), newScore);
+//		}
+//			
+//		return libScoresUsingConductance;
 	}
 	
 	private Map<Component, Double> getGlobalScores(){
