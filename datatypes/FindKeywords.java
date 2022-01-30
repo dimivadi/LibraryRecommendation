@@ -30,33 +30,31 @@ public class FindKeywords extends FindComponents{
 	public Set<Component> findComponents(CodeFile codefile) throws FileNotFoundException{
 		
 		keywords = new HashSet<Component>();
-		Pattern wordPattern = Pattern.compile("\\w{3,}([\\S]+\\w{3,})*");
-		Matcher m = wordPattern.matcher(" ");
+//		Pattern wordPattern = Pattern.compile("\\w{3,}([\\S]+\\w{3,})*");
+		Pattern wordPattern = Pattern.compile("[a-zA-Z0-9]{3,}");
+		Matcher matcher = wordPattern.matcher(" ");
 		Scanner in = new Scanner(codefile.getFile());
 		String line;
 		
 
 		while(in.hasNextLine()) {
 			line = in.nextLine();
-			if(line.matches("\\s*import\\s+.*"))
+			if(line.matches("^\\s*import\\s+.*"))
 					continue;
 			
-			m.reset(line);
-			while(m.find()) {
-				String token = m.group();
-		
+			matcher.reset(line);
+			while(matcher.find()) {
+				String token = matcher.group();
+			
 				String[] parts = splitTokenInStrings(token);
 				
 				for(String part : parts) {
-					if(part.length() < 3)
+					//skip if string is a number
+					if(part.matches("^[0-9]+$") || part.matches("0x[0-9]+$"))
 						continue;
 					if(!stopwords.contains(part)) {
 						Keyword newKeyword = new Keyword(part);
-						
-						if(!keywords.contains(newKeyword)) {
-							keywords.add(newKeyword);
-							//System.out.println("Keyword: " + newKeyword.getName());
-						}
+						keywords.add(newKeyword);
 					}
 				}
 			}
@@ -68,21 +66,34 @@ public class FindKeywords extends FindComponents{
 	
 	}
 	
-	
-	 String[] splitTokenInStrings(String str) {
+	private String[] splitTokenInStrings(String str) {
 		
-		//split words using as delimiter non word characters and camel case syntax
-		String[] s1 = str.split("\\W");
+		//split words written in camel case syntax
 		ArrayList<String> strList = new ArrayList<String>();
 		String[] words;
-		for(String s2 : s1) {
-			words = s2.split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
-			for(String word: words) {
-				strList.add(word.toLowerCase());
-			}
+		
+		words = str.split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
+		for(String word: words) {
+			strList.add(word.toLowerCase());
 		}
+		
 		return (String[]) strList.toArray(new String[0]);
 		
 	}
+//	 private String[] splitTokenInStrings(String str) {
+//		
+//		//split words using as delimiter non word characters and camel case syntax
+//		String[] s1 = str.split("[^a-zA-Z0-9]");
+//		ArrayList<String> strList = new ArrayList<String>();
+//		String[] words;
+//		for(String s2 : s1) {
+//			words = s2.split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
+//			for(String word: words) {
+//				strList.add(word.toLowerCase());
+//			}
+//		}
+//		return (String[]) strList.toArray(new String[0]);
+//		
+//	}
 	
 }

@@ -104,21 +104,21 @@ public class Stopwords {
 	}
 	
 	
-	//get tokens from file using as delimiter whitespaces
 	String[] tokensFromFile(File file) throws FileNotFoundException{
 		List<String> tokens = new ArrayList<>();
 		
-		Pattern wordPattern = Pattern.compile("\\w{3,}([\\S]+\\w{3,})*");
-		Matcher m = wordPattern.matcher(" ");
+//		Pattern wordPattern = Pattern.compile("\\w{3,}([\\S]+\\w{3,})*");
+		Pattern wordPattern = Pattern.compile("[a-zA-Z0-9]{3,}");
+		Matcher matcher = wordPattern.matcher(" ");
 		Scanner in = new Scanner(file);
 		String line;
 		
 		while(in.hasNextLine()) {
 			line = in.nextLine();
-			m.reset(line);
+			matcher.reset(line);
 			
-			while(m.find()) {
-				tokens.add(m.group());
+			while(matcher.find()) {
+				tokens.add(matcher.group());
 				
 			}
 		}
@@ -126,21 +126,33 @@ public class Stopwords {
 		return (String[]) tokens.toArray(new String[0]);
 	}
 	
-	
-	//split tokens using as delimiter non word characters and camel case syntax
 	List<String> splitToken(String str) {
 		
-		String[] s1 = str.split("\\W");
 		ArrayList<String> strList = new ArrayList<String>();
 		String[] words;
-		for(String s2 : s1) {
-			words = s2.split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
-			for(String word: words) {
-				strList.add(word.toLowerCase());
-			}
+		
+		words = str.split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
+		for(String word: words) {
+			strList.add(word.toLowerCase());
 		}
+		
 		return strList;
 	}
+	
+	//split tokens using as delimiter non word characters and camel case syntax
+//	List<String> splitToken(String str) {
+//		
+//		String[] s1 = str.split("\\W");
+//		ArrayList<String> strList = new ArrayList<String>();
+//		String[] words;
+//		for(String s2 : s1) {
+//			words = s2.split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
+//			for(String word: words) {
+//				strList.add(word.toLowerCase());
+//			}
+//		}
+//		return strList;
+//	}
 	
 	
 }
