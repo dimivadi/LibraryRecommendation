@@ -44,12 +44,11 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 		
 		Pattern libraryPattern = Pattern.compile(".+:"); 
 		Matcher libraryMatcher = libraryPattern.matcher(" ");
-		Pattern dependencyPattern = Pattern.compile("(?<=\"\")(.*)(?=:)");
+		Pattern dependencyPattern = Pattern.compile("(?<=\")(.*)(?=:)");
 		Matcher dependencyMatcher = dependencyPattern.matcher("");
 
 		while((line = br.readLine()) != null) {
 			
-			System.out.println("line: "+line);
 			libraryMatcher.reset(line.split(",")[0]);
 			libraryMatcher.find();
 			library = libraryMatcher.group();
@@ -63,8 +62,9 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 				for(Iterator<String> i = libraryTermsSet.iterator(); i.hasNext();) {
 					String element = i.next();
 					if(stopwords.contains(element) 
-							|| element.length() < 2 ){
-							//|| !Pattern.matches("[a-zA-Z]", element)) { 
+							|| element.length() < 2 
+//								|| element.matches("^[0-9]+$")
+										||!element.matches("[a-zA-Z]+")){
 						i.remove();
 					}
 				}
@@ -77,7 +77,6 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 			}
 			
 			String dependency = line.split(",(?=\")")[1];
-			System.out.println("split dependency: "+dependency);
 			dependencyMatcher.reset(dependency);
 			dependencyMatcher.find();
 			dependency = dependencyMatcher.group();
@@ -133,7 +132,7 @@ public class EvaluateFromMavenCentral implements EvaluationDataSource{
 				continue;	
 			numOfLibs++;
 			currentLibrary = library;
-			terms = library.split("\\W");
+			terms = library.split("[^a-zA-Z0-9]");
 			Set<String> termsSet = new HashSet<>(Arrays.asList(terms));
 			for(String term: termsSet) {
 				termsFreq.put(term, termsFreq.getOrDefault(term, 0) + 1);
