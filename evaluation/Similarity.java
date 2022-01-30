@@ -27,15 +27,12 @@ public class Similarity {
 	
 	public Map<Component, Double> getLibrarySimilarity(Set<Component> input) {
 		Map<String, Integer> inputMap = new HashMap<>();
-		System.out.println("input: "+input);
 		for(Component component: input) {
 			inputMap.put(component.toString().toLowerCase(), 1);
 		}
 		Map<Component, Double> librarySimilarity = new HashMap<>();
 		for(Map.Entry<Component, Map<String, Integer>> entry: componentsMap.entrySet()) {
-			System.out.println("Component: "+entry.getKey());
 			double value = cosineSimilarity(inputMap, entry.getValue());
-			System.out.println("value: "+value);
 			librarySimilarity.put(entry.getKey(), value);
 		}
 		return librarySimilarity;

@@ -3,7 +3,6 @@ package evaluation;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.Map.Entry;
 
@@ -55,8 +54,8 @@ public class Metrics{
 				sizeOfTestingSet--;
 				continue;
 			}
-//			Map<Component, Double> rankedComponents = componentMiner.componentMining(existingConnection.getKey());
-			Map<Component, Double> rankedComponents = similarity.getLibrarySimilarity(existingConnection.getKey());
+			Map<Component, Double> rankedComponents = componentMiner.componentMining(existingConnection.getKey());
+//			Map<Component, Double> rankedComponents = similarity.getLibrarySimilarity(existingConnection.getKey());
 			
 			// AUC
 			x = new double[existingConnection.getValue().size()];
@@ -118,12 +117,7 @@ public class Metrics{
 					break;
 				}
 			}
-			try {
-				TimeUnit.SECONDS.sleep(10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
 		}
 		meanRecall = (double) recall/sizeOfTestingSet;
 		meanPrecision = (double) precision/sizeOfTestingSet;
