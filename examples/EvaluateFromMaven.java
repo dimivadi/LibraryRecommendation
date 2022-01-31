@@ -33,8 +33,8 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 	private Connections connections = new Connections();
 	private Map<Set<Component>, Set<Component>> existingConnections = new HashMap<>();
 	private Set<String> stopwords = new HashSet<>();
-	private static final boolean UPDATE_STOPWORDS = true;
-	private String stopwordsSerialized = "stopwords.ser";
+//	private static final boolean UPDATE_STOPWORDS = true;
+//	private String stopwordsSerialized = "stopwords.ser";
 	
 	
 	public EvaluateFromMaven(String filePath) throws IOException {
@@ -43,32 +43,34 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 		String[] libraryTerms;
 		Random rand = new Random();
 		
-		if(UPDATE_STOPWORDS) {
-			updateStopwords(filePath);
-			FileOutputStream file = new FileOutputStream(stopwordsSerialized);
-			ObjectOutputStream out = new ObjectOutputStream(file);
-			
-			out.writeObject(stopwords);
-			
-			out.close();
-			file.close();
-			System.out.println("stopwords");
-		}else {
-			FileInputStream file = new FileInputStream(stopwordsSerialized);
-			InputStream is = new BufferedInputStream(file);
-			ObjectInputStream in = new ObjectInputStream(file);
-			
-			try {
-				stopwords = (Set<String>) in.readObject();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			in.close();
-			file.close();
-		}
+		updateStopwords(filePath);
+		
+//		if(UPDATE_STOPWORDS) {
+//			updateStopwords(filePath);
+//			FileOutputStream file = new FileOutputStream(stopwordsSerialized);
+//			ObjectOutputStream out = new ObjectOutputStream(file);
+//			
+//			out.writeObject(stopwords);
+//			
+//			out.close();
+//			file.close();
+//			System.out.println("stopwords");
+//		}else {
+//			FileInputStream file = new FileInputStream(stopwordsSerialized);
+//			InputStream is = new BufferedInputStream(file);
+//			ObjectInputStream in = new ObjectInputStream(file);
+//			
+//			try {
+//				stopwords = (Set<String>) in.readObject();
+//			} catch (ClassNotFoundException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//			
+//			in.close();
+//			file.close();
+//		}
 		
 
 		
@@ -94,27 +96,16 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 			libraryDependencies.putIfAbsent(terms[0], new HashSet<String>());
 			libraryDependencies.get(terms[0]).add(terms[1]);
 		}
-		System.out.println("libraryDependencies");
+
 		br.close();
 		
-//		Set<String> librariesEligibleForTesting = new HashSet<>();
-//		for(Map.Entry<String, Set<String>> entry: libraryDependencies.entrySet()) {
-//			if(entry.getValue().size() >= 10) {
-//				librariesEligibleForTesting.add(entry.getKey());
-//			}
-//		}
 		
 		
 		for(Map.Entry<String, Set<String>> entry: libraryDependencies.entrySet()) {
 			
-//			if(entry.getValue().size() >= 10 && ((rand.nextInt(1000) < 1))
-			boolean usedForTestingSet = (entry.getValue().size() >= 10 && ((rand.nextInt(1000) < 1)));
-//			if(librariesEligibleForTesting.contains(entry.getKey())){
-//				usedForTestingSet = (rand.nextInt(1000) < 1);
-//			}else {
-//				usedForTestingSet = false;
-//			}
-			
+
+			boolean usedForTestingSet = (entry.getValue().size() >= 10 && ((rand.nextInt(100) < 1)));
+
 			String library = entry.getKey();
 			libraryTerms = library.split("[^a-zA-Z0-9]");
 			Set<String> libraryTermsSet = new HashSet<>(Arrays.asList(libraryTerms));
