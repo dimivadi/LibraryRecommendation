@@ -39,26 +39,9 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 	
 	public EvaluateFromMaven(String filePath) throws IOException {
 		
-//		Set<Component> libraryTermsAsKeywords = new HashSet<>();
-//		Set<Component> dependencies = new HashSet<>(); //store every dependency for the current library		
-//		String line;
-//		String library;
+
 		String[] libraryTerms;
 		Random rand = new Random();
-		boolean usedForTestingSet = false; //true if that line is used for the testing set. Is set by a random number generator
-//		String currentLibrary = "";
-		
-//		BufferedReader br = new BufferedReader(new FileReader(filePath));
-//		br.readLine();
-//		
-//		Pattern libraryPattern = Pattern.compile(".+:"); 
-//		Matcher libraryMatcher = libraryPattern.matcher(" ");
-//		Pattern dependencyPattern = Pattern.compile("(?<=\")(.*)(?=:)");
-//		Matcher dependencyMatcher = dependencyPattern.matcher("");
-		Pattern libraryPattern = Pattern.compile(".*(?=:)");
-		Matcher libraryMatcher = libraryPattern.matcher("");
-		
-//		updateStopwords(filePath);
 		
 		if(UPDATE_STOPWORDS) {
 			updateStopwords(filePath);
@@ -69,6 +52,7 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 			
 			out.close();
 			file.close();
+			System.out.println("stopwords");
 		}else {
 			FileInputStream file = new FileInputStream(stopwordsSerialized);
 			InputStream is = new BufferedInputStream(file);
@@ -86,21 +70,19 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 			file.close();
 		}
 		
-	
-		
 
-		
-		
 		
 		File file = new File(filePath);
 		Map<String, Set<String>> libraryDependencies = new HashMap<>();
+		Pattern libraryPattern = Pattern.compile(".*(?=:)");
+		Matcher libraryMatcher = libraryPattern.matcher("");
 		
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		
 		String line;
 		br.readLine();
 		while((line = br.readLine()) != null) {
-			String[] terms = Arrays.copyOfRange(line.split(","), 0, 2);
+			String[] terms = Arrays.copyOfRange(line.split(",(?=\\\")"), 0, 2);
 			
 			for(int i = 0; i < terms.length; i++) {
 				terms[i] = terms[i].replaceAll("^\"+|\"+$", "");
@@ -116,24 +98,26 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 				libraryDependencies.get(terms[0]).add(terms[1]);
 			}		
 		}
-
+		System.out.println("libraryDependencies");
 		br.close();
 		
-		Set<String> librariesEligibleForTesting = new HashSet<>();
-		for(Map.Entry<String, Set<String>> entry: libraryDependencies.entrySet()) {
-			if(entry.getValue().size() >= 10) {
-				librariesEligibleForTesting.add(entry.getKey());
-			}
-		}
+//		Set<String> librariesEligibleForTesting = new HashSet<>();
+//		for(Map.Entry<String, Set<String>> entry: libraryDependencies.entrySet()) {
+//			if(entry.getValue().size() >= 10) {
+//				librariesEligibleForTesting.add(entry.getKey());
+//			}
+//		}
 		
 		
 		for(Map.Entry<String, Set<String>> entry: libraryDependencies.entrySet()) {
 			
-			if(librariesEligibleForTesting.contains(entry.getKey())){
-				usedForTestingSet = (rand.nextInt(1000) < 1);
-			}else {
-				usedForTestingSet = false;
-			}
+//			if(entry.getValue().size() >= 10 && ((rand.nextInt(1000) < 1))
+			boolean usedForTestingSet = (entry.getValue().size() >= 10 && ((rand.nextInt(1000) < 1)));
+//			if(librariesEligibleForTesting.contains(entry.getKey())){
+//				usedForTestingSet = (rand.nextInt(1000) < 1);
+//			}else {
+//				usedForTestingSet = false;
+//			}
 			
 			String library = entry.getKey();
 			libraryTerms = library.split("[^a-zA-Z0-9]");
@@ -142,8 +126,7 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 				String element = i.next();
 				if(stopwords.contains(element) 
 						|| element.length() < 2 
-//							|| element.matches("^[0-9]+$")
-									||!element.matches("[a-zA-Z]+")){
+								||!element.matches("[a-zA-Z]+")){
 					i.remove();
 				}
 			}
@@ -177,79 +160,6 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 				}
 			}
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-//		
-//		
-//		
-//		while((line = br.readLine()) != null) {
-//			
-//			libraryMatcher.reset(line.split(",")[0]);
-//			libraryMatcher.find();
-//			library = libraryMatcher.group();
-//			if(!library.equals(currentLibrary)) {
-//				usedForTestingSet = (rand.nextInt(10000) < 1);
-//				dependencies = new HashSet<Component>();
-//				
-//				currentLibrary = library;
-//				libraryTerms = library.split("[^a-zA-Z0-9]");
-//				Set<String> libraryTermsSet = new HashSet<>(Arrays.asList(libraryTerms));
-//				for(Iterator<String> i = libraryTermsSet.iterator(); i.hasNext();) {
-//					String element = i.next();
-//					if(stopwords.contains(element) 
-//							|| element.length() < 2 
-////								|| element.matches("^[0-9]+$")
-//										||!element.matches("[a-zA-Z]+")){
-//						i.remove();
-//					}
-//				}
-//				libraryTermsAsKeywords = new HashSet<>();
-//				for(String s: libraryTermsSet) {
-//					libraryTermsAsKeywords.add(new Keyword(s));
-//				}
-//				
-//
-//			}
-//			
-//			String dependency = line.split(",(?=\")")[1];
-//			dependencyMatcher.reset(dependency);
-//			dependencyMatcher.find();
-//			dependency = dependencyMatcher.group();
-//
-//			Library dependencyAsComponent = new Library(dependency);
-//			
-//			if(usedForTestingSet) {
-//				Set<Component> value = new HashSet<Component>();
-//				if(existingConnections.get(libraryTermsAsKeywords) == null) {
-//					value.add(dependencyAsComponent);
-//					existingConnections.put(libraryTermsAsKeywords, value);
-//				}else {
-//					existingConnections.get(libraryTermsAsKeywords).add(dependencyAsComponent);
-//				}
-//						
-//					
-//				
-//			}else {
-//				for(Component d: dependencies) {
-//					connections.addConnection(d, dependencyAsComponent);
-//				}
-//				dependencies.add(dependencyAsComponent);
-//				for(Component k: libraryTermsAsKeywords) {
-//					connections.addConnection(k, dependencyAsComponent);
-//				}
-//			}
-//		}
-//		br.close();
 	}
 	
 	
@@ -294,13 +204,7 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 			}
 		}
 	}
-	
-//	@Override
-//	public ComponentMiner getComponentMiner() {
-//		
-//		ComponentMiner componentMiner = new RelatedLibraries(connections);
-//		return componentMiner;
-//	}
+
 	
 	@Override
 	public Connections getConnections() {
