@@ -86,10 +86,6 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 			
 			for(int i = 0; i < 2; i++) {
 				terms[i] = terms[i].replaceAll("^\"+|\"+$", "");
-//				int lastIndex = terms[i].lastIndexOf(":");
-//				if(lastIndex == -1)
-//					lastIndex = terms[i].length();
-//				terms[i] = terms[i].substring(0, lastIndex);
 				libraryMatcher.reset(terms[i]);
 				libraryMatcher.find();
 				terms[i] = libraryMatcher.group();
