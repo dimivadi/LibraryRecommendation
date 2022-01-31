@@ -82,9 +82,9 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 		String line;
 		br.readLine();
 		while((line = br.readLine()) != null) {
-			String[] terms = Arrays.copyOfRange(line.split(",(?=\\\")"), 0, 2);
+			String[] terms = Arrays.copyOfRange(line.split(",(?=\")"), 0, 2);
 			
-			for(int i = 0; i < terms.length; i++) {
+			for(int i = 0; i < 2; i++) {
 				terms[i] = terms[i].replaceAll("^\"+|\"+$", "");
 //				int lastIndex = terms[i].lastIndexOf(":");
 //				if(lastIndex == -1)
@@ -94,9 +94,9 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 				libraryMatcher.find();
 				terms[i] = libraryMatcher.group();
 				
-				libraryDependencies.putIfAbsent(terms[0], new HashSet<String>());
-				libraryDependencies.get(terms[0]).add(terms[1]);
-			}		
+			}	
+			libraryDependencies.putIfAbsent(terms[0], new HashSet<String>());
+			libraryDependencies.get(terms[0]).add(terms[1]);
 		}
 		System.out.println("libraryDependencies");
 		br.close();
