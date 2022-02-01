@@ -1,11 +1,19 @@
 
 import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +35,7 @@ public class MainClass{
 	
 	public static void main(String[] args) throws IOException{
 		
-		final boolean buildNewGraph = true;
+		final boolean buildNewGraph = false;
 		
 		String testing = "testing.ser";
 		String graph = "graph.ser";
@@ -42,8 +50,9 @@ public class MainClass{
 		
 		
 		//get data
-			EvaluationDataSource evaluationDataSource = new EvaluateFromFiles("jEdit", "test", "java");
+//			EvaluationDataSource evaluationDataSource = new EvaluateFromFiles("jEdit", "test", "java");
 //			EvaluationDataSource evaluationDataSource = new EvaluateFromMavenCentral("maven-data2.csv/links_all.csv");
+			EvaluationDataSource evaluationDataSource = new EvaluateFromMaven("maven-data2.csv/links_all.csv");
 			
 			//get connections (part of the data) that will be used as a testing set
 			existingConnections = evaluationDataSource.getExistingConnections();
@@ -138,8 +147,27 @@ public class MainClass{
 //		rankedComponents = rc.getTopComponents(10);
 		
 
-		Metrics metrics = new Metrics(componentMiner, existingConnections);
-		metrics.run();
+//		Metrics metrics = new Metrics(componentMiner, existingConnections);
+//		metrics.run();
+		
+		Date date = new Date() ;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss") ;
+		File file = new File(dateFormat.format(date) + ".txt") ;
+		FileWriter fileWriter = new FileWriter(file);
+		
+		double[] dampingFactor = {0.85, 0.9, 0.95};
+		boolean[] sweepRatio = {false, true};
+		String[] normalization = {"original", "symmetricNorm", "renorm", "symmetricNormRenorm"};
+		
+		for(double a: dampingFactor) {
+			for(boolean s: sweepRatio) {
+				for(String n: normalization) {
+					Metrics metrics = new Metrics(componentMiner, existingConnections, s, a, n, fileWriter);
+					metrics.run();
+				}
+			}
+		}
+		fileWriter.close();
 	}
 }
 
