@@ -19,7 +19,9 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 	
 	public static final double TOLERANCE_DEFAULT = 0.000001;
 	
-	public static final double DAMPING_FACTOR_DEFAULT = 0.85d;
+	public static final double DAMPING_FACTOR_DEFAULT = 0.95d;
+	
+	public static final String NORMALIZATION_DEFAULT = "original";
 	
 	private final Graph<Component, DefaultEdge> graph;
 	
@@ -38,27 +40,62 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 	Component[] vertexMap; 
 	private ArrayList<int[]> adjList;
 	private double totalScore;
+	private String normalization;
 
-	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, int maxIterations, double tolerance, double dampingFactor, Set<Component> seedComponents)	{
+	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, int maxIterations, double tolerance, double dampingFactor, Set<Component> seedComponents, String normalization)	{
 				
 		this.graph = graph;
 		this.tolerance = tolerance;
 		this.dampingFactor = dampingFactor;
 		this.maxIterations = maxIterations;
 		this.seedComponents = seedComponents;
+		this.normalization = normalization;
 
 	}
+	
+//	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, int maxIterations, double tolerance, double dampingFactor, Set<Component> seedComponents)	{
+//		
+//		this.graph = graph;
+//		this.tolerance = tolerance;
+//		this.dampingFactor = dampingFactor;
+//		this.maxIterations = maxIterations;
+//		this.seedComponents = seedComponents;
+//		
+//
+//	}
 	
 
 	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, Set<Component> seedComponents){	
 		
-		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT, seedComponents);
+		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT, seedComponents, NORMALIZATION_DEFAULT);
 	}
 	
 	PersonalizedPageRank(Graph<Component, DefaultEdge> graph){
-		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT, new HashSet<Component>());
+		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT, new HashSet<Component>(), NORMALIZATION_DEFAULT);
 	}
 	
+//	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, double dampingFactor, Set<Component> seedComponents){	
+//		
+//		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, dampingFactor, seedComponents, NORMALIZATION_DEFAULT);
+//	}
+	
+	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, double dampingFactor, Set<Component> seedComponents, String normalization){	
+		
+		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, dampingFactor, seedComponents, normalization);
+	}
+	
+	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, double dampingFactor, String normalization){
+		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, dampingFactor, new HashSet<Component>(), normalization);
+	}
+	
+//	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, Set<Component> seedComponents){	
+//		
+//		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT, seedComponents);
+//	}
+//	
+//	PersonalizedPageRank(Graph<Component, DefaultEdge> graph){
+//		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT, new HashSet<Component>());
+//	}
 	
 	public Map<Component, Double> getScores(){
 		if(scores == null) {
@@ -90,8 +127,13 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 		
 		for(Component c : graph.vertexSet()) {
 			curScore[l] = initScore;
-			outDegree[l] = graph.outDegreeOf(c);
-//			outDegree[l] = graph.outDegreeOf(c) + 1;													//renormalization
+			if(normalization == "renorm" || normalization == "symmetricNormRenorm") {
+				outDegree[l] = graph.outDegreeOf(c) + 1;  		//renormalization
+			}else {
+				outDegree[l] = graph.outDegreeOf(c);			//original
+			}
+																	
+																
 			vertexIndexMap.put(c, l);
 			vertexMap[l] = c;
 			if(seedComponents.size() > 0) {
@@ -127,17 +169,25 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 				double contribution = 0d;
 
 				for(int j : adjList.get(i)) {
-//					contribution += curScore[j] / outDegree[j];												//original
-					contribution += curScore[j] / Math.sqrt(outDegree[j] * outDegree[i]);					//symmetric normalization
+					if(normalization == "symmetricNorm" || normalization == "symmetricNormRenorm") {
+						contribution += curScore[j] / Math.sqrt(outDegree[j] * outDegree[i]);				//symmetric normalization
+					}else {
+						contribution += curScore[j] / outDegree[j];											//original
+					}
+																
+										
 				}
-//				contribution += curScore[i] / outDegree[i];													//renormalization
+				if(normalization == "renorm" || normalization == "symmetricNormRenorm") {
+					contribution += curScore[i] / outDegree[i];												//renormalization
+				}
+																
 				double newValue = dampingFactor * contribution + (1d - dampingFactor) * seedVector[i]; 
 				
 //				maxChange = Math.max(maxChange, Math.abs(newValue - curScore[i]));							//L inf
 				nextScore[i] = newValue;
 				totalScore += newValue;
 			}
-			System.out.println("totalScore: "+totalScore);
+//			System.out.println("totalScore: "+totalScore);
 			change = euclideanDistance(nextScore, curScore)/Math.sqrt(totalVertices);						//L2 normalized
 //			change = euclideanDistance(nextScore, curScore);												//L2
 //			change = l1Norm(nextScore, curScore);															//L1
@@ -155,7 +205,7 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 		}
 		if(iterations<=0)
 			System.out.println("failed to converge in "+maxIterations+ " iterations");
-		System.out.println("Iterations: "+(maxIterations-iterations));
+//		System.out.println("Iterations: "+(maxIterations-iterations));
 	
 	}
 	
