@@ -26,6 +26,7 @@ import datatypes.Component;
 import datatypes.Connections;
 import datatypes.Keyword;
 import datatypes.Library;
+import datatypes.Project;
 import evaluation.EvaluationDataSource;
 
 public class EvaluateFromMaven implements EvaluationDataSource{
@@ -33,47 +34,17 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 	private Connections connections = new Connections();
 	private Map<Set<Component>, Set<Component>> existingConnections = new HashMap<>();
 	private Set<String> stopwords = new HashSet<>();
-//	private static final boolean UPDATE_STOPWORDS = true;
-//	private String stopwordsSerialized = "stopwords.ser";
-	
+	private static final boolean LINKS_BETWEEN_DEPENDENCIES = true;
+	private static final boolean LINKS_BETWEEN_DEPENDENCIES_AND_LIBRARY = true;
 	
 	public EvaluateFromMaven(String filePath) throws IOException {
 		
-
 		String[] libraryTerms;
 		Random rand = new Random();
 		
 		updateStopwords(filePath);
 		
-//		if(UPDATE_STOPWORDS) {
-//			updateStopwords(filePath);
-//			FileOutputStream file = new FileOutputStream(stopwordsSerialized);
-//			ObjectOutputStream out = new ObjectOutputStream(file);
-//			
-//			out.writeObject(stopwords);
-//			
-//			out.close();
-//			file.close();
-//			System.out.println("stopwords");
-//		}else {
-//			FileInputStream file = new FileInputStream(stopwordsSerialized);
-//			InputStream is = new BufferedInputStream(file);
-//			ObjectInputStream in = new ObjectInputStream(file);
-//			
-//			try {
-//				stopwords = (Set<String>) in.readObject();
-//			} catch (ClassNotFoundException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//			
-//			in.close();
-//			file.close();
-//		}
-		
-
-		
+		//read csv file and store contents in libraryDependencies map
 		File file = new File(filePath);
 		Map<String, Set<String>> libraryDependencies = new HashMap<>();
 		Pattern libraryPattern = Pattern.compile(".*(?=:)");
@@ -100,12 +71,10 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 		br.close();
 		
 		
-		
+		//for every library
 		for(Map.Entry<String, Set<String>> entry: libraryDependencies.entrySet()) {
 			
-
-			boolean usedForTestingSet = (entry.getValue().size() >= 10 && ((rand.nextInt(100) < 1)));
-
+			//split library name into terms
 			String library = entry.getKey();
 			libraryTerms = library.split("[^a-zA-Z0-9]");
 			Set<String> libraryTermsSet = new HashSet<>(Arrays.asList(libraryTerms));
@@ -117,33 +86,39 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 					i.remove();
 				}
 			}
+			//store terms as Keyword components
 			Set<Component> libraryTermsAsKeywords = new HashSet<>();
-			for(String s: libraryTermsSet) {
-				libraryTermsAsKeywords.add(new Keyword(s));
-			}
+			libraryTermsSet.forEach(term -> libraryTermsAsKeywords.add(new Keyword(term)));
+			
+			//store dependencies of library in a set as Library components
 			Set<Component> dependencyAsComponentSet = new HashSet<>();
-			for(String dependency: entry.getValue()) {
-				dependencyAsComponentSet.add(new Library(dependency));
-			}
+			entry.getValue().forEach(dependency -> dependencyAsComponentSet.add(new Library(dependency)));
+			
+			//only libraries with at least 10 dependencies are used for testing (a percentage of the libraries that qualify is used)
+			boolean usedForTestingSet = (entry.getValue().size() >= 10 && ((rand.nextInt(100) < 1)));
 			if(usedForTestingSet) {
-				existingConnections.put(libraryTermsAsKeywords, new HashSet<Component>());
-
-				for(Component dependencyComponent: dependencyAsComponentSet) {
-					existingConnections.get(libraryTermsAsKeywords).add(dependencyComponent);
-				}
+				existingConnections.put(libraryTermsAsKeywords, dependencyAsComponentSet);
 			}else {
-				for(Component keyword: libraryTermsAsKeywords) {
-					for(Component dependency: dependencyAsComponentSet) {
+				//create links between keywords and dependencies
+				for(Component keyword: libraryTermsAsKeywords) 
+					for(Component dependency: dependencyAsComponentSet) 
 						connections.addConnection(keyword, dependency);
-					}
-				}
-				List<Component> dependencyList = new ArrayList<>(dependencyAsComponentSet);
-				int size = dependencyList.size();
 				
-				for(int i = 0; i < size-1; i++) {
-					for(int j = i + 1; j < size; j++) {
-						connections.addConnection(dependencyList.get(i), dependencyList.get(j));
-					}
+				//create links between dependencies
+				if(LINKS_BETWEEN_DEPENDENCIES) {
+					// create links between the dependencies of a library
+					List<Component> dependencyList = new ArrayList<>(dependencyAsComponentSet);
+					int size = dependencyList.size();
+					for(int i = 0; i < size-1; i++) 
+						for(int j = i + 1; j < size; j++) 
+							connections.addConnection(dependencyList.get(i), dependencyList.get(j));
+				}
+				
+				//create links between library (as a Project component) and its dependencies
+				if(LINKS_BETWEEN_DEPENDENCIES_AND_LIBRARY) {
+					//create links between the library (as a Project component) and the dependencies of the library
+					Project libraryAsProject = new Project(entry.getKey());
+					dependencyAsComponentSet.forEach(dependency -> connections.addConnection(dependency, libraryAsProject));				
 				}
 			}
 		}
@@ -184,10 +159,9 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 		br.close();
 	
 		for(Map.Entry<String, Integer> term: termsFreq.entrySet()) {
-			if(((float)term.getValue() / numOfLibs) > 0.1) {
-				if(!stopwords.contains(term.getKey())) {
-					stopwords.add(term.getKey());
-					}		
+			if(((double)term.getValue() / numOfLibs) > 0.1) {
+				stopwords.add(term.getKey());
+							
 			}
 		}
 	}

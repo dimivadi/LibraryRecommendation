@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import datatypes.CodeFile;
 import datatypes.Component;
@@ -20,6 +22,7 @@ import datatypes.FindLibraries;
 import datatypes.FindLibrariesAndKeywords;
 import datatypes.Keyword;
 import datatypes.Library;
+import datatypes.Project;
 import datatypes.Stopwords;
 import miners.ComponentMiner;
 import miners.RelatedLibraries;
@@ -35,22 +38,21 @@ import evaluation.EvaluationDataSource;
  * 
  * trainingSet: path of the training set as string
  * testingSet: path of the testing set as string
- * filesExtensions: extensions of files to use, as string separated by non word characters
+ * filesExtensions: string separated by non word characters denoting extensions of files to be used
  * 
  */
 
 
 public class EvaluateFromFiles implements EvaluationDataSource{
 	
-	List<File> trainingFiles; 
-	List<File> testingFiles;
-	Collection<Component> components;
-	FindComponents find = new FindLibrariesAndKeywords();
-	Connections connections = new Connections();
-	ComponentMiner componentMiner;
-	//Map that contains as keys a Set of seed components, and as values the libraries they are connected with
-	Map<Set<Component>, Set<Component>> existingConnections = new HashMap<>();
-	
+	private List<File> trainingFiles; 
+	private List<File> testingFiles;
+	private Collection<Component> components;
+	private FindComponents find = new FindLibrariesAndKeywords();
+	private Connections connections = new Connections();
+	private ComponentMiner componentMiner;
+	private Map<Set<Component>, Set<Component>> existingConnections = new HashMap<>();
+	private final static boolean LINKS_BETWEEN_LIBRARIES_AND_FILE = true;
 
 	public EvaluateFromFiles(String trainingSet, String testingSet, String filesExtensions) throws IOException{
 		
@@ -70,11 +72,20 @@ public class EvaluateFromFiles implements EvaluationDataSource{
 			components = find.findComponents(codefile);
 			connections.addConnectionsByType(components, Library.class, Keyword.class);
 			connections.addConnectionsByType(components, Library.class);
+			
+			//add connections between a Project component(name of file stored as Project component) and its libraries
+			if(LINKS_BETWEEN_LIBRARIES_AND_FILE) {
+				Set<Component> fileLibraries = components.stream()
+						.filter(component -> (component.getClass().equals(Library.class)))
+							.collect(Collectors.toCollection(HashSet::new));
+				Project fileNameAsProject = new Project(codefile.getFileName());
+				fileLibraries.forEach(library -> connections.addConnection(library, fileNameAsProject));
+			}
 		}
-		
+	
 		FileNameToKeywords fileNameToKeywords = new FileNameToKeywords();
 		
-		//The keywords used as seed for testing comprise the name of the file
+		//The keywords used as seed for testing, comprise the name of the file
 		//and the libraries are the libraries that are imported from the same file
 		//Alternatively, the seed components may be the keywords contained in the file
 		for(File file: testingFiles) {
@@ -84,7 +95,7 @@ public class EvaluateFromFiles implements EvaluationDataSource{
 			FindComponents findKeywords = new FindKeywords();
 			
 			Set<Component> fileKeywords = findKeywords.findComponents(new CodeFile(file)); //use as seed the keywords of the file
-//			Set<Component> fileKeywords = fileNameToKeywords.getKeywords(file); //use as seed the terms of the file name
+//			Set<Component> fileKeywords = fileNameToKeywords.getKeywords(file); //use as seed the terms in the file name
 			
 			Set<String> stopwordsSet = stopwords.getStopwords();
 			
