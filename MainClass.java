@@ -1,6 +1,5 @@
 
 import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,23 +8,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import datatypes.Component;
 import datatypes.Connections;
-import datatypes.Library;
+import datatypes.Keyword;
 import evaluation.*;
 import examples.*;
 import miners.ComponentGraph;
 import miners.ComponentMiner;
+import miners.RankedComponents;
 import miners.RelatedLibraries;
 
 
@@ -34,25 +31,31 @@ public class MainClass{
 
 	
 	public static void main(String[] args) throws IOException{
+
+		final boolean buildNewGraph = true;
 		
-		final boolean buildNewGraph = false;
-		
+//		String testing = "serialized/testingMavenWith10.ser";
+//		String graph = "serialized/graphMavenWith10.ser";
 		String testing = "testing.ser";
 		String graph = "graph.ser";
-		
+		System.out.println(graph);
+		boolean[] linkLibsProject = {false,true};
 		Map<Set<Component>, Set<Component>> existingConnections = null;
 		Connections connections = null;
 		
 		ComponentMiner componentMiner = new RelatedLibraries();
 		
-		
+		for(boolean link: linkLibsProject) {
 		if(buildNewGraph) {
 		
 		
 		//get data
-//			EvaluationDataSource evaluationDataSource = new EvaluateFromFiles("jEdit", "test", "java");
+//			EvaluationDataSource evaluationDataSource = new EvaluateFromFiles("jEdit", "test", "java", true, true);
+//			EvaluationDataSource evaluationDataSource = new EvaluateFromFiles("elasticsearch-master", "testElastic", "java", true, false);
 //			EvaluationDataSource evaluationDataSource = new EvaluateFromMavenCentral("maven-data2.csv/links_all.csv");
-			EvaluationDataSource evaluationDataSource = new EvaluateFromMaven("maven-data2.csv/links_all.csv");
+//			EvaluationDataSource evaluationDataSource = new EvaluateFromMaven("maven-data.csv/links_all.csv", true, link);
+			EvaluationDataSource evaluationDataSource = new EvaluateFromApk("apk_info.csv", "lib_info.csv", "relation.csv", true, false);
+			
 			
 			//get connections (part of the data) that will be used as a testing set
 			existingConnections = evaluationDataSource.getExistingConnections();
@@ -66,33 +69,33 @@ public class MainClass{
 			componentMiner.getComponentGraph().getNumOfEdges();
 			
 			//Serialization
-			try {
-			
-				FileOutputStream file = new FileOutputStream(testing);
-				ObjectOutputStream out = new ObjectOutputStream(file);
-				
-				out.writeObject(existingConnections);
-				
-				out.close();
-				file.close();
-				
-				System.out.println("existingConnections have been serialized");
-				
-				file = new FileOutputStream(graph);
-				out = new ObjectOutputStream(file);
-				
-				out.writeObject(componentMiner.getComponentGraph());
-				
-				out.close();
-				file.close();
-				
-				System.out.println("Graph has been serialized");
-				
-			}catch(IOException ex)
-	        {
-	            System.out.println("IOException is caught");
-	        }
-			
+//			try {
+//			
+//				FileOutputStream file = new FileOutputStream(testing);
+//				ObjectOutputStream out = new ObjectOutputStream(file);
+//				
+//				out.writeObject(existingConnections);
+//				
+//				out.close();
+//				file.close();
+//				
+//				System.out.println("existingConnections have been serialized");
+//				
+//				file = new FileOutputStream(graph);
+//				out = new ObjectOutputStream(file);
+//				
+//				out.writeObject(componentMiner.getComponentGraph());
+//				
+//				out.close();
+//				file.close();
+//				
+//				System.out.println("Graph has been serialized");
+//				
+//			}catch(IOException ex)
+//	        {
+//	            System.out.println("IOException is caught");
+//	        }
+//			
 		}else {
 		
 			//Deserialization
@@ -146,7 +149,6 @@ public class MainClass{
 //		RecommendedComponents rc = new RecommendedComponents(rankedComponents);
 //		rankedComponents = rc.getTopComponents(10);
 		
-
 //		Metrics metrics = new Metrics(componentMiner, existingConnections);
 //		metrics.run();
 		
@@ -154,10 +156,15 @@ public class MainClass{
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss") ;
 		File file = new File(dateFormat.format(date) + ".txt") ;
 		FileWriter fileWriter = new FileWriter(file);
+		fileWriter.append(graph +"\nLink libs: " + true + "\nLink libs to project: " + link+"\n");
+//		double[] dampingFactor = {0.85, 0.9, 0.95};
+//		boolean[] sweepRatio = {false, true};
+//		String[] normalization = {"original", "symmetricNorm", "renorm", "symmetricNormRenorm"};
 		
-		double[] dampingFactor = {0.85, 0.9, 0.95};
-		boolean[] sweepRatio = {false, true};
-		String[] normalization = {"original", "symmetricNorm", "renorm", "symmetricNormRenorm"};
+		double[] dampingFactor = {0.85};
+		boolean[] sweepRatio = {false};
+		String[] normalization = {"original"};
+	
 		
 		for(double a: dampingFactor) {
 			for(boolean s: sweepRatio) {
@@ -168,6 +175,9 @@ public class MainClass{
 			}
 		}
 		fileWriter.close();
+		
+		
+	}
 	}
 }
 
