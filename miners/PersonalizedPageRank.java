@@ -23,6 +23,8 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 	
 	public static final String NORMALIZATION_DEFAULT = "original";
 	
+	public static final boolean IS_WEIGHTED_DEFAULT = false;
+	
 	private final Graph<Component, DefaultEdge> graph;
 	
 	private final double dampingFactor;
@@ -36,13 +38,16 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 	private double[] curScore;
 	private double[] nextScore;
 	private int[] outDegree;
+	private double[] sqrtOutDegree;
 	private Map<Component, Integer> vertexIndexMap; 
-	Component[] vertexMap; 
+	private Component[] vertexMap; 
 	private ArrayList<int[]> adjList;
 	private double totalScore;
 	private String normalization;
+	private boolean isWeighted;
+	private double[] weights;
 
-	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, int maxIterations, double tolerance, double dampingFactor, Set<Component> seedComponents, String normalization)	{
+	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, int maxIterations, double tolerance, double dampingFactor, Set<Component> seedComponents, String normalization, boolean isWeighted)	{
 				
 		this.graph = graph;
 		this.tolerance = tolerance;
@@ -50,42 +55,38 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 		this.maxIterations = maxIterations;
 		this.seedComponents = seedComponents;
 		this.normalization = normalization;
+		this.isWeighted = isWeighted;
 
 	}
 	
-//	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, int maxIterations, double tolerance, double dampingFactor, Set<Component> seedComponents)	{
-//		
-//		this.graph = graph;
-//		this.tolerance = tolerance;
-//		this.dampingFactor = dampingFactor;
-//		this.maxIterations = maxIterations;
-//		this.seedComponents = seedComponents;
-//		
-//
-//	}
+	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, int maxIterations, double tolerance, double dampingFactor, Set<Component> seedComponents)	{
+		
+		this.graph = graph;
+		this.tolerance = tolerance;
+		this.dampingFactor = dampingFactor;
+		this.maxIterations = maxIterations;
+		this.seedComponents = seedComponents;
+		
+
+	}
 	
 
 	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, Set<Component> seedComponents){	
 		
-		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT, seedComponents, NORMALIZATION_DEFAULT);
+		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT, seedComponents, NORMALIZATION_DEFAULT, IS_WEIGHTED_DEFAULT);
 	}
 	
 	PersonalizedPageRank(Graph<Component, DefaultEdge> graph){
-		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT, new HashSet<Component>(), NORMALIZATION_DEFAULT);
+		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, DAMPING_FACTOR_DEFAULT, new HashSet<Component>(), NORMALIZATION_DEFAULT, IS_WEIGHTED_DEFAULT);
 	}
 	
-//	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, double dampingFactor, Set<Component> seedComponents){	
-//		
-//		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, dampingFactor, seedComponents, NORMALIZATION_DEFAULT);
-//	}
-	
-	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, double dampingFactor, Set<Component> seedComponents, String normalization){	
+	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, double dampingFactor, Set<Component> seedComponents, String normalization, boolean isWeighted){	
 		
-		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, dampingFactor, seedComponents, normalization);
+		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, dampingFactor, seedComponents, normalization, isWeighted);
 	}
 	
-	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, double dampingFactor, String normalization){
-		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, dampingFactor, new HashSet<Component>(), normalization);
+	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, double dampingFactor, String normalization, boolean isWeighted){
+		this(graph, MAX_ITERATIONS_DEFAULT, TOLERANCE_DEFAULT, dampingFactor, new HashSet<Component>(), normalization, isWeighted);
 	}
 	
 //	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, Set<Component> seedComponents){	
@@ -117,35 +118,37 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 		curScore = new double[totalVertices];
 		nextScore = new double[totalVertices];
 		outDegree = new int[totalVertices];
+		sqrtOutDegree = new double[totalVertices];
 		vertexIndexMap = new HashMap<>(); 
 		vertexMap =  new Component[totalVertices]; 
 		adjList = new ArrayList<int[]>(totalVertices);
 		
 		double initScore = 1.0d / totalVertices;
 		
-		int l = 0;
+		int index = 0;
+		
 		
 		for(Component c : graph.vertexSet()) {
-			curScore[l] = initScore;
-			if(normalization == "renorm" || normalization == "symmetricNormRenorm") {
-				outDegree[l] = graph.outDegreeOf(c) + 1;  		//renormalization
+			curScore[index] = initScore;
+			if(normalization == "renorm" || normalization == "symmetricNormRenorm") {				//renormalization
+				outDegree[index] = graph.outDegreeOf(c) + 1;
+				sqrtOutDegree[index] = Math.sqrt(outDegree[index]);
 			}else {
-				outDegree[l] = graph.outDegreeOf(c);			//original
-			}
-																	
-																
-			vertexIndexMap.put(c, l);
-			vertexMap[l] = c;
+				outDegree[index] = graph.outDegreeOf(c);											//original		
+				sqrtOutDegree[index] = Math.sqrt(outDegree[index]);
+			}																			
+			vertexIndexMap.put(c, index);
+			vertexMap[index] = c;
 			if(seedComponents.size() > 0) {
-				seedVector[l] = (seedComponents.contains(c) == true)? ((double) 1 / numOfPersonalizationComponents) : 0d;
+				seedVector[index] = (seedComponents.contains(c) == true)? ((double) 1 / numOfPersonalizationComponents) : 0d;
 			}else {
-				seedVector[l] = (double) 1 / numOfPersonalizationComponents;
+				seedVector[index] = (double) 1 / numOfPersonalizationComponents;
 			}
 						
-			l++;
+			index++;
 		}
 		
-		for(int k=0; k<totalVertices; k++) { 
+		for(int k=0; k < totalVertices; k++) { 
 			Component c = vertexMap[k];
 			int[] inNeighbors = new int[graph.inDegreeOf(c)];
 			int j = 0;
@@ -157,44 +160,100 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 			adjList.add(inNeighbors);
 		}
 		
+		if(isWeighted) {	//calculate sum of weights component edges
+			this.weights = new double[totalVertices];
+            for (Component component : graph.vertexSet()) {
+                double sum = 0;
+                for (DefaultEdge edge: graph.outgoingEdgesOf(component)) {
+                    sum += graph.getEdgeWeight(edge);
+                }
+                weights[vertexIndexMap.get(component)] = sum;
+            }
+		}
+		
+		
 		int iterations = maxIterations;
 		double change = tolerance;
 		
-		
-		while(iterations > 0 && change >= tolerance) {
-//			long start = System.nanoTime();
-//			maxChange = 0;
-			totalScore = 0;
-			for(int i=0; i<totalVertices; i++) { 
-				double contribution = 0d;
-
-				for(int j : adjList.get(i)) {
-					if(normalization == "symmetricNorm" || normalization == "symmetricNormRenorm") {
-						contribution += curScore[j] / Math.sqrt(outDegree[j] * outDegree[i]);				//symmetric normalization
-					}else {
-						contribution += curScore[j] / outDegree[j];											//original
+		if(isWeighted) {
+			while(iterations > 0 && change >= tolerance) {
+				for(int i = 0; i < totalVertices; i++) {
+					Component component = vertexMap[i];
+					double contribution = 0d;
+					for(DefaultEdge edge: graph.edgesOf(component)) {
+						Component neighbor = Graphs.getOppositeVertex(graph, edge, component);
+						int neighborIndex = vertexIndexMap.get(neighbor);
+                        contribution += dampingFactor * curScore[neighborIndex] * graph.getEdgeWeight(edge) /  weights[neighborIndex];
 					}
-																
-										
+					
+					double newValue = dampingFactor * contribution + (1d - dampingFactor) * seedVector[i];
+					nextScore[i] = newValue;
+					totalScore += newValue;
 				}
-				if(normalization == "renorm" || normalization == "symmetricNormRenorm") {
-					contribution += curScore[i] / outDegree[i];												//renormalization
-				}
-																
-				double newValue = dampingFactor * contribution + (1d - dampingFactor) * seedVector[i]; 
+				change = euclideanDistance(nextScore, curScore)/Math.sqrt(totalVertices);
 				
-//				maxChange = Math.max(maxChange, Math.abs(newValue - curScore[i]));							//L inf
-				nextScore[i] = newValue;
-				totalScore += newValue;
+				double[] temp = curScore;
+				curScore = nextScore;
+				nextScore = temp;
+				
+				iterations--;
+				
 			}
-//			System.out.println("totalScore: "+totalScore);
-			change = euclideanDistance(nextScore, curScore)/Math.sqrt(totalVertices);						//L2 normalized
-//			change = euclideanDistance(nextScore, curScore);												//L2
-//			change = l1Norm(nextScore, curScore);															//L1
+		}else {
+			while(iterations > 0 && change >= tolerance) {
+//				long start = System.nanoTime();
+	//			maxChange = 0;
+				totalScore = 0;
+				if(normalization == "symmetricNorm" || normalization == "symmetricNormRenorm") {					//symmetric normalization
+					for(int i=0; i<totalVertices; i++) { 
+						double contribution = 0d;
+	
+						for(int j : adjList.get(i))
+	//						contribution += curScore[j] /(outDegree[j] * outDegree[i]);
+							contribution += curScore[j] / (sqrtOutDegree[j] * sqrtOutDegree[i]);				
+									
+						if(normalization == "renorm" || normalization == "symmetricNormRenorm") {
+							contribution += curScore[i] / outDegree[i];												//renormalization
+						}
+																		
+						double newValue = dampingFactor * contribution + (1d - dampingFactor) * seedVector[i]; 
+						
+	//					maxChange = Math.max(maxChange, Math.abs(newValue - curScore[i]));												//L inf
+						nextScore[i] = newValue;
+						totalScore += newValue;
+					}
+				}else {																								//original
+					for(int i=0; i<totalVertices; i++) { 
+						double contribution = 0d;
+	
+						for(int j : adjList.get(i))
+							contribution += curScore[j] / outDegree[j];											
+					
+						if(normalization == "renorm" || normalization == "symmetricNormRenorm") 
+							contribution += curScore[i] / outDegree[i];												//renormalization
+						
+																		
+						double newValue = dampingFactor * contribution + (1d - dampingFactor) * seedVector[i]; 
+						
+	//					maxChange = Math.max(maxChange, Math.abs(newValue - curScore[i]));												//L inf
+						nextScore[i] = newValue;
+						totalScore += newValue;
+					}
+				}
+			
+			
+				if(normalization == "symmetricNorm" || normalization == "symmetricNormRenorm") 					//symmetric normalization
+					nextScore = Arrays.stream(nextScore).map(i -> i / totalScore).toArray(); 
+			
+											
+	//			System.out.println("totalScore: "+totalScore);
+				change = euclideanDistance(nextScore, curScore)/Math.sqrt(totalVertices);												//L2 normalized
+	//			change = euclideanDistance(nextScore, curScore);																		//L2
+	//			change = l1Norm(nextScore, curScore);																					//L1
+			
 			
 			double[] temp = curScore;
 			curScore = nextScore;
-//			curScore = Arrays.stream(curScore).map(i -> i / totalScore).toArray();							//symmetric normalization
 			nextScore = temp;
 			
 			iterations--;
@@ -202,7 +261,9 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 //			long elapsedTime = System.nanoTime() - start;
 //			double elapsedTimeInSeconds = (double) elapsedTime / 1_000_000;
 //			System.out.println("time to complete iteration: "+ elapsedTimeInSeconds +"ms");
+			}
 		}
+		
 		if(iterations<=0)
 			System.out.println("failed to converge in "+maxIterations+ " iterations");
 //		System.out.println("Iterations: "+(maxIterations-iterations));

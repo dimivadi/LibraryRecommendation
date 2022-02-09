@@ -8,7 +8,8 @@ import datatypes.Connections;
 
 public interface ComponentMiner {
 	
-	Map<Component, Double> componentMining(Set<Component> seedComponents);
+	Map<Component, Double> componentMining(Set<Component> seedComponents, boolean sweepRatio, double dampingFactor, String normalization);
+//	Map<Component, Double> componentMining(Set<Component> seedComponents);
 	void createGraph(Connections connections);
 	ComponentGraph getComponentGraph();
 	void setComponentGraph(ComponentGraph componentGraph);

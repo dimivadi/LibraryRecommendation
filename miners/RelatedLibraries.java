@@ -21,6 +21,7 @@ public class RelatedLibraries implements ComponentMiner{
 	
 	private ComponentGraph componentGraph;
 	private Map<Component, Double> globalLibraryScores; //scores calculated using global pagerank
+
 	
 	class InvalidSeedException extends RuntimeException{
 		InvalidSeedException(String message){
@@ -28,13 +29,23 @@ public class RelatedLibraries implements ComponentMiner{
 		}
 	}
 	
+	class EmptyGraphException extends RuntimeException{
+		EmptyGraphException(String message){
+			super(message);
+		}
+	}
+	
 	
 	//return a Map that will have as keys the libraries of the graph, and as values their corresponding scores
-	public Map<Component, Double> componentMining(Set<Component> seedComponents) {	
+	public Map<Component, Double> componentMining(Set<Component> seedComponents, boolean sweepRatio, double dampingFactor, String normalization) {	
+//	public Map<Component, Double> componentMining(Set<Component> seedComponents) {
 
-			
+		if(componentGraph == null) {
+			throw new EmptyGraphException("Component Graph has not been created");
+		}
+		
 		for(Component comp: seedComponents) {
-			if (comp.getClass() == Library.class) {
+			if (comp.getClass().equals(Library.class)) {
 				throw new InvalidSeedException("Seed component for 'RelatedLibraries' should not be a Library");
 			}
 		}
@@ -44,11 +55,12 @@ public class RelatedLibraries implements ComponentMiner{
 			System.out.println("Calculated PR");
 		}
 		
-		System.out.println("seed: " + seedComponents);
+//		System.out.println("seed: " + seedComponents);
 		//Scoring Algorithm
 		//TIME
 //		long start1 = System.nanoTime();
-		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph(), seedComponents);
+		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph(), dampingFactor, seedComponents, normalization, false);
+//		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph(), seedComponents);
 		Map<Component, Double> scores = ppr.getScores();
 		//TIME
 //		long elapsedTime1 = System.nanoTime() - start1;
@@ -60,16 +72,20 @@ public class RelatedLibraries implements ComponentMiner{
 		Map<Component, Double> libScores = keepLibraryScores(scores);
 		
 		
+		if(sweepRatio) {
+			Map<Component, Double> libScoresUsingConductance = new HashMap<>();										//sweep ratio							
+			
+			for(Map.Entry<Component, Double> entry: libScores.entrySet()) { 
+				double newScore = entry.getValue() / globalLibraryScores.get(entry.getKey());
+				libScoresUsingConductance.put(entry.getKey(), newScore);
+			}
+				
+			return libScoresUsingConductance;
+		}
+		
 		return libScores;																						//original
 		
-//		Map<Component, Double> libScoresUsingConductance = new HashMap<>();										//sweep ratio							
-//		
-//		for(Map.Entry<Component, Double> entry: libScores.entrySet()) { 
-//			double newScore = entry.getValue() / globalLibraryScores.get(entry.getKey());
-//			libScoresUsingConductance.put(entry.getKey(), newScore);
-//		}
-//			
-//		return libScoresUsingConductance;
+
 	}
 	
 	private Map<Component, Double> getGlobalScores(){
@@ -84,7 +100,7 @@ public class RelatedLibraries implements ComponentMiner{
 	private Map<Component, Double> keepLibraryScores(Map<Component, Double> scores) {
 		
 		Map<Component, Double> libScores = scores.entrySet().stream()
-															.filter(x -> x.getKey().getClass() == Library.class)
+															.filter(x -> x.getKey().getClass().equals(Library.class))
 																.collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
 		
 		return libScores;
