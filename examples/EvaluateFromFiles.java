@@ -24,8 +24,6 @@ import datatypes.Keyword;
 import datatypes.Library;
 import datatypes.Project;
 import datatypes.Stopwords;
-import miners.ComponentMiner;
-import miners.RelatedLibraries;
 import evaluation.EvaluationDataSource;
 
 
@@ -50,11 +48,17 @@ public class EvaluateFromFiles implements EvaluationDataSource{
 	private Collection<Component> components;
 	private FindComponents find = new FindLibrariesAndKeywords();
 	private Connections connections = new Connections();
-	private ComponentMiner componentMiner;
 	private Map<Set<Component>, Set<Component>> existingConnections = new HashMap<>();
-	private final static boolean LINKS_BETWEEN_LIBRARIES_AND_FILE = true;
+	private boolean linkLibraries;
+	private boolean linkLibsProject;
+//	private final static boolean LINKS_BETWEEN_LIBRARIES_AND_FILE = true;
+//	private final static boolean LINKS_BETWEEN_LIBRARIES = true;
 
-	public EvaluateFromFiles(String trainingSet, String testingSet, String filesExtensions) throws IOException{
+	public EvaluateFromFiles(String trainingSet, String testingSet, String filesExtensions, boolean linkLibraries, boolean linkLibsProject) throws IOException{
+		
+		this.linkLibraries = linkLibraries;
+		this.linkLibsProject = linkLibsProject;
+		
 		
 		//update stopwords
 		Stopwords stopwords = new Stopwords();
@@ -71,10 +75,11 @@ public class EvaluateFromFiles implements EvaluationDataSource{
 		for(CodeFile codefile : trainingCodefiles){
 			components = find.findComponents(codefile);
 			connections.addConnectionsByType(components, Library.class, Keyword.class);
-			connections.addConnectionsByType(components, Library.class);
+			if(linkLibraries)
+				connections.addConnectionsByType(components, Library.class);
 			
 			//add connections between a Project component(name of file stored as Project component) and its libraries
-			if(LINKS_BETWEEN_LIBRARIES_AND_FILE) {
+			if(linkLibsProject) {
 				Set<Component> fileLibraries = components.stream()
 						.filter(component -> (component.getClass().equals(Library.class)))
 							.collect(Collectors.toCollection(HashSet::new));
@@ -91,7 +96,8 @@ public class EvaluateFromFiles implements EvaluationDataSource{
 		for(File file: testingFiles) {
 			FindComponents findLibraries = new FindLibraries();
 			Set<Component> fileLibraries = findLibraries.findComponents(new CodeFile(file));
-			//
+			if(fileLibraries.size() < 10)
+				continue;
 			FindComponents findKeywords = new FindKeywords();
 			
 			Set<Component> fileKeywords = findKeywords.findComponents(new CodeFile(file)); //use as seed the keywords of the file

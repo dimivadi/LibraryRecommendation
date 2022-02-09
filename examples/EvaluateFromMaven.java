@@ -1,15 +1,9 @@
 package examples;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,10 +28,11 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 	private Connections connections = new Connections();
 	private Map<Set<Component>, Set<Component>> existingConnections = new HashMap<>();
 	private Set<String> stopwords = new HashSet<>();
-	private static final boolean LINKS_BETWEEN_DEPENDENCIES = true;
-	private static final boolean LINKS_BETWEEN_DEPENDENCIES_AND_LIBRARY = true;
+//	private static final boolean LINKS_BETWEEN_DEPENDENCIES = true;
+//	private static final boolean LINKS_BETWEEN_DEPENDENCIES_AND_LIBRARY = true;
 	
-	public EvaluateFromMaven(String filePath) throws IOException {
+	public EvaluateFromMaven(String filePath, boolean linkDependencies, boolean linkDependenciesToProject) throws IOException {
+		
 		
 		String[] libraryTerms;
 		Random rand = new Random();
@@ -105,7 +100,7 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 						connections.addConnection(keyword, dependency);
 				
 				//create links between dependencies
-				if(LINKS_BETWEEN_DEPENDENCIES) {
+				if(linkDependencies) {
 					// create links between the dependencies of a library
 					List<Component> dependencyList = new ArrayList<>(dependencyAsComponentSet);
 					int size = dependencyList.size();
@@ -115,7 +110,7 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 				}
 				
 				//create links between library (as a Project component) and its dependencies
-				if(LINKS_BETWEEN_DEPENDENCIES_AND_LIBRARY) {
+				if(linkDependenciesToProject) {
 					//create links between the library (as a Project component) and the dependencies of the library
 					Project libraryAsProject = new Project(entry.getKey());
 					dependencyAsComponentSet.forEach(dependency -> connections.addConnection(dependency, libraryAsProject));				

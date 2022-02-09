@@ -23,14 +23,14 @@ import evaluation.EvaluationDataSource;
 
 public class EvaluateFromApk implements EvaluationDataSource{
 	
-	private static final boolean LINKS_BETWEEN_LIBRARIES = true;
-	private static final boolean LINKS_BETWEEN_LIBRARIES_AND_PROJECT = true;
+//	private static final boolean LINKS_BETWEEN_LIBRARIES = true;
+//	private static final boolean LINKS_BETWEEN_LIBRARIES_AND_PROJECT = false;
 	
 	private Connections connections = new Connections();
 	private Map<Set<Component>, Set<Component>> existingConnections = new HashMap<>();
 	private Set<String> stopwords = new HashSet<>();
 	
-	public EvaluateFromApk(String apkPath, String libPath, String relationPath) throws IOException{
+	public EvaluateFromApk(String apkPath, String libPath, String relationPath, boolean linkLibraries, boolean linkLibsToProject) throws IOException{
 		
 		//read libInfo.csv
 		Map<Integer, Component> libInfo = new HashMap<>();
@@ -105,7 +105,7 @@ public class EvaluateFromApk implements EvaluationDataSource{
 			
 			//add apk to testing set only if it uses 10 libraries or more (use a percentage of the apks that qualify)
 			Random rand = new Random();
-			boolean usedForTestingSet = (entry.getValue().size() >= 10 && (rand.nextInt(100) < 1));
+			boolean usedForTestingSet = (entry.getValue().size() >= 10 && (rand.nextInt(150) < 1));
 			if(usedForTestingSet) 
 				existingConnections.put(apkNameAsKeywords, apkLibraries);
 			else {
@@ -114,7 +114,7 @@ public class EvaluateFromApk implements EvaluationDataSource{
 					for(Component library: apkLibraries)
 						connections.addConnection(keyword, library);
 				
-				if(LINKS_BETWEEN_LIBRARIES) {
+				if(linkLibraries) {
 					//add connection between libraries
 					List<Component> libraryList = new ArrayList<>(apkLibraries);
 					int size = libraryList.size();
@@ -123,7 +123,7 @@ public class EvaluateFromApk implements EvaluationDataSource{
 							connections.addConnection(libraryList.get(i), libraryList.get(j));
 				}
 				
-				if(LINKS_BETWEEN_LIBRARIES_AND_PROJECT) 
+				if(linkLibsToProject) 
 					//add connection between libraries and project
 					for(Component library: apkLibraries)
 						connections.addConnection(apkInfo.get(entry.getKey()), library);
