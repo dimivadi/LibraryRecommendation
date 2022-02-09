@@ -22,27 +22,31 @@ public class Coverage {
 	private HashSet<Component> trainingSetLibraries = new HashSet<>();
 	
 	
-	public void addToRecommendedComponents(Map<Component, Double> recommendedComponents) {
+	public Coverage addToRecommendedComponents(Map<Component, Double> recommendedComponents) {
 		for(Map.Entry<Component, Double> entry: recommendedComponents.entrySet()) {
 			if(testingSetLibraries.contains(entry.getKey()))
 				this.recommendedComponents.add(entry.getKey());
 		}
+		return this;
 	}
 
-	public void setNumberOfCommonLibraries(ComponentMiner componentMiner, Map<Set<Component>, Set<Component>> existingConnections) {
+	public Coverage setNumberOfCommonLibraries(ComponentMiner componentMiner, Map<Set<Component>, Set<Component>> existingConnections) {
 		
 		for(Map.Entry<Set<Component>, Set<Component>> connection: existingConnections.entrySet()) {
 			testingSetLibraries.addAll(connection.getValue());
 		}
 		
 		trainingSetLibraries = componentMiner.getComponentGraph().getGraph().vertexSet().stream()
-																							.filter(x -> x.getClass().equals(Library.class))
-																								.collect(Collectors.toCollection(HashSet::new));
+											.filter(vertex -> vertex.getClass().equals(Library.class))
+												.collect(Collectors.toCollection(HashSet::new));
 		Set<Component> commonLibraries = new HashSet<Component>(trainingSetLibraries);
 		commonLibraries.retainAll(testingSetLibraries);
 		numberOfCommonLibraries = commonLibraries.size();
+		
+		return this;
 	}
 	
+
 	public double getCoverage() {
 		
 		System.out.println("Size of recommendedComponents: " + recommendedComponents.size());
