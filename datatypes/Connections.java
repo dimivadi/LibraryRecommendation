@@ -83,24 +83,25 @@ public class Connections implements java.io.Serializable {
 	 * given a collection of components, 
 	 * call addConnection(A,B) for every 2 components that are of different class, for any class defined in the classes array
 	 */
-	public void addConnectionsByType(Collection<Component> components, Class... classes) {
-		
+	public void addConnectionsByType(Collection<Component> componentsCollection, Class... classes) {
+		Collection<Component> components = new HashSet<Component>(componentsCollection);
 		//if classes array contains only one element, then add a connection between all the components of this unique class
 		if(classes.length == 1) {
 			
 			Iterator<Component> i = components.iterator();
-			//save an element of collection components in a local variable
-			Component currentComponent = i.next();
-			//remove this element from the collection
-			i.remove();
-			//add a connection with every element of the collection
-			if(currentComponent.getClass() == classes[0]) {
-				for(Component comp: components) {
-					if(comp.getClass() == classes[0])
-						addConnection(currentComponent, comp);
-				}	
-			}
-			
+				while(i.hasNext()) {
+					//save an element of collection components in a local variable
+					Component currentComponent = i.next();
+					//remove this element from the collection
+					i.remove();
+					//add a connection with every element of the collection
+					if(currentComponent.getClass() == classes[0]) {
+						for(Component comp: components) {
+							if(comp.getClass() == classes[0])
+								addConnection(currentComponent, comp);
+						}
+					}
+				}
 	
 		}else {
 			

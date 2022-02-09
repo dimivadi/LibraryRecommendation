@@ -52,6 +52,12 @@ public class Stopwords {
 			
 	}
 	
+	//used exclusively for Maven dataset
+	//this method return directly a set consisting of stopwords and does not make use of the stopwords.txt file
+//	public Set<String> addStopwordsMavenCsv(String filePath) {
+//		
+//	}
+	
 	public void resetStopwordsList() throws FileNotFoundException {
 		PrintWriter writer = new PrintWriter(new File("stopwords.txt"));
 		writer.print("");

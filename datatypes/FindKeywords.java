@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class FindKeywords extends FindComponents{
 
 	private ArrayList<String> stopwords = new ArrayList<>();
-	Set<Component> keywords;
+	private Set<Component> keywords;
 	
 	public FindKeywords() throws FileNotFoundException{
 		
@@ -73,9 +73,10 @@ public class FindKeywords extends FindComponents{
 		String[] words;
 		
 		words = str.split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
-		for(String word: words) {
-			strList.add(word.toLowerCase());
-		}
+		for(String word: words) 
+			if(word.length() > 1)
+				strList.add(word.toLowerCase());
+		
 		
 		return (String[]) strList.toArray(new String[0]);
 		
