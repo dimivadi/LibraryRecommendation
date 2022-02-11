@@ -18,8 +18,8 @@ public class Similarity {
 	public Similarity(ComponentMiner componentMiner){
 
 		trainingSetLibraries = componentMiner.getComponentGraph().getGraph().vertexSet().stream()
-																	.filter(x -> x.getClass().equals(Library.class))
-																			.collect(Collectors.toSet());
+							.filter(x -> x.getClass().equals(Library.class))
+								.collect(Collectors.toSet());
 		for(Component component: trainingSetLibraries) {
 			addComponentToMap(component);
 		}
