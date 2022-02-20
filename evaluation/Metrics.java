@@ -23,15 +23,17 @@ public class Metrics{
 	private double dampingFactor;
 	private String normalization;
 	private FileWriter fileWriter;
+	private boolean isWeighted;
 	
 	public Metrics(ComponentMiner componentMiner, Map<Set<Component>, Set<Component>> existingConnections, 
-			boolean sweepRatio, double dampingFactor, String normalization, FileWriter fileWriter){
+			boolean sweepRatio, double dampingFactor, String normalization, boolean isWeighted, FileWriter fileWriter){
 		this.componentMiner = componentMiner;
 		this.existingConnections = existingConnections;
 		this.sweepRatio = sweepRatio;
 		this.dampingFactor = dampingFactor;
 		this.normalization = normalization;
 		this.fileWriter = fileWriter;
+		this.isWeighted = isWeighted;
 	}
 	
 	public Metrics(ComponentMiner componentMiner, Map<Set<Component>, Set<Component>> existingConnections){
@@ -59,7 +61,7 @@ public class Metrics{
 		
 		System.out.println("size of testing set: "+sizeOfTestingSet);
 		
-		Similarity similarity = new Similarity(componentMiner);
+		Similarity similarity = new Similarity(componentMiner, true);
 	
 		// 	Coverage
 		Coverage coverage = new Coverage();
@@ -76,9 +78,9 @@ public class Metrics{
 //				continue;
 //			}
 			
-//			Map<Component, Double> rankedComponents = componentMiner.componentMining(existingConnection.getKey(), sweepRatio, dampingFactor, normalization);
+			Map<Component, Double> rankedComponents = componentMiner.componentMining(existingConnection.getKey(), sweepRatio, dampingFactor, normalization, isWeighted);
 //			Map<Component, Double> rankedComponents = componentMiner.componentMining(existingConnection.getKey());
-			Map<Component, Double> rankedComponents = similarity.getLibrarySimilarity(existingConnection.getKey());
+//			Map<Component, Double> rankedComponents = similarity.getLibrarySimilarity(existingConnection.getKey());
 			
 			// AUC
 			x = new double[existingConnection.getValue().size()];
