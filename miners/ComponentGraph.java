@@ -1,8 +1,10 @@
 package miners;
 
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,7 +29,7 @@ public class ComponentGraph implements java.io.Serializable{
 									.buildGraph();
 
 	
-	public void addConnectionsToGraph(Connections connections) {
+	public ComponentGraph addConnectionsToGraph(Connections connections) {
 		
 		for (Component component : connections.getComponents()) {
 			graph.addVertex(component);
@@ -36,16 +38,19 @@ public class ComponentGraph implements java.io.Serializable{
 				graph.addEdge(component, comp);				
 			}
 		}
+		return this;
 	}
 	
 	//set the same weight for every edge of a specific component
-	public void setComponentEdgesWeight(Component component, double weight) {
+	public ComponentGraph setComponentEdgesWeight(Component component, double weight) {
 		graph.edgesOf(component).forEach(edge -> graph.setEdgeWeight(edge, weight));
+		
+		return this;
 	}
 	
 	
 	//set edge weight between neighboring vertices that are of the same type classA
-	public void setEdgeWeightOfClass(Class classA, double weight) {
+	public ComponentGraph setEdgeWeightOfClass(Class classA, double weight) {
 		Set<Component> verticesOfTypeA = graph.vertexSet()
 				.stream()
 					.filter(component -> component.getClass().equals(classA))
@@ -62,11 +67,13 @@ public class ComponentGraph implements java.io.Serializable{
 					graph.setEdgeWeight(edge, weight);
 			}
 		}
+		
+		return this;
 	}
 	
 	
-	//set edge weight if neighboring vertices are of types classA and classB
-	public void setEdgeWeightOfClasses(Class classA, Class classB, double weight) {
+	//set edge weight if a node is an object of classA and the opposite node is an object of classB
+	public ComponentGraph setEdgeWeightOfClasses(Class classA, Class classB, double weight) {
 		
 		Set<Component> verticesOfTypeA = graph.vertexSet()
 				.stream()
@@ -82,8 +89,16 @@ public class ComponentGraph implements java.io.Serializable{
 			}
 		}
 		
+		return this;
 	}
 	
+	public Set<Component> getNeighbouringComponents(Component component){
+		Set<Component> neighbours = new HashSet<Component>();
+		for(DefaultEdge edge: graph.incomingEdgesOf(component)) 
+			neighbours.add(Graphs.getOppositeVertex(graph, edge, component));
+		
+		return neighbours;
+	}
 	public void getNumOfEdges() {
 		
 		int numOfEdges = 0;
@@ -104,7 +119,30 @@ public class ComponentGraph implements java.io.Serializable{
 		return graph;
 	}
 	
-	public void setGraph(Graph graph) {
+	public ComponentGraph setGraph(Graph graph) {
 		this.graph = graph;
+		
+		return this;
 	}
+	
+	public Map<Component, Integer> getDistribution(Class class1, Class class2){
+		Map<Component, Integer> distro = new HashMap<>();
+		
+		for(Component vertice: graph.vertexSet()) {
+			if(vertice.getClass().equals(class1)) {
+				distro.put(vertice, 0);
+				Set<DefaultEdge> currentEdges = graph.edgesOf(vertice);
+				for(DefaultEdge edge: currentEdges) {
+					Component oppositeVertex = Graphs.getOppositeVertex(graph, edge, vertice);
+					if(oppositeVertex.getClass().equals(class2)) 
+						distro.put(vertice, distro.get(vertice) + 1);
+					
+				}
+			}
+		}
+		
+		
+		return distro;
+	}
+	
 }

@@ -12,6 +12,9 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 
 import datatypes.Component;
+import datatypes.Keyword;
+import datatypes.Library;
+import datatypes.Project;
 
 public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 	
@@ -46,6 +49,7 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 	private String normalization;
 	private boolean isWeighted;
 	private double[] weights;
+	private double[][] weightMatrix;
 
 	PersonalizedPageRank(Graph<Component, DefaultEdge> graph, int maxIterations, double tolerance, double dampingFactor, Set<Component> seedComponents, String normalization, boolean isWeighted)	{
 				
@@ -160,15 +164,15 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 			adjList.add(inNeighbors);
 		}
 		
-		if(isWeighted) {	//calculate sum of weights component edges
+		if(isWeighted) {	//calculate sum of weight of the edges for every component
 			this.weights = new double[totalVertices];
-            for (Component component : graph.vertexSet()) {
-                double sum = 0;
-                for (DefaultEdge edge: graph.outgoingEdgesOf(component)) {
-                    sum += graph.getEdgeWeight(edge);
-                }
-                weights[vertexIndexMap.get(component)] = sum;
-            }
+			for (Component component : graph.vertexSet()) {
+				double sum = 0;
+				for (DefaultEdge edge: graph.outgoingEdgesOf(component)) {
+					sum += graph.getEdgeWeight(edge);
+				}
+				weights[vertexIndexMap.get(component)] = sum;
+			}
 		}
 		
 		
@@ -176,20 +180,42 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 		double change = tolerance;
 		
 		if(isWeighted) {
+			
 			while(iterations > 0 && change >= tolerance) {
+				totalScore = 0;
 				for(int i = 0; i < totalVertices; i++) {
-					Component component = vertexMap[i];
 					double contribution = 0d;
-					for(DefaultEdge edge: graph.edgesOf(component)) {
-						Component neighbor = Graphs.getOppositeVertex(graph, edge, component);
-						int neighborIndex = vertexIndexMap.get(neighbor);
-                        contribution += dampingFactor * curScore[neighborIndex] * graph.getEdgeWeight(edge) /  weights[neighborIndex];
+					Component component = vertexMap[i];
+					//
+					for(int j: adjList.get(i)) {
+						Component neighbour = vertexMap[j];
+						Double weight;
+						if((component.getClass().hashCode() + neighbour.getClass().hashCode()) == 2 * Library.class.hashCode()) 
+							weight = 1d;
+						else if((component.getClass().hashCode() + neighbour.getClass().hashCode()) == (Library.class.hashCode() + Keyword.class.hashCode())) 
+							weight = 5d;
+						else if((component.getClass().hashCode() + neighbour.getClass().hashCode()) == (Library.class.hashCode() + Project.class.hashCode())) 
+							weight = 1d;
+						else
+							weight = 1d;
+						
+						contribution +=  curScore[j] * weight /  weights[j];	
 					}
+					//
+//					for(DefaultEdge edge: graph.edgesOf(component)) {
+//						Component neighbor = Graphs.getOppositeVertex(graph, edge, component);
+//						int neighborIndex = vertexIndexMap.get(neighbor);
+//						contribution += dampingFactor * curScore[neighborIndex] * graph.getEdgeWeight(edge) /  weights[neighborIndex];
+//					}
+
 					
 					double newValue = dampingFactor * contribution + (1d - dampingFactor) * seedVector[i];
 					nextScore[i] = newValue;
 					totalScore += newValue;
 				}
+				//normalize scores
+				nextScore = Arrays.stream(nextScore).map(i -> i / totalScore).toArray(); 
+				
 				change = euclideanDistance(nextScore, curScore)/Math.sqrt(totalVertices);
 				
 				double[] temp = curScore;
@@ -225,10 +251,10 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 				}else {																								//original
 					for(int i=0; i<totalVertices; i++) { 
 						double contribution = 0d;
-	
-						for(int j : adjList.get(i))
+						
+						for(int j : adjList.get(i)) 
 							contribution += curScore[j] / outDegree[j];											
-					
+						
 						if(normalization == "renorm" || normalization == "symmetricNormRenorm") 
 							contribution += curScore[i] / outDegree[i];												//renormalization
 						
@@ -240,7 +266,6 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 						totalScore += newValue;
 					}
 				}
-			
 			
 				if(normalization == "symmetricNorm" || normalization == "symmetricNormRenorm") 					//symmetric normalization
 					nextScore = Arrays.stream(nextScore).map(i -> i / totalScore).toArray(); 
@@ -266,7 +291,7 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 		
 		if(iterations<=0)
 			System.out.println("failed to converge in "+maxIterations+ " iterations");
-//		System.out.println("Iterations: "+(maxIterations-iterations));
+		System.out.println("Iterations: "+(maxIterations-iterations));
 	
 	}
 	

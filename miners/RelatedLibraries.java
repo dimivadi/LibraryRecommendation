@@ -7,7 +7,9 @@ import java.util.HashMap;
 
 import datatypes.Component;
 import datatypes.Library;
+import datatypes.Project;
 import datatypes.Connections;
+import datatypes.Keyword;
 
 
 /*
@@ -37,7 +39,7 @@ public class RelatedLibraries implements ComponentMiner{
 	
 	
 	//return a Map that will have as keys the libraries of the graph, and as values their corresponding scores
-	public Map<Component, Double> componentMining(Set<Component> seedComponents, boolean sweepRatio, double dampingFactor, String normalization) {	
+	public Map<Component, Double> componentMining(Set<Component> seedComponents, boolean sweepRatio, double dampingFactor, String normalization, boolean isWeighted) {	
 //	public Map<Component, Double> componentMining(Set<Component> seedComponents) {
 
 		if(componentGraph == null) {
@@ -50,8 +52,8 @@ public class RelatedLibraries implements ComponentMiner{
 			}
 		}
 		
-		if(globalLibraryScores == null) {
-			globalLibraryScores = getGlobalScores();
+		if(sweepRatio && globalLibraryScores == null) {
+			globalLibraryScores = getGlobalScores(dampingFactor, normalization, isWeighted);
 			System.out.println("Calculated PR");
 		}
 		
@@ -59,7 +61,7 @@ public class RelatedLibraries implements ComponentMiner{
 		//Scoring Algorithm
 		//TIME
 //		long start1 = System.nanoTime();
-		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph(), dampingFactor, seedComponents, normalization, false);
+		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph(), dampingFactor, seedComponents, normalization, isWeighted);
 //		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph(), seedComponents);
 		Map<Component, Double> scores = ppr.getScores();
 		//TIME
@@ -88,9 +90,9 @@ public class RelatedLibraries implements ComponentMiner{
 
 	}
 	
-	private Map<Component, Double> getGlobalScores(){
+	private Map<Component, Double> getGlobalScores(double dampingFactor, String normalization, boolean isWeighted){
 		
-		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph());
+		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph(), dampingFactor, normalization, isWeighted);
 		Map<Component, Double> scores = ppr.getScores();
 		scores = keepLibraryScores(scores);
 		
@@ -106,15 +108,23 @@ public class RelatedLibraries implements ComponentMiner{
 		return libScores;
 	}
 	
-	public void createGraph(Connections connections){
+	public void createGraph(Connections connections, boolean isWeighted){
 		
 		//TIME
 		long start = System.nanoTime();
 		System.out.println("Creating graph...");
 		//Create Graph
-		ComponentGraph cg = new ComponentGraph();
-		cg.addConnectionsToGraph(connections);
-		this.componentGraph = cg;
+//		ComponentGraph cg = new ComponentGraph();
+//		cg.addConnectionsToGraph(connections);
+//		this.componentGraph = cg;
+		componentGraph = new ComponentGraph();
+		componentGraph.addConnectionsToGraph(connections);
+		if(isWeighted) {
+			componentGraph.setEdgeWeightOfClasses(Keyword.class, Library.class, 5);
+			componentGraph.setEdgeWeightOfClass(Library.class, 1);
+			componentGraph.setEdgeWeightOfClasses(Library.class, Project.class, 1);
+		}
+		
 		//graph = cg.getGraph();
 		//TIME
 		long elapsedTime = System.nanoTime() - start;
