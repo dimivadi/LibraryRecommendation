@@ -202,10 +202,11 @@ public class PersonalizedPageRank implements PersonalizedScoringAlgorithm{
 						contribution +=  curScore[j] * weight /  weights[j];	
 					}
 					//
-//					for(DefaultEdge edge: graph.edgesOf(component)) {
-//						Component neighbor = Graphs.getOppositeVertex(graph, edge, component);
-//						int neighborIndex = vertexIndexMap.get(neighbor);
-//						contribution += dampingFactor * curScore[neighborIndex] * graph.getEdgeWeight(edge) /  weights[neighborIndex];
+
+//					for(int j: adjList.get(i)) {
+//						Component neighbour = vertexMap[j];
+//						DefaultEdge edge = graph.getEdge(component, neighbour);
+//						contribution += dampingFactor * curScore[j] * graph.getEdgeWeight(edge) /  weights[j];
 //					}
 
 					
