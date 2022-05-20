@@ -26,13 +26,12 @@ public class Evaluation extends Mode {
 	}
 	
 	@Override
-	public Settings chooseSettings() {
+	public Settings selectSettings() {
 		
-		chooseGraph();
 		
 		while(true) {
 			System.out.println("Choose value for damping facor, in range [0.1, 0.95]: ");
-			double dampingFactor  = Double.parseDouble(scanner.nextLine());
+			double dampingFactor  = Double.parseDouble(scanner.nextLine().replace(',', '.'));
 			if(dampingFactor >= 0.1 && dampingFactor <= 0.95) {
 				settings.setDampingFactor(dampingFactor);
 				break;
@@ -40,7 +39,7 @@ public class Evaluation extends Mode {
 		}
 		
 		while(true) {
-			System.out.println("Choose on of the methods below.\n"
+			System.out.println("Choose one of the methods below.\n"
 					+ "Type 1 for simple PPR, 2 for Symetric Normalization, \n"
 					+ "3 for Symmetric Normalization with Renormalization or 4 for PPR on weighted graph");
 			int methodInt = Integer.parseInt(scanner.nextLine());
@@ -79,7 +78,7 @@ public class Evaluation extends Mode {
 
 	}
 
-	private void chooseGraph() {
+	public void selectGraph() {
 		String graph;
 		String testing;
 		ComponentGraph componentGraph = null;
@@ -149,15 +148,18 @@ public class Evaluation extends Mode {
 	@Override
 	public void run() {
 		
+		selectSettings();
+		
 		while(true) {
 			Metrics metrics = new Metrics(componentMiner, existingConnections, settings.getSweepRatio(), settings.getDampingFactor(), settings.getNormalization(), settings.getWeightValues());
+			System.out.println("Evaluation in progress... ");
 			metrics.run();
 			System.out.println("Type 1 to change dataset along with recommendation settings \n"
-					+ "or any other number to change only recommendation settings");
+					+ "or any other number to only change recommendation settings: ");
 			int change = Integer.parseInt(scanner.nextLine());
 			if(change == 1)
-				chooseGraph();
-			chooseSettings();
+				selectGraph();
+			selectSettings();
 			
 		}
 		

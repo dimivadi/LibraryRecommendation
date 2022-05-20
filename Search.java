@@ -29,9 +29,7 @@ public class Search extends Mode {
 	}
 
 	@Override
-	public Settings chooseSettings() {
-		
-		chooseGraph();
+	public Settings selectSettings() {
 		
 		int methodInt;
 		while(true) {
@@ -71,8 +69,8 @@ public class Search extends Mode {
 		return settings;
 		
 	}
-	
-	private void chooseGraph() {
+	@Override
+	public void selectGraph() {
 		String graph;
 		int datasetInt;
 		while(true) {
@@ -80,9 +78,11 @@ public class Search extends Mode {
 			datasetInt = Integer.parseInt(scanner.nextLine());
 			if(datasetInt == 1) {
 				graph = "graphMavenTF.ser";
+				setPPR50();
 				break;
 			}else if(datasetInt == 2) {
 				graph = "graphApkTF.ser";
+				setSymRenorm50();
 				break;
 			}
 		}
@@ -113,10 +113,13 @@ public class Search extends Mode {
 	public void run() {
 		
 		while(true) {
-			System.out.println("Type '/' to change recommendation parameters \nor type some keywords to get relevant libraries: ");
+			System.out.println("Current method is " + settings.getMethodShortname() + " and number of recommended Libraries is set to " + settings.getNumOfRecommendations() + ".\n"
+					+ "Type '/' to change these parameters, '?' to change selected dataset, \nor type some keywords to get relevant libraries: ");
 			String inputText = scanner.nextLine();
-			if(inputText.matches("/"))
-				chooseSettings();
+			if(inputText.matches("\\?")) {
+				selectGraph();
+			}else if(inputText.matches("/"))
+				selectSettings();
 			else {
 				Set<Component> seedComponents = userInput.stringToKeywords(inputText);
 				try {
@@ -137,6 +140,7 @@ public class Search extends Mode {
 		settings.setNormalization("original");
 		settings.setSweepRatio(false);
 		settings.setWeightValues(null);
+		settings.setMethodShortname("PPR50");
 	}
 	
 	private void setPPR85() {
@@ -144,6 +148,7 @@ public class Search extends Mode {
 		settings.setNormalization("original");
 		settings.setSweepRatio(false);
 		settings.setWeightValues(null);
+		settings.setMethodShortname("PPR85");
 	}
 	
 	private void setSymRenorm50() {
@@ -151,6 +156,7 @@ public class Search extends Mode {
 		settings.setNormalization("symmetricNormRenorm");
 		settings.setSweepRatio(false);
 		settings.setWeightValues(null);
+		settings.setMethodShortname("SymRenorm");
 	}
 	
 	private void setSweepPPR50() {
@@ -158,6 +164,7 @@ public class Search extends Mode {
 		settings.setNormalization("original");
 		settings.setSweepRatio(true);
 		settings.setWeightValues(null);
+		settings.setMethodShortname("Sweep/PPR50");
 	}
 	
 	private void setW1501PPR50() {
@@ -165,6 +172,7 @@ public class Search extends Mode {
 		settings.setNormalization("original");
 		settings.setSweepRatio(false);
 		settings.setWeightValues(new double[] {1,50,1});
+		settings.setMethodShortname("W1-50-1");
 	}
 	
 }

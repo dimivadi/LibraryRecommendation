@@ -7,13 +7,15 @@ public class Settings {
 	boolean sweepRatio;
 	double[] weightValues;
 	int numOfRecommendations;
+	String methodShortname;
+
 	
 	Settings(){
 		normalization = "original";
 		dampingFactor = 0.85;
 		sweepRatio = false;
 		weightValues = null;
-		numOfRecommendations = 10;
+		numOfRecommendations = 20;
 	}
 	
 	public void setDampingFactor(double dampingFactor) {
@@ -36,6 +38,11 @@ public class Settings {
 		this.weightValues = weightValues;
 	}
 	
+	public String setMethodShortname(String methodShortname) {
+		this.methodShortname = methodShortname;
+		return this.methodShortname;
+	}
+	
 	public double getDampingFactor() {
 		return this.dampingFactor;
 	}
@@ -56,5 +63,8 @@ public class Settings {
 		return this.numOfRecommendations;
 	}
 	
+	public String getMethodShortname() {
+		return methodShortname;
+	}
 	
 }
