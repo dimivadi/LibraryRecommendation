@@ -125,6 +125,11 @@ public class ComponentGraph implements java.io.Serializable{
 		return this;
 	}
 	
+	public boolean contains(Component component) {
+		
+		return graph.containsVertex(component);
+	}
+	
 	public Map<Component, Integer> getDistribution(Class class1, Class class2){
 		Map<Component, Integer> distro = new HashMap<>();
 		

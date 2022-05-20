@@ -23,7 +23,7 @@ public class RelatedLibraries implements ComponentMiner{
 	
 	private ComponentGraph componentGraph;
 	private Map<Component, Double> globalLibraryScores; //scores calculated using global pagerank
-
+	private double[] weightsVector;
 	
 	class InvalidSeedException extends RuntimeException{
 		InvalidSeedException(String message){
@@ -37,31 +37,42 @@ public class RelatedLibraries implements ComponentMiner{
 		}
 	}
 	
+//	class NoSuchKeywordsExistException extends Exception{
+//		NoSuchKeywordsExistException(String message){
+//			super(message);
+//		}
+//	}
+	
 	
 	//return a Map that will have as keys the libraries of the graph, and as values their corresponding scores
-	public Map<Component, Double> componentMining(Set<Component> seedComponents, boolean sweepRatio, double dampingFactor, String normalization, boolean isWeighted) {	
+	public Map<Component, Double> componentMining(Set<Component> seedComponents, boolean sweepRatio, double dampingFactor, String normalization, double[] weightValues) throws NoSuchKeywordsExistException {	
 //	public Map<Component, Double> componentMining(Set<Component> seedComponents) {
 
 		if(componentGraph == null) {
 			throw new EmptyGraphException("Component Graph has not been created");
 		}
-		
-		for(Component comp: seedComponents) {
-			if (comp.getClass().equals(Library.class)) {
+		boolean atLeastOneKeywordExistsInGraph = false;
+		for(Component seedComp: seedComponents) {
+			if (seedComp.getClass().equals(Library.class)) {
 				throw new InvalidSeedException("Seed component for 'RelatedLibraries' should not be a Library");
 			}
+			if(componentGraph.contains(seedComp))
+				atLeastOneKeywordExistsInGraph = true;
 		}
 		
+		if(!atLeastOneKeywordExistsInGraph)
+			throw new NoSuchKeywordsExistException("No such keywords exist in graph. Try different keywords");
+		
 		if(sweepRatio && globalLibraryScores == null) {
-			globalLibraryScores = getGlobalScores(dampingFactor, normalization, isWeighted);
-			System.out.println("Calculated PR");
+			globalLibraryScores = getGlobalScores(dampingFactor, normalization, weightValues);
+//			System.out.println("Calculated PR");
 		}
 		
 //		System.out.println("seed: " + seedComponents);
 		//Scoring Algorithm
 		//TIME
 //		long start1 = System.nanoTime();
-		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph(), dampingFactor, seedComponents, normalization, isWeighted);
+		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph(), dampingFactor, seedComponents, normalization, weightValues);
 //		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph(), seedComponents);
 		Map<Component, Double> scores = ppr.getScores();
 		//TIME
@@ -90,9 +101,9 @@ public class RelatedLibraries implements ComponentMiner{
 
 	}
 	
-	private Map<Component, Double> getGlobalScores(double dampingFactor, String normalization, boolean isWeighted){
+	private Map<Component, Double> getGlobalScores(double dampingFactor, String normalization, double[] weightValues){
 		
-		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph(), dampingFactor, normalization, isWeighted);
+		PersonalizedScoringAlgorithm ppr = new PersonalizedPageRank(componentGraph.getGraph(), dampingFactor, normalization, weightValues);
 		Map<Component, Double> scores = ppr.getScores();
 		scores = keepLibraryScores(scores);
 		
@@ -108,7 +119,7 @@ public class RelatedLibraries implements ComponentMiner{
 		return libScores;
 	}
 	
-	public void createGraph(Connections connections, boolean isWeighted){
+	public void createGraph(Connections connections){
 		
 		//TIME
 		long start = System.nanoTime();
@@ -119,11 +130,11 @@ public class RelatedLibraries implements ComponentMiner{
 //		this.componentGraph = cg;
 		componentGraph = new ComponentGraph();
 		componentGraph.addConnectionsToGraph(connections);
-		if(isWeighted) {
-			componentGraph.setEdgeWeightOfClasses(Keyword.class, Library.class, 5);
-			componentGraph.setEdgeWeightOfClass(Library.class, 1);
-			componentGraph.setEdgeWeightOfClasses(Library.class, Project.class, 1);
-		}
+//		if(isWeighted) {
+//			componentGraph.setEdgeWeightOfClasses(Keyword.class, Library.class, 1);
+//			componentGraph.setEdgeWeightOfClass(Library.class, 5);
+//			componentGraph.setEdgeWeightOfClasses(Library.class, Project.class, 1);
+//		}
 		
 		//graph = cg.getGraph();
 		//TIME
@@ -140,6 +151,10 @@ public class RelatedLibraries implements ComponentMiner{
 		return componentGraph;
 	}
 	
+	public double[] setWeights(double[] weightsVector) {
+		this.weightsVector = weightsVector;
+		return weightsVector;
+	}
 	//keep scores only for Library Components
 //	Map<Component, Double> libScores = new HashMap<>();
 //	for(Map.Entry<Component, Double> entry : scores.entrySet()) {
