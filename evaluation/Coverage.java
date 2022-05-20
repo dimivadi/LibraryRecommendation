@@ -16,17 +16,32 @@ import datatypes.Library;
 
 public class Coverage {
 	
-	private Set<Component> recommendedComponents = new HashSet<>();
+	private Set<Component> recommendedComponents3 = new HashSet<>();
+	private Set<Component> recommendedComponents5 = new HashSet<>();
+	private Set<Component> recommendedComponents10 = new HashSet<>();
 	private int numberOfCommonLibraries;
 	private HashSet<Component> testingSetLibraries = new HashSet<>();
 	private HashSet<Component> trainingSetLibraries = new HashSet<>();
 	
 	
-	public Coverage addToRecommendedComponents(Map<Component, Double> recommendedComponents) {
-		for(Map.Entry<Component, Double> entry: recommendedComponents.entrySet()) {
-			if(testingSetLibraries.contains(entry.getKey()))
-				this.recommendedComponents.add(entry.getKey());
-		}
+	public Coverage addToRecommendedComponents(Map<Component, Double> recommendedComponents, int i) {
+		if(i == 3) {
+			for(Map.Entry<Component, Double> entry: recommendedComponents.entrySet()) 
+				if(testingSetLibraries.contains(entry.getKey()))
+					this.recommendedComponents3.add(entry.getKey());
+		}else if(i == 5) {
+			for(Map.Entry<Component, Double> entry: recommendedComponents.entrySet()) 
+				if(testingSetLibraries.contains(entry.getKey()))
+					this.recommendedComponents5.add(entry.getKey());
+		}else if(i == 10) {
+			for(Map.Entry<Component, Double> entry: recommendedComponents.entrySet()) 
+				if(testingSetLibraries.contains(entry.getKey()))
+					this.recommendedComponents10.add(entry.getKey());
+		}else 
+			throw new RuntimeException("recommendedComponents number");
+		
+		
+		
 		return this;
 	}
 
@@ -47,12 +62,18 @@ public class Coverage {
 	}
 	
 
-	public double getCoverage() {
+	public double[] getCoverage() {
 		
-		System.out.println("Size of recommendedComponents: " + recommendedComponents.size());
+		System.out.println("Size of recommendedComponents@3: " + recommendedComponents3.size());
+		System.out.println("Size of recommendedComponents@5: " + recommendedComponents5.size());
+		System.out.println("Size of recommendedComponents@10: " + recommendedComponents10.size());
 		System.out.println("Number of common libraries in testing and training sets: " + numberOfCommonLibraries);
 		
-		return (double) recommendedComponents.size() / numberOfCommonLibraries;
+		double[] coverage = new double[3];
+		coverage[0] = (double) recommendedComponents3.size() / numberOfCommonLibraries;
+		coverage[1] = (double) recommendedComponents5.size() / numberOfCommonLibraries;
+		coverage[2] = (double) recommendedComponents10.size() / numberOfCommonLibraries;
+		return coverage;
 	}
 	
 	

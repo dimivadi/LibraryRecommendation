@@ -42,11 +42,13 @@ public class Similarity {
 		
 		for(Component component: trainingSetLibraries) 
 			addComponentToMap(component);
-		//if library neighbours are used, the vector of the library is the result of the addition of its initial vector and the vectors of its neighbours
+		
+		//if library neighbours are used, the vector of the library used for cosine similarity computation
+		//is the result of the addition of its initial vector and the vectors of its neighbours
 		if(useNeighbours) {
 			//for each library in the graph
 			for(Map.Entry<Component, Map<String, Integer>> library: componentsMap.entrySet()) {
-				//store the map representing the library's terms as strings and the number of their appearences
+				//store the map representing the library's terms as strings and the number of their occurancies
 				Map<String, Integer> libraryMap = library.getValue();
 				//for each of the library's neighbours
 				for(Component neighbour: componentMiner.getComponentGraph().getNeighbouringComponents(library.getKey())) {
@@ -66,6 +68,9 @@ public class Similarity {
 	
 	// returns a Map with keys the libraries of the graph and values the similarity of each library to the input
 	public Map<Component, Double> getLibrarySimilarity(Set<Component> input) {
+		
+		long start = System.nanoTime();
+		
 		Map<String, Integer> inputMap = new HashMap<>();
 		for(Component component: input) {
 			inputMap.put(component.toString().toLowerCase(), 1);
@@ -84,6 +89,10 @@ public class Similarity {
 				librarySimilarity.put(entry.getKey(), value);
 			}
 		}
+		
+//		long elapsedTime = System.nanoTime() - start;
+//		double elapsedTimeInSeconds = (double) elapsedTime / 1_000_000;
+//		System.out.println("time to calculate cos sim: "+ elapsedTimeInSeconds +"ms");
 		
 		return librarySimilarity;
 	}
