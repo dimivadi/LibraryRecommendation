@@ -8,6 +8,7 @@ public class Settings {
 	double[] weightValues;
 	int numOfRecommendations;
 	String methodShortname;
+	boolean cosSim;
 
 	
 	Settings(){
@@ -16,6 +17,7 @@ public class Settings {
 		sweepRatio = false;
 		weightValues = null;
 		numOfRecommendations = 20;
+		cosSim = false;
 	}
 	
 	public void setDampingFactor(double dampingFactor) {
@@ -43,6 +45,10 @@ public class Settings {
 		return this.methodShortname;
 	}
 	
+	public void setCosSim(boolean cosSim) {
+		this.cosSim = cosSim;
+	}
+	
 	public double getDampingFactor() {
 		return this.dampingFactor;
 	}
@@ -65,6 +71,10 @@ public class Settings {
 	
 	public String getMethodShortname() {
 		return methodShortname;
+	}
+	
+	public boolean getCosSim() {
+		return this.cosSim;
 	}
 	
 }

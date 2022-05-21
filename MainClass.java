@@ -64,11 +64,11 @@ public class MainClass{
 		
 		final boolean buildNewGraph = false;
 		
-		String testing = "testingMavenTT.ser";
-		String graph = "graphMavenTT.ser";
+		String testing = "testingApkN.ser";
+		String graph = "graphApkN.ser";
 		System.out.println(graph);
 		boolean linkLibs = true;
-		boolean[] linkLibsProject = {false};
+		boolean[] linkLibsProject = {true};
 				
 		Map<Set<Component>, Set<Component>> existingConnections = null;
 		Connections connections = null;
@@ -203,17 +203,21 @@ public class MainClass{
 //		};
 		
 		double[][] weightValuesArray = {
-				{1d, 50d, 1d}
+				{50d, 1d, 1d},{1d, 50d, 1d}
 		};
 		
 		double[] dampingFactor = {0.85};
 		boolean[] sweepRatio = {false};
-		String[] normalization = {"symmetricNormRenorm"};
+		String[] normalization = {"original"};
 
 		
-		double[] dampingFactor2 = {0.85};
+		double[] dampingFactor2 = {0.5};
 		boolean[] sweepRatio2 = {false};
-		String[] normalization2 = {"original"};
+		String[] normalization2 = {"original","symmetricNormRenorm"};
+		
+		double[] dampingFactor3 = {0.5};
+		boolean[] sweepRatio3 = {true};
+		String[] normalization3 = {"original"};
 		
 		double[] weightValues = {50d, 1d, 1d};
 		
@@ -237,8 +241,8 @@ public class MainClass{
 //				}
 //			}
 //		}
-		
-
+//		
+//
 //		for(double a: dampingFactor2) {
 //			for(boolean s: sweepRatio2) {
 //				for(String n: normalization2) {
@@ -247,6 +251,16 @@ public class MainClass{
 //				}
 //			}
 //		}
+		
+		for(double a: dampingFactor3) {
+			for(boolean s: sweepRatio3) {
+				for(String n: normalization3) {
+					Metrics metrics = new Metrics(componentMiner, existingConnections, s, a, n, null, fileWriter);
+					metrics.run();
+				}
+			}
+		}
+		
 		
 		for(double[] weightValues2: weightValuesArray) {
 			Metrics metrics = new Metrics(componentMiner, existingConnections, false, 0.5d, "original", weightValues2, fileWriter);

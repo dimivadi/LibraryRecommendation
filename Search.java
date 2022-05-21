@@ -8,6 +8,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 import datatypes.Component;
+import evaluation.Similarity;
 import miners.ComponentGraph;
 import miners.ComponentMiner;
 import miners.NoSuchKeywordsExistException;
@@ -34,8 +35,8 @@ public class Search extends Mode {
 		int methodInt;
 		while(true) {
 			System.out.println("Choose one of the recommendation methods below.\n"
-					+"Type 1 for PPR85, 2 for PPR50, 3 for SymRenorm, \n"
-					+"4 for PPR50 with sweep or 5 for PPR50 on weighted graph");
+					+"Type 1 for PPR85, 2 for PPR50, 3 for SymRenorm, 4 for PPR50 with sweep, \n"
+					+"5 for PPR50 on weighted graph, or 6 for Cosine similarity");
 			methodInt = Integer.parseInt(scanner.nextLine());
 			
 			if(methodInt == 1) {
@@ -52,6 +53,9 @@ public class Search extends Mode {
 				break;
 			}else if(methodInt == 5) {
 				setW1501PPR50();
+				break;
+			}else if(methodInt == 6) {
+				settings.setCosSim(true);
 				break;
 			}
 		}
@@ -81,7 +85,7 @@ public class Search extends Mode {
 				setPPR50();
 				break;
 			}else if(datasetInt == 2) {
-				graph = "graphApkTF.ser";
+				graph = "graphApkN.ser";
 				setSymRenorm50();
 				break;
 			}
@@ -121,15 +125,23 @@ public class Search extends Mode {
 			}else if(inputText.matches("/"))
 				selectSettings();
 			else {
+				Map<Component, Double> result = null;
 				Set<Component> seedComponents = userInput.stringToKeywords(inputText);
-				try {
-					Map<Component, Double> result = componentMiner.componentMining(seedComponents, settings.getSweepRatio(), settings.getDampingFactor(), settings.getNormalization(), settings.getWeightValues());
-					RankedComponents rankedComponents = new RankedComponents(result);
-					result = rankedComponents.getTopComponents(settings.getNumOfRecommendations());
-					result.forEach((x,y) -> System.out.println(x));
-				} catch (NoSuchKeywordsExistException e) {
-					System.out.println("No such keywords exist in graph. Try different keywords. ");
+				if(!settings.getCosSim()) {
+					try {
+						result = componentMiner.componentMining(seedComponents, settings.getSweepRatio(), settings.getDampingFactor(), settings.getNormalization(), settings.getWeightValues());
+						
+					} catch (NoSuchKeywordsExistException e) {
+						System.out.println("No such keywords exist in graph. Try different keywords. ");
+					}
+	
+				}else {
+					Similarity  similarity = new Similarity(componentMiner, false);
+					result = similarity.getLibrarySimilarity(seedComponents);
 				}
+				RankedComponents rankedComponents = new RankedComponents(result);
+				result = rankedComponents.getTopComponents(settings.getNumOfRecommendations());
+				result.forEach((x,y) -> System.out.println(x));
 			}
 			
 		}
@@ -141,6 +153,7 @@ public class Search extends Mode {
 		settings.setSweepRatio(false);
 		settings.setWeightValues(null);
 		settings.setMethodShortname("PPR50");
+		settings.setCosSim(false);
 	}
 	
 	private void setPPR85() {
@@ -149,6 +162,7 @@ public class Search extends Mode {
 		settings.setSweepRatio(false);
 		settings.setWeightValues(null);
 		settings.setMethodShortname("PPR85");
+		settings.setCosSim(false);
 	}
 	
 	private void setSymRenorm50() {
@@ -157,6 +171,16 @@ public class Search extends Mode {
 		settings.setSweepRatio(false);
 		settings.setWeightValues(null);
 		settings.setMethodShortname("SymRenorm");
+		settings.setCosSim(false);
+	}
+	
+	private void setSymRenorm85() {
+		settings.setDampingFactor(0.85);
+		settings.setNormalization("symmetricNormRenorm");
+		settings.setSweepRatio(false);
+		settings.setWeightValues(null);
+		settings.setMethodShortname("SymRenorm");
+		settings.setCosSim(false);
 	}
 	
 	private void setSweepPPR50() {
@@ -165,6 +189,7 @@ public class Search extends Mode {
 		settings.setSweepRatio(true);
 		settings.setWeightValues(null);
 		settings.setMethodShortname("Sweep/PPR50");
+		settings.setCosSim(false);
 	}
 	
 	private void setW1501PPR50() {
@@ -173,6 +198,7 @@ public class Search extends Mode {
 		settings.setSweepRatio(false);
 		settings.setWeightValues(new double[] {1,50,1});
 		settings.setMethodShortname("W1-50-1");
+		settings.setCosSim(false);
 	}
 	
 }

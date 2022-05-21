@@ -152,7 +152,7 @@ public class Evaluation extends Mode {
 		
 		while(true) {
 			Metrics metrics = new Metrics(componentMiner, existingConnections, settings.getSweepRatio(), settings.getDampingFactor(), settings.getNormalization(), settings.getWeightValues());
-			System.out.println("Evaluation in progress... ");
+			System.out.println("Evaluation in progress... This might take a while");
 			metrics.run();
 			System.out.println("Type 1 to change dataset along with recommendation settings \n"
 					+ "or any other number to only change recommendation settings: ");
