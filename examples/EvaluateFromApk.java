@@ -1,4 +1,4 @@
-package examples;
+package datasets;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -29,8 +29,11 @@ public class EvaluateFromApk implements EvaluationDataSource{
 	private Connections connections = new Connections();
 	private Map<Set<Component>, Set<Component>> existingConnections = new HashMap<>();
 	private Set<String> stopwords = new HashSet<>();
+	private boolean linkLibraries = true;
+	boolean linkLibsToProject = true;
 	
-	public EvaluateFromApk(String apkPath, String libPath, String relationPath, boolean linkLibraries, boolean linkLibsToProject) throws IOException{
+	
+	public EvaluateFromApk(String apkPath, String libPath, String relationPath) throws IOException{
 		
 		//read libInfo.csv
 		Map<Integer, Component> libInfo = new HashMap<>();
@@ -85,6 +88,7 @@ public class EvaluateFromApk implements EvaluationDataSource{
 		//create appropriate connections between components
 		Pattern apkTermsPattern = Pattern.compile("[a-zA-Z0-9]{2,}");
 		Matcher apkTermsMatcher = apkTermsPattern.matcher("");
+
 		
 		for(Map.Entry<Integer, Set<Integer>> entry: relation.entrySet()) {
 			
@@ -93,9 +97,17 @@ public class EvaluateFromApk implements EvaluationDataSource{
 			apkTermsMatcher.reset(apkInfo.get(entry.getKey()).getName());
 			
 			while(apkTermsMatcher.find()) {
-				if(!stopwords.contains(apkTermsMatcher.group()))
-					apkNameAsKeywords.add(new Keyword(apkTermsMatcher.group()));
-			}
+				String[] apkWords = apkTermsMatcher.group().split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
+				for(String word: apkWords) {
+					if(!stopwords.contains(word))
+						apkNameAsKeywords.add(new Keyword(word));
+				}
+				
+					
+				
+				}
+				
+			
 			
 			//store libraries of apk as Library components
 			Set<Component> apkLibraries = new HashSet<>();
@@ -135,6 +147,7 @@ public class EvaluateFromApk implements EvaluationDataSource{
 		
 		Pattern pattern = Pattern.compile("[a-zA-Z0-9]{2,}"); 
 		Matcher matcher = pattern.matcher(" ");
+		
 		Map<String, Integer> termsFreq = new HashMap<>();
 		String apkName;
 		
@@ -143,10 +156,16 @@ public class EvaluateFromApk implements EvaluationDataSource{
 			apkName = entry.getValue().getName();
 			matcher.reset(apkName);
 			
-			while(matcher.find())
+			while(matcher.find()) {
 				//check if matching pattern contains only numbers
-				if(!matcher.group().matches("[0-9]+"))
-					termsFreq.put(matcher.group(), termsFreq.getOrDefault(matcher.group(), 0) + 1);
+				String matcherWords[] = matcher.group().split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
+				for(String word: matcherWords) {
+					if(!word.matches("[0-9]+"))
+						termsFreq.put(matcher.group(), termsFreq.getOrDefault(word, 0) + 1);
+				}
+			}
+				
+				
 			
 			for(Map.Entry<String, Integer> term: termsFreq.entrySet()) 
 				if(((double)term.getValue() / apkInfo.size()) > 0.1) 

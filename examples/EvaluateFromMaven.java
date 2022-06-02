@@ -1,4 +1,4 @@
-package examples;
+package datasets;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,10 +28,12 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 	private Connections connections = new Connections();
 	private Map<Set<Component>, Set<Component>> existingConnections = new HashMap<>();
 	private Set<String> stopwords = new HashSet<>();
+	boolean linkDependencies = true;
+	boolean linkDependenciesToProject = true;
 //	private static final boolean LINKS_BETWEEN_DEPENDENCIES = true;
 //	private static final boolean LINKS_BETWEEN_DEPENDENCIES_AND_LIBRARY = true;
 	
-	public EvaluateFromMaven(String filePath, boolean linkDependencies, boolean linkDependenciesToProject) throws IOException {
+	public EvaluateFromMaven(String filePath) throws IOException {
 		
 		
 		String[] libraryTerms;
@@ -77,7 +79,7 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 				String element = i.next();
 				if(stopwords.contains(element) 
 						|| element.length() < 2 
-								||!element.matches("[a-zA-Z]+")){
+								||!element.matches(".*[a-zA-Z]+.*")){
 					i.remove();
 				}
 			}

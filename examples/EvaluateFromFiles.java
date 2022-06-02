@@ -1,4 +1,4 @@
-package examples;
+package datasets;
 
 import java.io.File;
 import java.io.IOException;
