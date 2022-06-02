@@ -31,11 +31,6 @@ public class RelatedLibraries implements ComponentMiner{
 		}
 	}
 	
-	class EmptyGraphException extends RuntimeException{
-		EmptyGraphException(String message){
-			super(message);
-		}
-	}
 	
 //	class NoSuchKeywordsExistException extends Exception{
 //		NoSuchKeywordsExistException(String message){
@@ -45,7 +40,7 @@ public class RelatedLibraries implements ComponentMiner{
 	
 	
 	//return a Map that will have as keys the libraries of the graph, and as values their corresponding scores
-	public Map<Component, Double> componentMining(Set<Component> seedComponents, boolean sweepRatio, double dampingFactor, String normalization, double[] weightValues) throws NoSuchKeywordsExistException {	
+	public Map<Component, Double> componentMining(Set<Component> seedComponents, boolean sweepRatio, double dampingFactor, String normalization, double[] weightValues) throws NoSuchKeywordsExistException,  EmptyGraphException{	
 //	public Map<Component, Double> componentMining(Set<Component> seedComponents) {
 
 		if(componentGraph == null) {
