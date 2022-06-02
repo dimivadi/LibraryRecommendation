@@ -5,7 +5,7 @@ import java.util.Set;
 
 import datatypes.Component;
 import datatypes.Connections;
-import miners.RelatedLibraries.NoSuchKeywordsExistException;
+import miners.NoSuchKeywordsExistException;
 
 public interface ComponentMiner {
 	
