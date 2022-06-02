@@ -13,6 +13,7 @@ import miners.ComponentMiner;
 import miners.NoSuchKeywordsExistException;
 import miners.RankedComponents;
 import miners.RelatedLibraries;
+import miners.EmptyGraphException;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -37,7 +38,7 @@ public class CmdSearch implements Callable<Integer> {
 	@Option(names = {"-o"}, description = "Save results to file named 'recommendations.txt'")
 	private boolean saveResults = false;
 	
-	@Option(names= {"-h","--help"}, usageHelp = true, description="display instructions")
+	@Option(names= {"-h","--help"}, usageHelp = true, description="Display instructions")
 	boolean help=false;
 	
 	private static GraphData graphData;
@@ -101,6 +102,9 @@ public class CmdSearch implements Callable<Integer> {
 				
 			} catch (NoSuchKeywordsExistException e) {
 				System.out.println("No such keywords exist in graph. Try different keywords. ");
+			} catch (EmptyGraphException e) {
+				System.out.println("Dataset is not loaded yet. Use the command 'load' to import some data.");
+				return 0;
 			}
 
 		}else {

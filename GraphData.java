@@ -6,7 +6,10 @@ import java.io.ObjectInputStream;
 import java.util.Map;
 import java.util.Set;
 
+import datasets.EvaluateFromApk;
+import datasets.EvaluateFromMaven;
 import datatypes.Component;
+import evaluation.EvaluationDataSource;
 import miners.ComponentGraph;
 
 public class GraphData {
@@ -17,10 +20,45 @@ public class GraphData {
 	Map<Set<Component>, Set<Component>> existingConnectionsMaven;
 	
 	public GraphData() {
-		componentGraphMalib = deserializeComponentGraph("graphApkNT.ser");
-		//componentGraphMaven = deserializeComponentGraph("graphMavenTT.ser");
-		existingConnectionsMalib = deserializeTestingSet("testingApkNT.ser");
+		
+	}
+	
+	public void loadMavenType(String filePath) {
+		EvaluationDataSource evaluationDataSource = null;
+		try {
+			evaluationDataSource = new EvaluateFromMaven(filePath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		ComponentGraph componentGraph = new ComponentGraph();
+		componentGraph.addConnectionsToGraph(evaluationDataSource.getConnections());
+		componentGraphMaven = componentGraph;
+		existingConnectionsMaven = evaluationDataSource.getExistingConnections();
+		
+	}
+	
+	public void loadMalibType(String apkPath, String libPath, String relationPath) {
+		EvaluationDataSource evaluationDataSource = null;
+		try {
+			evaluationDataSource = new EvaluateFromApk(apkPath, libPath, relationPath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		ComponentGraph componentGraph = new ComponentGraph();
+		componentGraph.addConnectionsToGraph(evaluationDataSource.getConnections());
+		componentGraphMalib = componentGraph;
+		existingConnectionsMalib = evaluationDataSource.getExistingConnections();
+	}
+	
+	public void loadSerializedMaven() {
+		componentGraphMaven = deserializeComponentGraph("graphMavenTT.ser");
 		existingConnectionsMaven = deserializeTestingSet("testingMavenTT.ser");
+	}
+	
+	
+	public void loadSerializedMalib() {
+		componentGraphMalib = deserializeComponentGraph("graphApkNT.ser");
+		existingConnectionsMalib = deserializeTestingSet("testingApkNT.ser");
 	}
 	
 	public ComponentGraph getComponentGraphMalib() {

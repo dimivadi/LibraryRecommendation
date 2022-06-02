@@ -22,13 +22,13 @@ import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 
+import datasets.*;
 import datatypes.Component;
 import datatypes.Connections;
 import datatypes.Keyword;
 import datatypes.Library;
 import datatypes.Project;
 import evaluation.*;
-import examples.*;
 import miners.ComponentGraph;
 import miners.ComponentMiner;
 import miners.NoSuchKeywordsExistException;
@@ -43,28 +43,33 @@ public class MainClass{
 	public static void main(String[] args) throws IOException{
 		
 		Scanner scanner = new Scanner(System.in);
-		System.out.println("Loading datasets...");
+
 		GraphData graphData = new GraphData();
+		CmdLoad cl = new CmdLoad();
 		CmdSearch cs = new CmdSearch();
-		CmdEvaluation ce = new CmdEvaluation();
+		CmdEvaluate ce = new CmdEvaluate();
+		
+		cl.setGraphData(graphData);
 		cs.setGraphData(graphData);
 		ce.setGraphData(graphData);
 		
 		while(true) {
-			System.out.println("\n\nType one of the commands:\nsearch\nevaluate\nload\nfollowed by appropriate parameters. Type exit to terminate."
-					+ "\nType a command followed by option -h to get a list of the valid parameters\n");
+			System.out.println("Type one of the commands:\nsearch\nevaluate\nload\nfollowed by appropriate parameters."
+					+ "\nType a command followed by option -h to get a list of the valid parameters"
+					+ "\nType exit to terminate.\n");
 			String[] input = scanner.nextLine().split(" ");
 			String[] arguments = Arrays.copyOfRange(input, 1, input.length);
 			if(input[0].equals("search"))
 				cs.runSearch(arguments);
 			else if(input[0].equals("evaluate"))
 				ce.runEval(arguments);
-			else if(input[0].equals("load")) {}
-				
+			else if(input[0].equals("load")) 
+				cl.runLoad(arguments);
 			else if(input[0].equals("exit")) {
 				scanner.close();
 				return;
 			}
+			System.out.println("\n\n");
 		}
 		
 		
