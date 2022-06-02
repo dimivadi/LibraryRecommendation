@@ -164,7 +164,17 @@ public class Connections implements java.io.Serializable {
 		}
 	}
 	
-
+	public Collection<Component> getComponentConnectionsByType(Component component, Class connectionClass){
+		
+		Set<Component> componentConnections = new HashSet<>();
+		
+		for(Integer i: adjacentComponents.get(component)) 
+			if(indexToComponent.get(i).getClass().equals(connectionClass))
+				componentConnections.add(indexToComponent.get(i));
+		
+		
+		return componentConnections;
+	}
 	
 
 	

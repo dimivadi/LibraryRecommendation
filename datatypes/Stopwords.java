@@ -28,7 +28,7 @@ public class Stopwords {
 	Map<String, Integer> termsFreq;
 
 	
-	//calculate IDF for every term in dir, then add to stopwords if IDF is smaller than 0.5
+	//calculate IDF for every term in dir, then add to stopwords if IDF is smaller than 0.3
 	public void addStopwords(String dir) throws IOException {
 
 		

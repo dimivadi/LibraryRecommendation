@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-public class FileNameToKeywords {
+public class FileNameToKeywords extends FindComponents{
 	
 	/*
 	 * Class to split a File name and return the words as components
@@ -25,5 +25,8 @@ public class FileNameToKeywords {
 	
 	}
 
+	public Set<Component> findComponents(CodeFile codefile){
+		return getKeywords(codefile.getFile());
+	}
 		
 }
