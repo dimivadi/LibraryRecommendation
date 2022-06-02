@@ -17,4 +17,13 @@ public class UserInput {
 		
 		return inputSet;
 	}
+	
+	public Set<Component> stringArrayToKeywords(String[] input){
+		Set<Component> inputSet = new HashSet<Component>();
+		for(String i: input) {
+			inputSet.add(new Keyword(i));
+		}
+		
+		return inputSet;
+	}
 }
