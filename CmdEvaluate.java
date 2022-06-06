@@ -11,6 +11,7 @@ import miners.RelatedLibraries;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import picocli.CommandLine.Help.ColorScheme;
 
 
 @Command(name="evaluate", description="Evaluate the recommendation system")
@@ -97,7 +98,11 @@ public class CmdEvaluate implements Callable<Integer> {
 	}
 	
 	public void runEval(String[] args) {
-		int exitCode = new CommandLine(new CmdEvaluate()).setCaseInsensitiveEnumValuesAllowed(true).execute(args);
+		ColorScheme colorScheme = CommandLine.Help.defaultColorScheme(CommandLine.Help.Ansi.AUTO);
+		int exitCode = new CommandLine(new CmdEvaluate())
+				.setCaseInsensitiveEnumValuesAllowed(true)
+				.setColorScheme(colorScheme)
+				.execute(args);
 		
 	}
 	

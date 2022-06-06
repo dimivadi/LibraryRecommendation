@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -16,6 +15,7 @@ import miners.RelatedLibraries;
 import miners.EmptyGraphException;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Help.ColorScheme;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
@@ -26,7 +26,7 @@ public class CmdSearch implements Callable<Integer> {
 	@Parameters(description="Keywords, seperated by space, without quotes", arity="1..*")
 	private String[] keywords;
 	
-	@Option(names="-g", description = "Graph on which search will be applied to (valid values (case insensitive): ${COMPLETION-CANDIDATES}) (default: ${DEFAULT-VALUE})")
+	@Option(names="-g", description = "Graph on which search will be applied to (valid values (case insensitive): @|bold ${COMPLETION-CANDIDATES})|@ (default: ${DEFAULT-VALUE})")
 	private GraphType graphType = GraphType.MALIB;
 	
 	@Option(names = "-m",description = "Search method (valid values (case insensitive): ${COMPLETION-CANDIDATES}) (default: ${DEFAULT-VALUE})")
@@ -102,8 +102,9 @@ public class CmdSearch implements Callable<Integer> {
 				
 			} catch (NoSuchKeywordsExistException e) {
 				System.out.println("No such keywords exist in graph. Try different keywords. ");
+				return 0;
 			} catch (EmptyGraphException e) {
-				System.out.println("Dataset is not loaded yet. Use the command 'load' to import some data.");
+				System.out.println("Dataset is not loaded yet. Use the command 'load' to import it.");
 				return 0;
 			}
 
@@ -123,6 +124,7 @@ public class CmdSearch implements Callable<Integer> {
 				}
 			});
 			fileWriter.close();
+			System.out.println("Results exported to file 'recommendations.txt'");
 		}else 
 			result.forEach((x,y) -> System.out.println(x));
 		
@@ -132,9 +134,16 @@ public class CmdSearch implements Callable<Integer> {
 	}
 	
 	public void runSearch(String[] args) {
-		int exitCode = new CommandLine(new CmdSearch()).setCaseInsensitiveEnumValuesAllowed(true).execute(args);
+		ColorScheme colorScheme = CommandLine.Help.defaultColorScheme(CommandLine.Help.Ansi.AUTO);
+		int exitCode = new CommandLine(new CmdSearch())
+				.setCaseInsensitiveEnumValuesAllowed(true)
+				.setColorScheme(colorScheme)
+				.execute(args);
 	}
 	
+
+
+
 	private void setPPR50() {
 		settings.setDampingFactor(0.5);
 		settings.setNormalization("original");

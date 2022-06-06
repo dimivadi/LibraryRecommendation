@@ -94,10 +94,10 @@ public class MainClass{
 		
 		
 		
-//		final boolean buildNewGraph = false;
+//		final boolean buildNewGraph = true;
 //		
-//		String testing = "testingApkN.ser";
-//		String graph = "graphApkN.ser";
+//		String testing = "testingMavenTest.ser";
+//		String graph = "graphMavenTest.ser";
 //		System.out.println(graph);
 //		boolean linkLibs = true;
 //		boolean[] linkLibsProject = {true};
@@ -114,7 +114,10 @@ public class MainClass{
 //		//get data
 ////			EvaluationDataSource evaluationDataSource = new EvaluateFromFiles("elasticsearch-master", "testElastic", "java", linkLibs, link);
 ////			EvaluationDataSource evaluationDataSource = new EvaluateFromMaven("maven-data.csv/links_all.csv", linkLibs, link);
-//			EvaluationDataSource evaluationDataSource = new EvaluateFromApk("apk_info.csv", "lib_info.csv", "relation.csv", linkLibs, link);
+////			EvaluationDataSource evaluationDataSource = new EvaluateFromApk("apk_info.csv", "lib_info.csv", "relation.csv", linkLibs, link);
+//			EvaluationDataSource evaluationDataSource = new EvaluateFromMaven("maven-data.csv/links_all.csv");
+////			EvaluationDataSource evaluationDataSource = new EvaluateFromApk("apk_info.csv", "lib_info.csv", "relation.csv");
+//			System.out.println("1");
 //			
 //			
 //			//get connections (part of the data) that will be used as a testing set

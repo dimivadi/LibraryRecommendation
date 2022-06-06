@@ -30,8 +30,10 @@ public class GraphData {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Files loaded.\nCreating graph...");
 		ComponentGraph componentGraph = new ComponentGraph();
 		componentGraph.addConnectionsToGraph(evaluationDataSource.getConnections());
+		System.out.println("Graph created");
 		componentGraphMaven = componentGraph;
 		existingConnectionsMaven = evaluationDataSource.getExistingConnections();
 		
@@ -44,21 +46,25 @@ public class GraphData {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Files loaded.\nCreating graph...");
 		ComponentGraph componentGraph = new ComponentGraph();
 		componentGraph.addConnectionsToGraph(evaluationDataSource.getConnections());
+		System.out.println("Graph created");
 		componentGraphMalib = componentGraph;
 		existingConnectionsMalib = evaluationDataSource.getExistingConnections();
 	}
 	
 	public void loadSerializedMaven() {
-		componentGraphMaven = deserializeComponentGraph("graphMavenTT.ser");
-		existingConnectionsMaven = deserializeTestingSet("testingMavenTT.ser");
+		componentGraphMaven = deserializeComponentGraph("graphMavenTF.ser");
+		existingConnectionsMaven = deserializeTestingSet("testingMavenTF.ser");
+		System.out.println("Loaded graph.");
 	}
 	
 	
 	public void loadSerializedMalib() {
 		componentGraphMalib = deserializeComponentGraph("graphApkNT.ser");
 		existingConnectionsMalib = deserializeTestingSet("testingApkNT.ser");
+		System.out.println("Loaded graph.");
 	}
 	
 	public ComponentGraph getComponentGraphMalib() {
