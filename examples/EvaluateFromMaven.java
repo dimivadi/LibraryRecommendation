@@ -40,7 +40,6 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 		Random rand = new Random();
 		
 		updateStopwords(filePath);
-		
 		//read csv file and store contents in libraryDependencies map
 		File file = new File(filePath);
 		Map<String, Set<String>> libraryDependencies = new HashMap<>();
@@ -66,7 +65,6 @@ public class EvaluateFromMaven implements EvaluationDataSource{
 		}
 
 		br.close();
-		
 		
 		//for every library
 		for(Map.Entry<String, Set<String>> entry: libraryDependencies.entrySet()) {
