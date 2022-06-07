@@ -14,6 +14,7 @@ import org.apache.commons.math3.stat.inference.MannWhitneyUTest;
 
 import datatypes.Component;
 import miners.ComponentMiner;
+import miners.EmptyGraphException;
 import miners.RankedComponents;
 import miners.NoSuchKeywordsExistException;
 
