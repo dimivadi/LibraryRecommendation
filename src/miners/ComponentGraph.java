@@ -30,12 +30,11 @@ public class ComponentGraph implements java.io.Serializable{
 
 	
 	public ComponentGraph addConnectionsToGraph(Connections connections) {
-		
 		for (Component component : connections.getComponents()) {
 			graph.addVertex(component);
 			for(Component comp : connections.getComponentConnections(component)) {
 				graph.addVertex(comp);
-				graph.addEdge(component, comp);				
+				graph.addEdge(component, comp);	
 			}
 		}
 		return this;
