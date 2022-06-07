@@ -1,3 +1,4 @@
+package util;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import miners.ComponentMiner;
 import miners.NoSuchKeywordsExistException;
 import miners.RankedComponents;
 import miners.RelatedLibraries;
+import miners.ScoringMethod;
 import miners.EmptyGraphException;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;

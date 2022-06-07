@@ -1,3 +1,4 @@
+package util;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -57,14 +58,12 @@ public class GraphData {
 	public void loadSerializedMaven() {
 		componentGraphMaven = deserializeComponentGraph("graphMavenTF.ser");
 		existingConnectionsMaven = deserializeTestingSet("testingMavenTF.ser");
-		System.out.println("Loaded graph.");
 	}
 	
 	
 	public void loadSerializedMalib() {
 		componentGraphMalib = deserializeComponentGraph("graphApkNT.ser");
 		existingConnectionsMalib = deserializeTestingSet("testingApkNT.ser");
-		System.out.println("Loaded graph.");
 	}
 	
 	public ComponentGraph getComponentGraphMalib() {
@@ -94,7 +93,7 @@ public class GraphData {
 			componentGraph = (ComponentGraph) in.readObject();
 			in.close();
 			file.close();
-			
+			System.out.println("Loaded graph.");
 		}catch(IOException ex)
         {
             System.out.println("IOException is caught");

@@ -1,3 +1,4 @@
+package util;
 
 import java.util.Map;
 import java.util.Set;
@@ -7,6 +8,7 @@ import datatypes.Component;
 import evaluation.Metrics;
 import miners.ComponentGraph;
 import miners.ComponentMiner;
+import miners.NormalizationMethods;
 import miners.RelatedLibraries;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
