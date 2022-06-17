@@ -65,7 +65,7 @@ public class EvaluateFromApk implements EvaluationDataSource{
 			apkInfo.put(Integer.parseInt(apkValues[0]), new Project(apkValues[1]));
 		}
 		apkReader.close();
-		
+		System.out.println("num of apks: "+apkInfo.size());
 //		updateStopwords(apkInfo);
 		stopwords.add("com");
 		stopwords.add("apk");
@@ -86,10 +86,11 @@ public class EvaluateFromApk implements EvaluationDataSource{
 		
 		
 		//create appropriate connections between components
+		//split apk name at non word characters to get terms
 		Pattern apkTermsPattern = Pattern.compile("[a-zA-Z0-9]{2,}");
 		Matcher apkTermsMatcher = apkTermsPattern.matcher("");
 
-		
+		Map<Integer, Integer> hist = new HashMap<>();
 		for(Map.Entry<Integer, Set<Integer>> entry: relation.entrySet()) {
 			
 			//store keywords created by apk name, as Keyword components
@@ -102,12 +103,8 @@ public class EvaluateFromApk implements EvaluationDataSource{
 					if(!stopwords.contains(word))
 						apkNameAsKeywords.add(new Keyword(word));
 				}
+			}
 				
-					
-				
-				}
-				
-			
 			
 			//store libraries of apk as Library components
 			Set<Component> apkLibraries = new HashSet<>();
@@ -118,6 +115,9 @@ public class EvaluateFromApk implements EvaluationDataSource{
 			//add apk to testing set only if it uses 10 libraries or more (use a percentage of the apks that qualify)
 			Random rand = new Random();
 			boolean usedForTestingSet = (entry.getValue().size() >= 10 && (rand.nextInt(150) < 1));
+//			boolean usedForTestingSet = (entry.getValue().size() >= 10 && (rand.nextInt(5) < 1));
+//			hist.put(entry.getValue().size(), hist.getOrDefault(entry.getValue().size(), 0)+1);
+			
 			if(usedForTestingSet) 
 				existingConnections.put(apkNameAsKeywords, apkLibraries);
 			else {
@@ -141,6 +141,7 @@ public class EvaluateFromApk implements EvaluationDataSource{
 						connections.addConnection(apkInfo.get(entry.getKey()), library);
 			}
 		}
+//		hist.forEach((key, value) -> System.out.println(key + ":" + value));
 	}
 
 	private void updateStopwords(Map<Integer, Component> apkInfo) throws IOException {
