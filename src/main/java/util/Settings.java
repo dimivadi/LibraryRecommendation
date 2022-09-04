@@ -1,5 +1,6 @@
 package util;
-import java.util.Scanner;
+
+import web.Language;
 
 public class Settings {
 	
@@ -78,4 +79,24 @@ public class Settings {
 		return this.cosSim;
 	}
 	
+	public Settings setForType(Language language) {
+		
+		switch(language) {
+		case JAVA:
+			this.setDampingFactor(0.5);
+			this.setNormalization("original");
+			this.setSweepRatio(false);
+			this.setWeightValues(null);
+			this.setMethodShortname("PPR50");
+			break;
+		case ANDROID:
+			this.setDampingFactor(0.5);
+			this.setNormalization("symmetricNormRenorm");
+			this.setSweepRatio(false);
+			this.setWeightValues(null);
+			this.setMethodShortname("SymRenorm");
+			break;
+		}
+		return this;
+	}
 }

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Library Bootstrap</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+  </head>
+  <body>
+    <!--<p th:text="${query.keywords}"/>
+    <p th:text="${query.numberOfRecommendations}"/>
+    <p th:text="${query.language}"/> -->
+  <h3>Recommended Libraries:</h3>
+  <div th:each="library : ${recommendedLibraries}">
+    <span th:text="${library.name}">library</span>
+  </div>
+  <p>
+    <form th:action="@{/search/new}" method="GET">
+      <input type="submit" value="New search">
+    </form>
+  </p>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<!doctype html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Library Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+  </head>
+  <body>
+  
+    <form method="GET" th:action="@{/search}" th:object="${query}">
+      <p>Choose your programming language</p>
+      <div th:each="lang : ${allLanguages}">
+        <input type="radio" th:field="*{lang}" th:value="${lang}">
+        <label th:for="${#ids.prev('lang')}" th:text="${lang}">language</label>
+          <!--<span th:text="${lang}">language</span>-->
+        
+      </div>
+      <!--
+      <input type="radio" name="language" th:value="*{java}" id="javaLang" checked="checked">
+      <label for="javaLang">Java</label>
+      
+      <input type="radio" name="language" th:value="*{android}" id="androidLang">
+      <label for="androidLang">Android</label>
+      -->
+
+      <p><label for="num">Select number of recommended libraries</label>
+        <select name="numOfRecommendations" id="num" th:field="*{numOfRecommendations}">
+          <option value="5">5</option>
+          <option value="10" selected="selected">10</option>
+          <option value="20">20</option>
+        </select>
+      </p>
+      <p><label for="search">Describe your next project</label>
+      <input type="text" id="search" placeholder="Search" th:field="*{keywords}"/>
+      <!--<span class="validationError" th:if="${#fields.hasErrors('query')}" th:errors="*{query}">Input error</span>mm -->
+      <input type="submit" value="get useful libraries!"/></p>
+    </form> 
+  </body>
+</html>
