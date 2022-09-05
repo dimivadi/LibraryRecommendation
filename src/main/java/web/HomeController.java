@@ -19,8 +19,10 @@ public class HomeController {
 				.map(Enum::toString)
 				.map(x -> (x.substring(0, 1).toUpperCase() + x.substring(1).toLowerCase()))
 				.toArray(String[]::new);
-		
-		model.addAttribute("query", new Query());
+		Query modelQuery = new Query();
+		modelQuery.setLang("Android");
+		modelQuery.setNumOfRecommendations("10");
+		model.addAttribute("query", modelQuery);
 		model.addAttribute("allLanguages", allLanguages);
 //		model.addAttribute("allLanguages", Query.Language.values());
 		

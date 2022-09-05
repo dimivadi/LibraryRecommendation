@@ -3,7 +3,7 @@ package web;
 
 import java.util.Set;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,10 +17,13 @@ import util.WebSearch;
 @RequestMapping("/search")
 public class SearchController {
 	
+	@Autowired
+	private WebSearch webSearch;
+	
 	@GetMapping
 	public String processSearch(@ModelAttribute Query query , Model model) {
 		
-		WebSearch webSearch = new WebSearch(query);
+		webSearch.setQuery(query);
 		Set<Component> recommendedLibraries = webSearch.search();
 		model.addAttribute("recommendedLibraries", recommendedLibraries);
 		

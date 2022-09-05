@@ -13,17 +13,9 @@
       <p>Choose your programming language</p>
       <div th:each="lang : ${allLanguages}">
         <input type="radio" th:field="*{lang}" th:value="${lang}">
-        <label th:for="${#ids.prev('lang')}" th:text="${lang}">language</label>
-          <!--<span th:text="${lang}">language</span>-->
-        
+        <label th:for="${#ids.prev('lang')}" th:text="${lang}">language</label>        
       </div>
-      <!--
-      <input type="radio" name="language" th:value="*{java}" id="javaLang" checked="checked">
-      <label for="javaLang">Java</label>
-      
-      <input type="radio" name="language" th:value="*{android}" id="androidLang">
-      <label for="androidLang">Android</label>
-      -->
+
 
       <p><label for="num">Select number of recommended libraries</label>
         <select name="numOfRecommendations" id="num" th:field="*{numOfRecommendations}">
@@ -34,7 +26,7 @@
       </p>
       <p><label for="search">Describe your next project</label>
       <input type="text" id="search" placeholder="Search" th:field="*{keywords}"/>
-      <!--<span class="validationError" th:if="${#fields.hasErrors('query')}" th:errors="*{query}">Input error</span>mm -->
+      
       <input type="submit" value="get useful libraries!"/></p>
     </form> 
   </body>

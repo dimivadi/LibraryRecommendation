@@ -5,6 +5,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import datatypes.Component;
 import miners.ComponentGraph;
 import miners.ComponentMiner;
@@ -20,14 +22,29 @@ public class WebSearch {
 	private ComponentMiner componentMiner = new RelatedLibraries();
 	private UserInput userInput = new UserInput();
 	private Set<Component> seedComponents = new HashSet<Component>();
+	private GraphData graphData;
 	
-	public WebSearch(Query query) {
-		settings.setForType(Language.valueOf(query.getLang().toUpperCase()));
-//		configureSettings(query);
-		loadGraph(query);
-		this.seedComponents = userInput.stringToKeywords(query.getKeywords());
+	public WebSearch() {
+
 	}
 	
+	@Autowired
+	public void setGraphData(GraphData graphData) {
+		this.graphData = graphData;
+	}
+	
+	public WebSearch setQuery(Query query) {
+		graphData.printsmt();
+
+		settings.setForType(Language.valueOf(query.getLang().toUpperCase()));
+		ComponentGraph componentGraph = this.graphData.getComponentGraphMaven();
+		componentMiner.setComponentGraph(componentGraph);
+//		configureSettings(query);
+//		loadGraph(query);
+		this.seedComponents = userInput.stringToKeywords(query.getKeywords());
+		
+		return this;
+	}
 	
 	public Set<Component> search() {
 		Map<Component, Double> result;

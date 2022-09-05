@@ -7,9 +7,6 @@
     <link rel="stylesheet" th:href="@{/styles.css}" />
   </head>
   <body>
-    <!--<p th:text="${query.keywords}"/>
-    <p th:text="${query.numberOfRecommendations}"/>
-    <p th:text="${query.language}"/> -->
   <h3>Recommended Libraries:</h3>
   <div th:each="library : ${recommendedLibraries}">
     <span th:text="${library.name}">library</span>

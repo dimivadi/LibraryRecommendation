@@ -21,7 +21,12 @@ public class GraphData {
 	Map<Set<Component>, Set<Component>> existingConnectionsMaven;
 	
 	public GraphData() {
-		
+//		this.loadSerializedMalib();
+		this.loadSerializedMaven();
+	}
+	
+	public void printsmt() {
+		System.out.println("smtsmt");
 	}
 	
 	public void loadMavenType(String filePath) {
