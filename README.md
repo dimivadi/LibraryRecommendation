@@ -1,6 +1,6 @@
 # LibraryRecommendation
 
-##Library Bootstrap for Java and Android libraries, using keywords describing your next project.
+## Library Bootstrap for Java and Android libraries, using keywords describing your next project.
 
 This recommendation system utilizes knowledge derived from dependencies of many java and android projects. 
 This knowledge is captured on a graph data structure. Given the user input, that comprises keywords describing a project, 
