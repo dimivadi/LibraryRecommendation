@@ -6,7 +6,7 @@ This recommendation system utilizes knowledge derived from dependencies of many 
 This knowledge is captured on a graph data structure. Given the user input, that comprises keywords describing a project, 
 system outputs a set of useful libraries so that the user can bootstrap the project.<br/>
 Follow in-app instructions to set suitable parameters. You can choose PageRank variations, change the damping factor, etc<br/>
-Also, system can be used to evaluate its efficiency on user prefered datasets. User needs to write an appropriate class, that implements EvaluationDataSource intefcace, in order to manage the new dataset. Evaluation mode outputs a set of evaluation metrics such as AUC, f1score etc. 
+Also, system can be used, via evaluate command, to evaluate its efficiency on user prefered datasets. A new dataset needs an appropriate class, that implements EvaluationDataSource intefcace, in order to bring data to an appropriate format. Evaluation mode outputs a set of evaluation metrics such as AUC, f1score etc. 
 
 ## Installation instructions
 Currently system is used as a stand-alone java application. 
