@@ -8,6 +8,9 @@ system outputs a set of useful libraries so that the user can bootstrap the proj
 
 
 ## Installation instructions
+Currently system is used as a stand-alone java application. 
 
-1. Download and compile source code
+In order to install the app, 
+1. Download and compile source code 
+   (Note: it is advised to set explicitly the entry point at src/main/java/init/MainClass.java)
 2. Run the generated .jar file, providing up to 4GB of heap size, for better performance, using parameters -Xms4096 -Xmx4096
